@@ -135,14 +135,42 @@ class UserDashboardController extends Controller
 
     public function returns()
     {
-        $returns = Auth::user()->returns()->with(['order', 'product'])->latest()->paginate(10);
-        // Fetch only delivered orders for return eligibility
-        // Eager load items and products for the dropdown
-        $orders = Auth::user()->orders()
+        $user = Auth::user();
+        $returns = $user->returns()->with(['order', 'product'])->latest()->paginate(10);
+        
+        // Get list of already returned (order_id, product_id)
+        // We use a key like "order_id-product_id" for easy lookup
+        $returnedItems = $user->returns()
+            ->select('order_id', 'product_id')
+            ->get()
+            ->map(function ($r) {
+                return $r->order_id . '-' . $r->product_id;
+            })
+            ->toArray();
+
+        // Fetch only delivered orders
+        $orders = $user->orders()
             ->where('status', 'delivered')
             ->with(['items.product'])
             ->latest()
             ->get();
+
+        // Filter out items that are already returned
+        // We need to iterate over orders and their items and filter the items relation
+        // Since we can't easily filter eager loaded relation on the query builder side with this specific logic
+        // without complex joins, we filter the collection.
+        
+        $orders->each(function ($order) use ($returnedItems) {
+            $order->setRelation('items', $order->items->filter(function ($item) use ($order, $returnedItems) {
+                $key = $order->id . '-' . $item->product_id;
+                return !in_array($key, $returnedItems);
+            }));
+        });
+        
+        // Remove orders that have no eligible items left
+        $orders = $orders->filter(function ($order) {
+            return $order->items->isNotEmpty();
+        });
 
         return view('main_view.pages.user_dashboard.returns', compact('returns', 'orders'));
     }

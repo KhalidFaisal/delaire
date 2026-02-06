@@ -290,6 +290,10 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
     Route::get('/orders/{id}/pdf', [App\Http\Controllers\OrderController::class, 'downloadPdf'])->name('admin.orders.pdf');
     Route::post('/orders/{id}/status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('admin.orders.status');
 
+    // Return Request Management Routes
+    Route::get('/return-requests', [App\Http\Controllers\Backend\AdminReturnController::class, 'index'])->name('admin.returns.index');
+    Route::post('/return-requests/{id}/status', [App\Http\Controllers\Backend\AdminReturnController::class, 'updateStatus'])->name('admin.returns.status');
+
     // Testimonial Management Routes
     Route::get('/manage/testimonial', [TestimonialController::class, 'index'])->name('manage.testimonial');
     Route::get('/manage/testimonial/create', [TestimonialController::class, 'create'])->name('create.testimonial');
@@ -310,6 +314,10 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
         Route::post('/admin/update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/logout', [ProfileController::class, 'destroy'])->name('logout');
   
+        // Manage Reviews
+        Route::get('/manage/reviews', [\App\Http\Controllers\Backend\ReviewController::class, 'index'])->name('manage.reviews');
+        Route::delete('/manage/reviews/{id}', [\App\Http\Controllers\Backend\ReviewController::class, 'destroy'])->name('destroy.review');
+
     });
     Route::post('/items/filter', [ProductController::class,'filterProduct']);
     Route::get('/ajax/search', [ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
