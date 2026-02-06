@@ -96,7 +96,21 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                <td>{{ number_format($order->subtotal > 0 ? $order->subtotal : ($order->total - $order->delivery_charge + $order->promo_discount), 2) }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right"><strong>Delivery Charge:</strong></td>
+                <td>{{ number_format($order->delivery_charge, 2) }}</td>
+            </tr>
+            @if($order->promo_discount > 0)
+            <tr>
+                <td colspan="3" class="text-right"><strong>Discount ({{ $order->promo_code }}):</strong></td>
+                <td>-{{ number_format($order->promo_discount, 2) }}</td>
+            </tr>
+            @endif
+            <tr>
+                <td colspan="3" class="text-right"><strong>Grand Total:</strong></td>
                 <td><strong>BDT {{ number_format($order->total, 2) }}</strong></td>
             </tr>
         </tfoot>

@@ -190,8 +190,9 @@ if (config('app.debug')) {
 }
 
 // Checkout
-Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::class, 'applyPromo'])->name('checkout.promo');
 
     //blog route
     Route::middleware('auth:admin')->group(function () {
@@ -263,6 +264,25 @@ Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store
     // Portfolio Management Routes
     Route::get('/manage/portfolio', [PortfolioController::class, 'index'])->name('manage.portfolio');
     Route::post('/manage/portfolio', [PortfolioController::class, 'update'])->name('update.portfolio');
+
+    // General Settings Routes
+    Route::get('/general-settings', [App\Http\Controllers\Backend\GeneralSettingController::class, 'index'])->name('manage.settings'); // redirects to manage.offers
+    
+    // manage.offers
+    Route::get('/general-settings/offers', [App\Http\Controllers\Backend\GeneralSettingController::class, 'manageOffers'])->name('manage.offers');
+    Route::post('/general-settings/offers/update', [App\Http\Controllers\Backend\GeneralSettingController::class, 'updateOffers'])->name('update.offers');
+
+    // manage.charges
+    Route::get('/general-settings/charges', [App\Http\Controllers\Backend\GeneralSettingController::class, 'manageCharges'])->name('manage.charges');
+    Route::post('/general-settings/charges/update', [App\Http\Controllers\Backend\GeneralSettingController::class, 'updateCharges'])->name('update.charges');
+
+    // manage.promocodes
+    Route::get('/general-settings/promocodes', [App\Http\Controllers\Backend\PromoCodeController::class, 'index'])->name('manage.promocodes');
+    
+    // Promo Code Actions
+    Route::post('/promo-codes/store', [App\Http\Controllers\Backend\PromoCodeController::class, 'store'])->name('promo.store');
+    Route::get('/promo-codes/delete/{id}', [App\Http\Controllers\Backend\PromoCodeController::class, 'destroy'])->name('promo.delete');
+    Route::get('/promo-codes/status/{id}', [App\Http\Controllers\Backend\PromoCodeController::class, 'updateStatus'])->name('promo.status');
     
     // Order Management Routes
     Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');

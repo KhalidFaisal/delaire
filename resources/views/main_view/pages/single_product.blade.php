@@ -185,9 +185,9 @@
                             </p>
                         </div>
                         <div class="mb-3 mt-3">
-                            <h3 class="d-inline" style="color: var(--primary-color);">৳ {{ $product->pro_sprice ?? $product->pro_price }}</h3>
-                            @if($product->pro_sprice && $product->pro_price > $product->pro_sprice)
-                                <span class="text-muted text-decoration-line-through ms-2">৳ {{ $product->pro_price }}</span>
+                            <h3 class="d-inline" style="color: var(--primary-color);">৳ {{ $product->final_price }}</h3>
+                            @if($product->final_price < $product->adjusted_price)
+                                <span class="text-muted text-decoration-line-through ms-2">৳ {{ $product->adjusted_price }}</span>
                             @endif
                         </div>
 
@@ -228,7 +228,7 @@
                                 <button id="single-page-add-to-cart" class="btn btn-primary btn-lg flex-grow-1"
                                     data-id="{{ $product->id }}"
                                     data-title="{{ $product->pro_title }}"
-                                    data-price="{{ $product->pro_sprice ?? $product->pro_price }}"
+                                    data-price="{{ $product->final_price }}"
                                     data-stock="{{ $product->sizes->count() > 0 ? 0 : $product->pro_qty }}"
                                     data-has-sizes="{{ $product->sizes->count() > 0 ? 'true' : 'false' }}"
                                     data-img="{{ asset('uploads/'.$product->pro_img1) }}"
@@ -362,9 +362,11 @@
                     </div>
                     @foreach($related_products as $r_product)
                         @php
+                            $adjusted = $r_product->adjusted_price;
+                            $final = $r_product->final_price;
                             $droppercent = 0;
-                            if($r_product->pro_price > 0 && $r_product->pro_sprice > 0) {
-                                $droppercent = (($r_product->pro_price - $r_product->pro_sprice)/$r_product->pro_price)*100;
+                            if($adjusted > 0 && $final < $adjusted) {
+                                $droppercent = (($adjusted - $final)/$adjusted)*100;
                             }
                             $inWishlist = in_array($r_product->id, $wishlistProductIds ?? []);
                         @endphp
@@ -393,9 +395,9 @@
                                         <a href="{{ route('product.show', $r_product->id) }}" class="text-dark text-decoration-none">{{ $r_product->pro_title }}</a>
                                     </h3>
                                     <div class="product-card-price mb-3">
-                                        <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $r_product->pro_sprice ?? $r_product->pro_price }}</span>
-                                        @if($r_product->pro_sprice && $r_product->pro_price > $r_product->pro_sprice)
-                                        <span class="text-muted text-decoration-line-through small ms-2">৳ {{ $r_product->pro_price }}</span>
+                                        <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $r_product->final_price }}</span>
+                                        @if($r_product->final_price < $r_product->adjusted_price)
+                                        <span class="text-muted text-decoration-line-through small ms-2">৳ {{ $r_product->adjusted_price }}</span>
                                         @endif
                                     </div>
                                     <div class="shop-now-btn text-center pb-2">

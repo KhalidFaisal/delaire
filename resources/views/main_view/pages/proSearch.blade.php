@@ -193,9 +193,11 @@
 
                                     @foreach($products as $product)
                                         @php
+                                            $adjusted = $product->adjusted_price;
+                                            $final = $product->final_price;
                                             $droppercent = 0;
-                                            if($product->pro_price > 0 && $product->pro_sprice > 0) {
-                                                $droppercent = (($product->pro_price - $product->pro_sprice) / $product->pro_price) * 100;
+                                            if($adjusted > 0 && $final < $adjusted) {
+                                                $droppercent = (($adjusted - $final) / $adjusted) * 100;
                                             }
                                             $inWishlist = in_array($product->id, $wishlistProductIds ?? []);
                                         @endphp
@@ -225,9 +227,9 @@
                                                         <a href="{{ route('product.show', $product->id) }}" class="text-dark text-decoration-none">{{ $product->pro_title }}</a>
                                                     </h3>
                                                     <div class="product-card-price mb-3">
-                                                        <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $product->pro_sprice ?? $product->pro_price }}</span>
-                                                        @if($product->pro_sprice && $product->pro_price > $product->pro_sprice)
-                                                        <span class="text-muted text-decoration-line-through small ms-2">৳ {{ $product->pro_price }}</span>
+                                                        <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $product->final_price }}</span>
+                                                        @if($product->final_price < $product->adjusted_price)
+                                                        <span class="text-muted text-decoration-line-through small ms-2">৳ {{ $product->adjusted_price }}</span>
                                                         @endif
                                                     </div>
                                                     <div class="shop-now-btn text-center pb-2">
@@ -642,7 +644,7 @@
                                             <a class="nav-link-sub nav-text-sub" href="cart.html">Cart</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
-                                            <a class="nav-link-sub nav-text-sub" href="checkout.html">Checkout</a>
+                                            <a class="nav-link-sub nav-text-sub" href="{{ route('checkout.index') }}">Checkout</a>
                                         </li>
                                     </ul>
                                 </div>

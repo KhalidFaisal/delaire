@@ -294,7 +294,7 @@
                                             </svg>
                                             <span class="menu-back-text">Pages</span>
                                         </h5>
-                                    </div>
+                                    </div>  
                                     <ul class="submenu list-unstyled">
                                         <li class="menu-list-item nav-item-sub">
                                             <a class="nav-link-sub nav-text-sub" href="about-us.html">About Us</a>
@@ -321,7 +321,7 @@
                                             <a class="nav-link-sub nav-text-sub" href="cart.html">Cart</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
-                                            <a class="nav-link-sub nav-text-sub" href="checkout.html">Checkout</a>
+                                            <a class="nav-link-sub nav-text-sub" href="{{ route('checkout.index') }}">Checkout</a>
                                         </li>
                                     </ul>
                                 </div>

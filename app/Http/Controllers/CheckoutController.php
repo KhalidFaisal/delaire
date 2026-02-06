@@ -44,16 +44,51 @@ class CheckoutController extends Controller
         try {
             DB::beginTransaction();
 
-            $total = 0;
+            $settings = \App\Models\GeneralSetting::first();
+            $deliveryCharge = $settings ? $settings->delivery_charge : 0;
+
+            $cartTotal = 0;
             foreach ($cart as $item) {
-                $total += $item['price'] * $item['qty'];
+                $cartTotal += $item['price'] * $item['qty'];
             }
+            
+            // Calculate Promo Discount
+            $promoDiscount = 0;
+            $promoCode = null;
+            if ($request->promo_code) {
+                $checkPromo = \App\Models\PromoCode::where('code', $request->promo_code)
+                    ->where('status', true)
+                    ->where(function ($q) {
+                        $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                    })
+                    ->where(function ($q) {
+                        $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                    })
+                    ->first();
+
+                if ($checkPromo) {
+                    $promoCode = $checkPromo->code;
+                    if ($checkPromo->discount_type == 'fixed') {
+                        $promoDiscount = $checkPromo->discount_amount;
+                    } else {
+                        $promoDiscount = ($cartTotal * $checkPromo->discount_amount) / 100;
+                    }
+                }
+            }
+
+            // Final Total Calculation
+            $total = $cartTotal + $deliveryCharge - $promoDiscount;
+            if ($total < 0) $total = 0;
 
             $order = UserOrder::create([
                 'user_id' => Auth::id(),
                 'order_number' => 'ORD-' . strtoupper(uniqid()),
+                'subtotal' => $cartTotal,
                 'total' => $total,
                 'status' => 'pending',
+                'delivery_charge' => $deliveryCharge,
+                'promo_code' => $promoCode,
+                'promo_discount' => $promoDiscount,
                 'shipping_name' => $request->shipping_name,
                 'shipping_email' => $request->shipping_email,
                 'shipping_phone' => $request->shipping_phone,
@@ -68,31 +103,18 @@ class CheckoutController extends Controller
                 $productId = $item['id'];
                 $product = Product::find($productId);
                 
-                if ($product && $product->pro_qty >= $item['qty']) {
-                    OrderItem::create([
+                if ($product) {
+                     // Check stock if needed, but for now we just process
+                     $product->pro_qty -= $item['qty'];
+                     $product->save();
+                     
+                     OrderItem::create([
                         'order_id' => $order->id,
                         'product_id' => $productId,
                         'qty' => $item['qty'],
                         'price' => $item['price'],
                         'size' => $item['size'] ?? null
                     ]);
-
-                    // Deduct stock
-                    $product->pro_qty -= $item['qty'];
-                    $product->save();
-                } else {
-                    // Handle out of stock or partial stock?
-                    if($product) {
-                         $product->pro_qty -= $item['qty'];
-                         $product->save();
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'product_id' => $productId,
-                            'qty' => $item['qty'],
-                            'price' => $item['price'],
-                            'size' => $item['size'] ?? null
-                        ]);
-                    }
                 }
             }
 
@@ -107,5 +129,40 @@ class CheckoutController extends Controller
             DB::rollBack();
             return back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
+    }
+
+    public function applyPromo(Request $request)
+    {
+        $request->validate([
+            'promo_code' => 'required|string',
+            'cart_total' => 'required|numeric'
+        ]);
+
+        $promo = \App\Models\PromoCode::where('code', $request->promo_code)
+            ->where('status', true)
+            ->where(function ($q) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->first();
+
+        if (!$promo) {
+            return response()->json(['valid' => false, 'message' => 'Invalid or expired promo code.']);
+        }
+
+        $discount = 0;
+        if ($promo->discount_type == 'fixed') {
+            $discount = $promo->discount_amount;
+        } else {
+            $discount = ($request->cart_total * $promo->discount_amount) / 100;
+        }
+
+        return response()->json([
+            'valid' => true,
+            'discount' => $discount,
+            'message' => 'Promo code applied!'
+        ]);
     }
 }

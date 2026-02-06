@@ -87,6 +87,18 @@
                   </ul>
 
             </li>
+            
+            <li class="dropdown">
+                  <a class="nav-link menu-title" href="javascript:void(0)">
+                      <i class="fa fa-sliders"></i>
+                      <span style="margin-left: 5px;">Manage Settings</span>
+                  </a>
+                  <ul class="nav-submenu menu-content">
+                    <li><a href="{{route('manage.offers')}}"><i class="fa fa-percent"></i> Manage Offers</a></li>
+                    <li><a href="{{route('manage.charges')}}"><i class="fa fa-truck"></i> Manage Charges</a></li>
+                    <li><a href="{{route('manage.promocodes')}}"><i class="fa fa-ticket"></i> Manage Promo Codes</a></li>
+                  </ul>
+            </li>
              <!-- banner Area Start-->
             
 
