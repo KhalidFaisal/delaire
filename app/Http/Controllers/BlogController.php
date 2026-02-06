@@ -14,10 +14,12 @@ class BlogController extends Controller
         $blog = new Blog();
 
         $blog->blog_title = $request->blog_title;
-        $blog->blog_link = $request->blog_link;
+
         $blog->blog_image = $request->blog_image;
-        $blog->blog_cat = $request->blog_category;
+        $blog->blog_image = $request->blog_image;
+        $blog->blog_Cat = $request->blog_category;
         $blog->blog_key = $request->blog_key;
+        $blog->blog_description = $request->blog_description;
         if ($request->hasFile('blog_image')) {
             $image = $request->file('blog_image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
@@ -41,8 +43,8 @@ class BlogController extends Controller
         'blog_title' => 'nullable',
         'blog_category' => 'nullable', // Add validation for blog_category
         'blog_key' => 'nullable',      // Add validation for blog_key
-        'blog_link' => 'nullable',
         'blog_image' => 'nullable',
+        'blog_description' => 'nullable',
     ]);
 
     // Retrieve the existing blog post
@@ -58,8 +60,8 @@ class BlogController extends Controller
     if (isset($validatedData['blog_key'])) {
         $blog->blog_key = $validatedData['blog_key'];
     }
-    if (isset($validatedData['blog_link'])) {
-        $blog->blog_link = $validatedData['blog_link'];
+    if (isset($validatedData['blog_description'])) {
+        $blog->blog_description = $validatedData['blog_description'];
     }
 
     if ($request->hasFile('blog_image')) {
@@ -95,4 +97,17 @@ class BlogController extends Controller
 
            
             
+
+            public function webIndex() {
+                $cats = Category::orderBy('created_at', 'asc')->get();
+                $blogs = Blog::orderBy('created_at', 'desc')->get();
+                return view('main_view.pages.webBlog', compact('cats', 'blogs'));
+            }
+        
+            public function show($id) {
+                $blog = Blog::findOrFail($id);
+                $recentBlogs = Blog::where('id', '!=', $id)->orderBy('created_at', 'desc')->take(5)->get();
+                $cats = Category::orderBy('created_at', 'asc')->get();
+                return view('main_view.pages.webBlogDetails', compact('blog', 'recentBlogs', 'cats'));
+            }
 }

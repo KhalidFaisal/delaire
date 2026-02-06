@@ -309,10 +309,10 @@
                                             <a class="nav-link-sub nav-text-sub" href="404.html">404 page</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
-                                            <a class="nav-link-sub nav-text-sub" href="login.html">Login</a>
+                                            <a class="nav-link-sub nav-text-sub" href="{{ route('user_login') }}">Login</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
-                                            <a class="nav-link-sub nav-text-sub" href="register.html">Register</a>
+                                            <a class="nav-link-sub nav-text-sub" href="{{ route('user_register') }}">Register</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
                                             <a class="nav-link-sub nav-text-sub" href="wishlist.html">Wishlist</a>
@@ -347,7 +347,7 @@
                             </a>
                         </li>
                         <li class="utilty-menu-item">
-                            <a class="announcement-login announcement-text" href="login.html">
+                            <a class="announcement-login announcement-text" href="{{ route('user_login') }}">
                                 <span class="utilty-icon-wrapper">
                                     <svg class="icon icon-user" width="24" height="24" viewBox="0 0 10 11" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">

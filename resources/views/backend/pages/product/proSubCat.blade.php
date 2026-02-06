@@ -53,10 +53,6 @@
       </form><hr>
 
 
-
-
-      <!-- <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by title..."> -->
-  
     <!-- Table -->
     <table class="table table-striped">
     <thead>
@@ -69,22 +65,25 @@
     </thead>
 
     <tbody>
-        @forelse ($cats as $index => $category)
+        @php
+            $subcats = App\Models\Prosubcategory::orderBy('created_at', 'desc')->get();
+        @endphp
+        @forelse ($subcats as $index => $subcat)
         <tr>
             <td>{{ $index + 1 }}</td>
 
             <td>
-                {{ $category->mainCategory->proCat_name ?? 'N/A' }}
+                {{ $subcat->mainCategory->proCat_name ?? 'N/A' }}
             </td>
 
             <td>
-                {{ $category->proSubCat_name }}
+                {{ $subcat->proSubCat_name }}
             </td>
 
             <td>
                 <form method="POST" action="{{ route('destroy.proSubCategory') }}">
                     @csrf
-                    <input type="hidden" name="id" value="{{ $category->id }}">
+                    <input type="hidden" name="id" value="{{ $subcat->id }}">
                     <button type="submit" class="btn btn-danger btn-sm">
                         Delete
                     </button>

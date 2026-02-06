@@ -4,13 +4,14 @@
 
 
 <head>
-<title>Pinkush</title>
+<title>{{ $portfolio->company_name ?? 'Pinkush' }}</title>
     <!-- meta tags -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="meta description">
-    <link rel="shortcut icon" href="{{asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
 
     <!-- all css -->
     @include('main_view.include.css')
@@ -50,38 +51,23 @@
                         <div class="col-lg-12 col-md-12 col-12">
                             <div class="filter-sort-wrapper d-flex justify-content-between flex-wrap">
                                 <div class="collection-title-wrap d-flex align-items-end">
-                                    
-                                @php
-                                $proCategory = request()->query('pro_category');
-                                $productsQuery = App\Models\Product::orderBy('created_at', 'asc');
-
-                                // If pro_category is set, filter products by pro_category
-                                if ($proCategory) {
-                                    $productsQuery->where('main_category', $proCategory);
-                                }
-
-                                $products = $productsQuery->get();
-                                $count = 0;
-                                $droppercent = 0;
-                            @endphp
-
-                            <!-- Table rows with data -->
-                            @foreach($products as $product)
-                                @php
-                                    $count++;
-                                    $droppercent = (($product->pro_price - $product->pro_sprice) / $product->pro_price) * 100;
-                                @endphp
-                                
-                                @endforeach
-                                <h2 class="collection-title heading_24 mb-0">All products</h2>
-                                    <p class="collection-counter text_16 mb-0 ms-2">{{$count}} Items</p>
+                                    <h2 class="collection-title heading_24 mb-0">All products</h2><hr>
+                                    <p class="collection-counter text_16 mb-0 ms-2">{{ $products->total() }} Items</p>
                                 </div>
                                 <div class="filter-sorting">
                                     <div class="collection-sorting position-relative d-none d-lg-block">
-                                        <div
-                                            class="sorting-header text_16 d-flex align-items-center justify-content-end">
+                                        <div class="sorting-header text_16 d-flex align-items-center justify-content-end">
                                             <span class="sorting-title me-2">Sort by:</span>
-                                            <span class="active-sorting">Featured</span>
+                                            <span class="active-sorting">
+                                                {{ match(request('sort')) {
+                                                    'top_rated' => 'Top Rated',
+                                                    'a_z' => 'A-Z',
+                                                    'z_a' => 'Z-A',
+                                                    'price_low' => 'Price, low to high',
+                                                    'price_high' => 'Price, high to low',
+                                                    default => 'Featured'
+                                                } }}
+                                            </span>
                                             <span class="sorting-icon">
                                                 <svg class="icon icon-down" xmlns="http://www.w3.org/2000/svg"
                                                     width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -92,14 +78,12 @@
                                             </span>
                                         </div>
                                         <ul class="sorting-lists list-unstyled m-0">
-                                            <li><a href="#" class="text_14">Featured</a></li>
-                                            <li><a href="#" class="text_14">Best Selling</a></li>
-                                            <li><a href="#" class="text_14">Alphabetically, A-Z</a></li>
-                                            <li><a href="#" class="text_14">Alphabetically, Z-A</a></li>
-                                            <li><a href="#" class="text_14">Price, low to high</a></li>
-                                            <li><a href="#" class="text_14">Price, high to low</a></li>
-                                            <li><a href="#" class="text_14">Date, old to new</a></li>
-                                            <li><a href="#" class="text_14">Date, new to old</a></li>
+                                            <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'featured']) }}" class="text_14">Featured</a></li>
+                                            <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'top_rated']) }}" class="text_14">Top Rated</a></li>
+                                            <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'a_z']) }}" class="text_14">A-Z</a></li>
+                                            <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'z_a']) }}" class="text_14">Z-A</a></li>
+                                            <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'price_low']) }}" class="text_14">Price, low to high</a></li>
+                                            <li><a href="{{ request()->fullUrlWithQuery(['sort' => 'price_high']) }}" class="text_14">Price, high to low</a></li>
                                         </ul>
                                     </div>
                                     <div class="filter-drawer-trigger mobile-filter d-flex align-items-center d-lg-none">
@@ -116,127 +100,204 @@
                             </div>
                             <div class="collection-product-container">
                                 <div class="row">
-                                @php
-                                $proCategory = request()->query('pro_category');
-                                $productsQuery = App\Models\Product::orderBy('created_at', 'asc');
+                                    <style>
+                                        /* Minimalist Card CSS */
+                                        .minimalist-card {
+                                            border: 1px solid #f9f9f9;
+                                            transition: all 0.3s ease;
+                                            cursor: pointer;
+                                            background: #fff;
+                                            padding-bottom: 20px;
+                                            border-radius: 8px;
+                                            overflow: hidden;
+                                        }
+                                        .minimalist-card:hover {
+                                            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                                            transform: translateY(-5px);
+                                        }
+                                        .wishlist-btn {
+                                            z-index: 10;
+                                            width: 40px;
+                                            height: 40px;
+                                            border-radius: 50%;
+                                            background: #fff;
+                                            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            transition: all 0.2s;
+                                            cursor: pointer;
+                                        }
+                                        .wishlist-btn:hover {
+                                            background: #f8f8f8;
+                                        }
+                                        .wishlist-btn.active svg {
+                                            fill: var(--primary-color);
+                                            stroke: var(--primary-color);
+                                        }
+                                        .shop-now-btn {
+                                            opacity: 0;
+                                            transform: translateY(10px);
+                                            transition: all 0.3s;
+                                        }
+                                        .minimalist-card:hover .shop-now-btn {
+                                            opacity: 1;
+                                            transform: translateY(0);
+                                        }
+                                        .product-img-wrapper {
+                                            position: relative;
+                                            overflow: hidden;
+                                            padding-top: 100%; /* 1:1 Aspect Ratio */
+                                        }
+                                        .product-img-wrapper img {
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            object-fit: cover;
+                                            transition: transform 0.5s ease;
+                                        }
+                                        .minimalist-card:hover .product-img-wrapper img {
+                                            transform: scale(1.05);
+                                        }
+                                        
+                                        /* Pagination Styles */
+                                        .pagination .page-item .page-link {
+                                            border: none;
+                                            color: #000;
+                                            margin: 0 5px;
+                                            border-radius: 5px;
+                                            width: 40px;
+                                            height: 40px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-weight: 500;
+                                        }
+                                        
+                                        .pagination .page-item.active .page-link {
+                                            background-color: #000;
+                                            color: #fff;
+                                        }
 
-                                // If pro_category is set, filter products by pro_category
-                                if ($proCategory) {
-                                    $productsQuery->where('main_category', $proCategory);
-                                }
+                                        .pagination .page-item.disabled .page-link {
+                                            color: #ccc;
+                                            cursor: not-allowed;
+                                        }
 
-                                $products = $productsQuery->get();
-                                $count = 0;
-                                $droppercent = 0;
-                            @endphp
+                                        .pagination .page-item:hover:not(.active):not(.disabled) .page-link {
+                                            background-color: #f1f1f1;
+                                        }
+                                    </style>
 
-                            <!-- Table rows with data -->
-                            @foreach($products as $product)
-                                @php
-                                    $count++;
-                                    $droppercent = (($product->pro_price - $product->pro_sprice) / $product->pro_price) * 100;
-                                @endphp
-            
-
-                            <div class="col-lg-3 col-md-6 col-6" data-aos="fade-up" data-aos-duration="700">
-                                <div class="product-card">
-                                    <div class="product-card-img">
-                                        <a class="hover-switch" href="collection-left-sidebar.html">
-                                        <img class="secondary-img" src="{{ asset('uploads/'. $product->pro_img1) }}"
-                                                alt="product-img">
-                                            <img class="primary-img" src="{{ asset('uploads/'.$product->pro_img1) }}"
-                                                alt="product-img">
-                                        </a>
-
-                                        <div class="product-badge">
-                                            <span class="badge-label badge-percentage rounded">
-
-                                            {{ intval($droppercent) }}%
-                                            </span>
+                                    @foreach($products as $product)
+                                        @php
+                                            $droppercent = 0;
+                                            if($product->pro_price > 0 && $product->pro_sprice > 0) {
+                                                $droppercent = (($product->pro_price - $product->pro_sprice) / $product->pro_price) * 100;
+                                            }
+                                            $inWishlist = in_array($product->id, $wishlistProductIds ?? []);
+                                        @endphp
+                    
+                                        <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-duration="700">
+                                            <div class="minimalist-card" onclick="window.location='{{ route('product.show', $product->id) }}'">
+                                                <div class="position-relative product-img-wrapper">
+                                                    <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}">
+                                                    
+                                                    <div class="position-absolute top-0 end-0 m-3" onclick="event.stopPropagation()">
+                                                        <div class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" onclick="toggleWishlist(this)" data-product-id="{{ $product->id }}">
+                                                            <svg class="icon icon-wishlist" width="20" height="20" viewBox="0 0 26 22" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#333" stroke-width="2">
+                                                                <path d="M6.96429 0.000183105C3.12305 0.000183105 0 3.10686 0 6.84843C0 8.15388 0.602121 9.28455 1.16071 10.1014C1.71931 10.9181 2.29241 11.4425 2.29241 11.4425L12.3326 21.3439L13 22.0002L13.6674 21.3439L23.7076 11.4425C23.7076 11.4425 26 9.45576 26 6.84843C26 3.10686 22.877 0.000183105 19.0357 0.000183105C15.8474 0.000183105 13.7944 1.88702 13 2.68241C12.2056 1.88702 10.1526 0.000183105 6.96429 0.000183105ZM6.96429 1.82638C9.73912 1.82638 12.3036 4.48008 12.3036 4.48008L13 5.25051L13.6964 4.48008C13.6964 4.48008 16.2609 1.82638 19.0357 1.82638C21.8613 1.82638 24.1429 4.10557 24.1429 6.84843C24.1429 8.25732 22.4018 10.1584 22.4018 10.1584L13 19.4036L3.59821 10.1584C3.59821 10.1584 3.14844 9.73397 2.69866 9.07411C2.24888 8.41426 1.85714 7.55466 1.85714 6.84843C1.85714 4.10557 4.13867 1.82638 6.96429 1.82638Z" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    @if($droppercent > 0)
+                                                    <div class="product-badge position-absolute top-0 start-0 m-3">
+                                                         <span class="badge rounded-pill" style="background-color: #000 !important; color: #fff;">{{ intval($droppercent) }}% OFF</span>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                
+                                                <div class="card-body text-center mt-3 px-3">
+                                                    <h3 class="product-card-title mb-2" style="font-size: 16px; font-weight: 600;">
+                                                        <a href="{{ route('product.show', $product->id) }}" class="text-dark text-decoration-none">{{ $product->pro_title }}</a>
+                                                    </h3>
+                                                    <div class="product-card-price mb-3">
+                                                        <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $product->pro_sprice ?? $product->pro_price }}</span>
+                                                        @if($product->pro_sprice && $product->pro_price > $product->pro_sprice)
+                                                        <span class="text-muted text-decoration-line-through small ms-2">৳ {{ $product->pro_price }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="shop-now-btn text-center pb-2">
+                                                        <a href="{{ route('product.show', $product->id) }}" class="btn btn-primary btn-sm rounded-pill px-4">Shop Now</a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-
-                                        <div class="product-card-action product-card-action-2 justify-content-center">
-                                            <a href="#quickview-modal" class="action-card action-quickview"
-                                                data-bs-toggle="modal">
-                                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M10 0C15.5117 0 20 4.48828 20 10C20 12.3945 19.1602 14.5898 17.75 16.3125L25.7188 24.2812L24.2812 25.7188L16.3125 17.75C14.5898 19.1602 12.3945 20 10 20C4.48828 20 0 15.5117 0 10C0 4.48828 4.48828 0 10 0ZM10 2C5.57031 2 2 5.57031 2 10C2 14.4297 5.57031 18 10 18C14.4297 18 18 14.4297 18 10C18 5.57031 14.4297 2 10 2ZM11 6V9H14V11H11V14H9V11H6V9H9V6H11Z"
-                                                        fill="#00234D" />
-                                                </svg>
-                                            </a>
-
-                                            <a href="#" class="action-card action-wishlist">
-                                                <svg class="icon icon-wishlist" width="26" height="22"
-                                                    viewBox="0 0 26 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M6.96429 0.000183105C3.12305 0.000183105 0 3.10686 0 6.84843C0 8.15388 0.602121 9.28455 1.16071 10.1014C1.71931 10.9181 2.29241 11.4425 2.29241 11.4425L12.3326 21.3439L13 22.0002L13.6674 21.3439L23.7076 11.4425C23.7076 11.4425 26 9.45576 26 6.84843C26 3.10686 22.877 0.000183105 19.0357 0.000183105C15.8474 0.000183105 13.7944 1.88702 13 2.68241C12.2056 1.88702 10.1526 0.000183105 6.96429 0.000183105ZM6.96429 1.82638C9.73912 1.82638 12.3036 4.48008 12.3036 4.48008L13 5.25051L13.6964 4.48008C13.6964 4.48008 16.2609 1.82638 19.0357 1.82638C21.8613 1.82638 24.1429 4.10557 24.1429 6.84843C24.1429 8.25732 22.4018 10.1584 22.4018 10.1584L13 19.4036L3.59821 10.1584C3.59821 10.1584 3.14844 9.73397 2.69866 9.07411C2.24888 8.41426 1.85714 7.55466 1.85714 6.84843C1.85714 4.10557 4.13867 1.82638 6.96429 1.82638Z"
-                                                        fill="#00234D" />
-                                                </svg>
-                                            </a>
-
-                                            <a href="#" class="action-card action-addtocart">
-                                                <svg class="icon icon-cart" width="24" height="26" viewBox="0 0 24 26"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M12 0.000183105C9.25391 0.000183105 7 2.25409 7 5.00018V6.00018H2.0625L2 6.93768L1 24.9377L0.9375 26.0002H23.0625L23 24.9377L22 6.93768L21.9375 6.00018H17V5.00018C17 2.25409 14.7461 0.000183105 12 0.000183105ZM12 2.00018C13.6562 2.00018 15 3.34393 15 5.00018V6.00018H9V5.00018C9 3.34393 10.3438 2.00018 12 2.00018ZM3.9375 8.00018H7V11.0002H9V8.00018H15V11.0002H17V8.00018H20.0625L20.9375 24.0002H3.0625L3.9375 8.00018Z"
-                                                        fill="#00234D" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="product-card-details">
-                                        <!-- <ul class="color-lists list-unstyled d-flex align-items-center">
-                                            <li><a href="javascript:void(0)"
-                                                    class="color-swatch swatch-black active"></a></li>
-                                            <li><a href="javascript:void(0)" class="color-swatch swatch-cyan"></a></li>
-                                            <li><a href="javascript:void(0)" class="color-swatch swatch-purple"></a>
-                                            </li>
-                                        </ul> -->
-                                        <h3 class="product-card-title">
-                                            <a href="collection-left-sidebar.html">{{ $product->pro_title }}</a>
-                                        </h3>
-                                        <div class="product-card-price">
-                                            <span class="card-price-regular"> ৳ {{ $product->pro_sprice }}</span>
-                                            <span class="card-price-compare text-decoration-line-through">৳ {{ $product->pro_price }}</span>
-                                        </div>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                             
-                            @endforeach
-                                </div>
-                            </div>
-                            <div class="pagination justify-content-center mt-100">
+                            <!-- Pagination -->
+                            <div class="pagination justify-content-center mt-5">
                                 <nav>
-                                    <ul class="pagination m-0 d-flex align-items-center">
-                                        <li class="item disabled">
-                                            <a class="link">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-left">
-                                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                                </svg>
-                                            </a>
-                                        </li>
-                                        <li class="item"><a class="link" href="#">1</a></li>
-                                        <li class="item active"><a class="link" href="#">2</a></li>
-                                        <li class="item"><a class="link" href="#">3</a></li>
-                                        <li class="item"><a class="link" href="#">4</a></li>
-                                        <li class="item">
-                                            <a class="link" href="#">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-right">
-                                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                                </svg>
-                                            </a>
-                                        </li>
-                                    </ul>
+                                    @if ($products->hasPages())
+                                        <ul class="pagination m-0 d-flex align-items-center">
+                                            {{-- Previous Page Link --}}
+                                            @if ($products->onFirstPage())
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                                    </span>
+                                                </li>
+                                            @else
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $products->previousPageUrl() }}" rel="prev">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                                    </a>
+                                                </li>
+                                            @endif
+
+                                            {{-- Pagination Elements --}}
+                                            @foreach ($products->links()->elements as $element)
+                                                {{-- "Three Dots" Separator --}}
+                                                @if (is_string($element))
+                                                    <li class="page-item disabled" aria-disabled="true"><span class="page-link">{{ $element }}</span></li>
+                                                @endif
+
+                                                {{-- Array Of Links --}}
+                                                @if (is_array($element))
+                                                    @foreach ($element as $page => $url)
+                                                        @if ($page == $products->currentPage())
+                                                            <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
+                                                        @else
+                                                            <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                            @endforeach
+
+                                            {{-- Next Page Link --}}
+                                            @if ($products->hasMorePages())
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $products->nextPageUrl() }}" rel="next">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                                    </a>
+                                                </li>
+                                            @else
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                                    </span>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    @endif
                                 </nav>
                             </div>
+
                         </div>
                         <!-- product area end -->
 
@@ -569,10 +630,10 @@
                                             <a class="nav-link-sub nav-text-sub" href="404.html">404 page</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
-                                            <a class="nav-link-sub nav-text-sub" href="login.html">Login</a>
+                                            <a class="nav-link-sub nav-text-sub" href="{{ route('user_login') }}">Login</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
-                                            <a class="nav-link-sub nav-text-sub" href="register.html">Register</a>
+                                            <a class="nav-link-sub nav-text-sub" href="{{ route('user_register') }}">Register</a>
                                         </li>
                                         <li class="menu-list-item nav-item-sub">
                                             <a class="nav-link-sub nav-text-sub" href="wishlist.html">Wishlist</a>
@@ -607,7 +668,7 @@
                             </a>
                         </li>
                         <li class="utilty-menu-item">
-                            <a class="announcement-login announcement-text" href="login.html">
+                            <a class="announcement-login announcement-text" href="{{ route('user_login') }}">
                                 <span class="utilty-icon-wrapper">
                                     <svg class="icon icon-user" width="24" height="24" viewBox="0 0 10 11" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -1197,43 +1258,50 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         $(document).ready(function () {
+             // CSRF Setup if needed for other functionality
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $('.category-checkbox').change(function () {
-                var selectedCategories = [];
-                $('.category-checkbox:checked').each(function () {
-                    selectedCategories.push($(this).val());
-                });
-
-                $.ajax({
-                    url: '/items/filter',
-                    type: 'POST',
-                    data: {
-                        categories: selectedCategories
-                    },
-                    success: function (response) {
-                        // Update the list with filtered items
-                        var itemList = $('#itemList');
-                        itemList.empty();
-
-                        response.items.forEach(function (item) {
-                            itemList.append('<li>' + item.name + ' - ' + item.category + '</li>');
-                        });
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            });
+            // Legacy filter script removed to prevent conflicts
         });
     </script>
         <script src="{{asset('main_view/assets/js/main.js')}}"></script>
         <script src="{{asset('main_view/assets/js/vendor.js')}}"></script>
         <!-- <script src="assets/js/vendor.js"></script>
         <script src="assets/js/main.js"></script> -->
+        <script>
+            function toggleWishlist(btn) {
+                const productId = btn.getAttribute('data-product-id');
+                
+                fetch("{{ route('user.wishlist.toggle') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ product_id: productId })
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        window.location.href = "{{ route('user_login') }}";
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        if (data.status === 'added') {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
     </div>
 </body>
 

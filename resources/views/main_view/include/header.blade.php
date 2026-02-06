@@ -5,7 +5,7 @@
                     <div class="col-lg-3 d-lg-block d-none">
                         <div class="announcement-call-wrapper">
                             <div class="announcement-call">
-                                <a class="announcement-text text-white" href="tel:+1-078-2376">Call: +88 01712429662</a>
+                                <a class="announcement-text text-white" href="tel:{{ $portfolio->contact_number ?? '+88 01712429662' }}">Call: {{ $portfolio->contact_number ?? '+88 01712429662' }}</a>
                             </div>
                         </div>
                     </div>
@@ -17,7 +17,7 @@
                     <div class="col-lg-3 d-lg-block d-none">
                         <div class="announcement-meta-wrapper d-flex align-items-center justify-content-end">
                             <div class="announcement-meta d-flex align-items-center">
-                                <a class="announcement-login announcement-text text-white" href="login.html">
+                                <a class="announcement-login announcement-text text-white" href="{{ route('user_login') }}">
                                     <svg class="icon icon-user" width="10" height="11" viewBox="0 0 10 11" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -75,7 +75,7 @@
                         <div class="col-lg-3 col-md-4 col-4">
                             <div class="header-logo">
                                 <a href="{{route('home')}}" class="logo-main">
-                                  <img src="{{asset('main_view/assets/img/logo.png')}}" style="width:50%;margin:2px;"loading="lazy" alt="Pinkush"> 
+                                  <img src="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}" style="width:50%;margin:2px;"loading="lazy" alt="{{ $portfolio->company_name ?? 'Pinkush' }}"> 
                                 </a>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
 
                                                                  <li class="menu-list-item nav-item-sub">
                                                                     <a class="nav-link-sub nav-text-sub"
-                                                                        href="{{route('search.product')}}">
+                                                                        href="{{ route('search.product', ['pro_category' => $category->id, 'pro_sub_category' => $subcategory->id]) }}">
                                                                         {{ $subcategory->proSubCat_name }}
                                                                     
                                                                     </a>
@@ -171,11 +171,13 @@
                                                             <ul class="megamenu list-unstyled">
                                                                
                                                             @php
-                                                            $brand = App\Models\Probrand::where('main_Cat', $category->id)->join('brandcats', 'probrands.id', '=', 'brandcats.brand_id')->get();
-                                                            // $cat = App\Models\Product::distinct()->where('main_category',$category->id)->join('probrands', 'products.pro_brand', '=', 'probrands.id')->get();
-                                                            // $dog = App\Models\proBrand::distinct()->join('products', 'probrands.id', '=', 'products.pro_brand')->where('main_category',$category->id)->get();
-                                                            //dd($cat);
+                                                            // Correct logic: Find brands that actually have products in this category
+                                                            $brandIds = App\Models\Product::where('main_category', $category->id)
+                                                                            ->whereNotNull('pro_brand')
+                                                                            ->distinct()
+                                                                            ->pluck('pro_brand');
                                                             
+                                                            $brand = App\Models\Probrand::whereIn('id', $brandIds)->get();
                                                             
                                                                 $count=0;
                                                             @endphp
@@ -189,7 +191,7 @@
                                                             
                                                                <li class="menu-list-item nav-item-sub">
                                                                     <a class="nav-link-sub nav-text-sub"
-                                                                        href="product.html">{{ $brands->brand_name }}</a>
+                                                                        href="{{ route('search.product', ['pro_category' => $category->id, 'pro_brand' => $brands->id]) }}">{{ $brands->brand_name }}</a>
                                                                 </li>
                                                                 @endforeach
                                                             </ul>
@@ -199,9 +201,13 @@
                                                     <li class="menu-list-item nav-item-sub">
                                                         <div
                                                             class="mega-menu-header d-flex align-items-center justify-content-between">
+                                                            @php
+                                                                $randomFeature = App\Models\FeatureCategory::inRandomOrder()->first();
+                                                                $randomImage = $randomFeature ? asset('uploads/' . $randomFeature->banner_image) : asset('main_view/assets/img/menu/1.jpg');
+                                                            @endphp
                                                             <a class="mega-menu-img nav-link-sub nav-text-sub"
-                                                                href="collection-left-sidebar.html">
-                                                                <img class="menu-img" src="{{('main_view/assets/img/menu/1.jpg')}}" alt="img">
+                                                                href="{{ $randomFeature ? route('search.product', ['pro_sub_category' => $randomFeature->subcategory_id]) : '#' }}">
+                                                                <img class="menu-img" src="{{ $randomImage }}" alt="img">
                                                                 <h2 class="img-menu-heading text_16 mt-2">Featured
                                                                     Collection</h2>
                                                                 <div
@@ -227,7 +233,7 @@
                                     
                                   
                                     <li class="menu-list-item nav-item">
-                                        <a class="nav-link" href="contact.html">Contact</a>
+                                        <a class="nav-link" href="{{ route('contact') }}">Contact</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -243,7 +249,7 @@
                                     </svg>
                                 </a>
                                 <a class="header-action-item header-wishlist ms-4 d-none d-lg-block"
-                                    href="wishlist.html">
+                                    href="{{ route('user.wishlist') }}">
                                     <svg class="icon icon-wishlist" width="26" height="22" viewBox="0 0 26 22"
                                         fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -265,59 +271,89 @@
                            <div class="header-profile-wrapper ms-4 d-none d-lg-block">
     <!-- PROFILE ICON -->
 <a href="javascript:void(0)" class="header-profile-toggle">
-    <svg class="icon icon-profile" width="26" height="26" viewBox="0 0 24 24"
-         fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-         xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 20c0-4 4-8 8-8s8 4 8 8"/>
-    </svg>
+    @auth
+        @if(auth()->user()->avatar)
+            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="header-profile-avatar" width="32" height="32">
+        @else
+            <svg class="icon icon-profile" width="26" height="26" viewBox="0 0 24 24"
+                 fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 20c0-4 4-8 8-8s8 4 8 8"/>
+            </svg>
+        @endif
+    @else
+        <svg class="icon icon-profile" width="26" height="26" viewBox="0 0 24 24"
+             fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 4-8 8-8s8 4 8 8"/>
+        </svg>
+    @endauth
 </a>
 
 <!-- DROPDOWN -->
-<div class="profile-dropdown" style="
-    display:none;
-    position:absolute;
-    right:0;
-    top:60px;
-    background:#fff;
-    border:1px solid #ddd;
-    width:220px;
-    padding:12px;
-    z-index:9999;
-">
-    <!-- NOT LOGGED IN -->
-    <div class="not-logged-in">
-        <p>You are not logged in</p>
-        <a href="{{ route('user_login') }}" class="btn-primary">Login</a>
+<div class="profile-dropdown">
+    @guest
+    <div class="p-2 text-center">
+        <p class="mb-2 text-muted small">Welcome to {{ $portfolio->company_name ?? 'Pinkush' }}</p>
+        <a href="{{ route('user_login') }}" class="btn btn-dark btn-sm w-100">Login / Register</a>
     </div>
+    @endguest
 
-    <!-- LOGGED IN -->
-    <div class="logged-in" style="display:none;">
-        <a href="" class="btn-primary">My Profile</a>
+    @auth
+    <div class="d-flex align-items-center mb-3 p-2 border-bottom">
+        @if(auth()->user()->avatar)
+            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="user-img me-2">
+        @else
+            <div class="user-img-placeholder me-2">
+                {{ strtoupper(substr(auth()->user()->name ?: 'U', 0, 1)) }}
+            </div>
+        @endif
+        <div class="overflow-hidden">
+            <h6 class="m-0 text-truncate" style="font-size:14px;">{{ auth()->user()->name ?: 'User' }}</h6>
+            <span class="text-muted small" style="font-size:11px;">Signed in</span>
+        </div>
     </div>
+    
+    <div class="d-flex gap-2 p-2 pt-0">
+        <a href="{{ route('user.dashboard') }}" class="btn btn-outline-dark btn-sm flex-grow-1 d-flex align-items-center justify-content-center gap-2">
+            <span>Dashboard</span>
+        </a>
+        
+        <form action="{{ route('user.logout') }}" method="POST" class="m-0">
+            @csrf
+            <button type="submit" class="btn btn-danger btn-sm h-100 d-flex align-items-center justify-content-center" title="Logout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </form>
+    </div>
+    @endauth
 </div>
 
 <script>
-const profileToggle = document.querySelector('.header-profile-toggle');
-const dropdown = document.querySelector('.profile-dropdown');
+(function(){
+    const wrapper = document.querySelector('.header-profile-wrapper');
+    const dropdown = document.querySelector('.profile-dropdown');
+    
+    if (!wrapper || !dropdown) return;
 
-// set true after login
-let isLoggedIn = false;
+    wrapper.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isVisible = dropdown.style.display === 'block';
+        dropdown.style.display = isVisible ? 'none' : 'block';
+    });
 
-profileToggle.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    dropdown.style.display =
-        dropdown.style.display === 'block' ? 'none' : 'block';
-
-    dropdown.querySelector('.not-logged-in').style.display = isLoggedIn ? 'none' : 'block';
-    dropdown.querySelector('.logged-in').style.display = isLoggedIn ? 'block' : 'none';
-});
-
-document.addEventListener('click', () => {
-    dropdown.style.display = 'none';
-});
+    document.addEventListener('click', function(e) { 
+        if (!dropdown.contains(e.target) && !wrapper.contains(e.target)) {
+            dropdown.style.display = 'none'; 
+        }
+    });
+})();
 </script>
 
 
@@ -327,74 +363,62 @@ document.addEventListener('click', () => {
     cursor: pointer;
 }
 
+.header-profile-toggle img,
 .header-profile-toggle svg {
-    transition: 0.2s;
+    transition: transform 0.2s;
 }
 
-.header-profile-wrapper:hover svg {
-    stroke: #000; /* You can change color on hover */
-    transform: scale(1.1);
+.header-profile-wrapper:hover .header-profile-toggle img,
+.header-profile-wrapper:hover .header-profile-toggle svg {
+    transform: scale(1.05);
 }
 
 .profile-dropdown {
-    position: absolute;
-    top: 36px;
-    right: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    min-width: 200px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 12px;
-    font-family: sans-serif;
     display: none;
-    z-index: 100;
-}
-
-.profile-dropdown p {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-    color: #333;
-}
-
-.btn-login, .view-profile {
-    display: block;
-    text-decoration: none;
-    text-align: center;
-    background: black;
-    color: white;
-    padding: 6px 0;
-    border-radius: 4px;
-    font-size: 14px;
-    margin-top: 6px;
-    transition: 0.2s;
-}
-
-.btn-login:hover, .view-profile:hover {
-    background: #333;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 10px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    width: 240px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    z-index: 1000;
+    padding: 6px;
+    animation: fadeIn 0.2s ease-out;
 }
 
 .user-img {
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     object-fit: cover;
 }
 
-.user-name {
-    font-weight: 500;
+.user-img-placeholder {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 14px;
-    color: #000;
+    font-weight: 600;
 }
 
-</Style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.header-profile-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+}
+</style>
 
 
 <a class="header-action-item header-hamburger ms-4 d-lg-none" href="#drawer-menu"
@@ -413,7 +437,7 @@ document.addEventListener('click', () => {
                 </div>
                 <div class="search-wrapper">
                     <div class="container">
-                        <form action="#" class="search-form d-flex align-items-center">
+                        <form action="{{ route('search.product') }}" method="GET" class="search-form d-flex align-items-center position-relative">
                             <button type="submit" class="search-submit bg-transparent pl-0 text-start">
                                 <svg class="icon icon-search" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
@@ -422,8 +446,9 @@ document.addEventListener('click', () => {
                                         fill="black" />
                                 </svg>
                             </button>
-                            <div class="search-input mr-4">
-                                <input type="text" placeholder="Search your products..." autocomplete="off">
+                            <div class="search-input mr-4 w-100">
+                                <input type="text" id="searchInput" name="query" placeholder="Search your products..." autocomplete="off">
+                                <div id="searchResults" class="search-results"></div>
                             </div>
                             <div class="search-close">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -436,6 +461,108 @@ document.addEventListener('click', () => {
                         </form>
                     </div>
                 </div>
+
+<style>
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    z-index: 9999;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 0 0 8px 8px;
+}
+.search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+    color: inherit;
+}
+.search-result-item:hover {
+    background: #f9f9f9;
+}
+.search-result-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 15px;
+    border-radius: 4px;
+}
+.search-result-info h6 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+.search-result-info span {
+    font-size: 12px;
+    color: #888;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    let timeoutId;
+
+    if(searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            const query = this.value;
+
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            timeoutId = setTimeout(function() {
+                fetch(`{{ route('product.search.ajax') }}?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        searchResults.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(product => {
+                                const item = document.createElement('a');
+                                item.href = product.url;
+                                item.className = 'search-result-item';
+                                item.innerHTML = `
+                                    <img src="${product.image}" alt="${product.title}">
+                                    <div class="search-result-info">
+                                        <h6>${product.title}</h6>
+                                        <span>$${product.price}</span>
+                                    </div>
+                                `;
+                                searchResults.appendChild(item);
+                            });
+                            searchResults.style.display = 'block';
+                        } else {
+                            searchResults.innerHTML = '<div class="p-2 text-center text-muted">No results found</div>';
+                            searchResults.style.display = 'block';
+                        }
+                    })
+                    .catch(error => console.error('Error fetching search results:', error));
+            }, 300);
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
             </div>
         </header>
         <!-- header end -->

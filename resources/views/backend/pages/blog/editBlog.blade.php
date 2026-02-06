@@ -58,10 +58,11 @@ $blogName = App\Models\Blog::find($id);
                 <input type="text" class="form-control" id="blog_key" name="blog_key" Value="{{ $blogName->blog_key }}"
                     required>
             </div>
+
+
             <div class="form-group">
-                <label for="blogLink">Link to the Blog:</label>
-                <input type="url" class="form-control" id="blog_link" name="blog_link" placeholder="Link to the Blog"
-                    value="{{ $blogName->blog_link }}">
+                <label for="blogDescription">Blog Content:</label>
+                <textarea class="form-control" id="blog_description" name="blog_description" placeholder="Write your blog content here">{{ $blogName->blog_description }}</textarea>
             </div>
 
             <div class="form-group">
@@ -88,7 +89,17 @@ $blogName = App\Models\Blog::find($id);
 @endsection
 
 @section('script')
-<script>
+  <!-- Add Summernote Assets -->
+  <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/summernote.css')}}">
+  <script src="{{asset('backend/assets/js/editor/summernote/summernote.js')}}"></script>
+  <script src="{{asset('backend/assets/js/editor/summernote/summernote.custom.js')}}"></script>
 
-</script>
+  <script>
+      $(document).ready(function() {
+          $('#blog_description').summernote({
+              height: 300,
+              placeholder: 'Write your blog content here...'
+          });
+      });
+  </script>
 @endsection

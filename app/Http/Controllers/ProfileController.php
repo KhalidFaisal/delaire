@@ -59,8 +59,10 @@ class ProfileController extends Controller
         // return Redirect::to('/');
         
         Auth::logout(); // This will log the user out
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return redirect()->route('login'); // Redirect to the login page
+        return redirect()->route('home'); // Redirect to the home page
     
     }
 }

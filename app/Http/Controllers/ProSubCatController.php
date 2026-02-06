@@ -22,7 +22,7 @@ class proSubCatController extends Controller
     }
     public function destroySubProCat(Request $request)
             {
-                $item = Prosubcategory::find($request-->id);
+                $item = Prosubcategory::find($request->id);
                 //dd($item);
                 if (!$item) {
                     // Handle the case where the item is not found

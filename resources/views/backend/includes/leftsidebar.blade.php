@@ -29,6 +29,17 @@
                   </ul>
 
             </li>
+             <!-- Order Area Start-->
+            <li class="dropdown">
+                  <a class="nav-link menu-title" href="javascript:void(0)">
+                      <i class="fa fa-shopping-bag"></i>
+                      <span style="margin-left: 5px;">Manage Orders</span>
+                  </a>
+                  <ul class="nav-submenu menu-content">
+                    <li><a href="{{route('admin.orders.index')}}"><i class="fa fa-list"></i> All Orders</a></li>
+                  </ul>
+            </li>
+             <!-- Order Area End-->
              <!-- Blog Area Start-->
            <!-- Blog Area Start-->
             <li class="dropdown">
@@ -69,7 +80,10 @@
                   </a>
 
                   <ul class="nav-submenu menu-content">
-                    <li><a href="{{route('manage.content')}}"><i class="fa fa-file-text-o"></i> Edit Slider</a></li>
+                    <li><a href="{{route('manage.portfolio')}}"><i class="fa fa-briefcase"></i> Manage Portfolio</a></li>
+                    <li><a href="{{route('manage.content')}}"><i class="fa fa-file-text-o"></i> Manage Content</a></li>
+                    <li><a href="{{route('manage.feature.category')}}"><i class="fa fa-th-large"></i> Feature Category</a></li>
+                    <li><a href="{{route('manage.testimonial')}}"><i class="fa fa-comments"></i> Manage Testimonial</a></li>
                   </ul>
 
             </li>

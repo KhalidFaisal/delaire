@@ -116,13 +116,13 @@ function renderDrawerCart() {
                 <h2 class="product-title">${item.title}</h2>
                 <div class="misc d-flex justify-content-between">
                     <div class="qty-control">
-                        <button class="qty-btn" onclick="changeQty(${id}, -1)">−</button>
+                        <button class="qty-btn" onclick="changeQty('${id}', -1)">−</button>
                         <span class="qty-value">${item.qty}</span>
-                        <button class="qty-btn" onclick="changeQty(${id}, 1)">+</button>
+                        <button class="qty-btn" onclick="changeQty('${id}', 1)">+</button>
                     </div>
                     <div>
                         <div>৳${item.price}</div>
-                        <a href="#" style="color:Grey;" onclick="removeItem(${id})">Remove</a>
+                        <a href="#" style="color:Grey;" onclick="removeItem('${id}')">Remove</a>
                     </div>
                 </div>
             </div>
@@ -134,6 +134,12 @@ function renderDrawerCart() {
 
     document.getElementById('cartSubtotal').innerText = `৳${subtotal.toFixed(2)}`;
     document.querySelector('.cart-drawer-heading').innerText = `Your Cart (${count})`;
+
+    // Update header cart count
+    const headerCartCount = document.getElementById('cart-count');
+    if (headerCartCount) {
+        headerCartCount.innerText = count;
+    }
 }
 
 function changeQty(id, change) {
@@ -153,5 +159,66 @@ function removeItem(id) {
     saveCart(cart);
 }
 
-document.addEventListener('DOMContentLoaded', renderDrawerCart);
+document.addEventListener('DOMContentLoaded', function() {
+    renderDrawerCart();
+
+    @if(session('order_placed'))
+        localStorage.removeItem('drawer_cart');
+        renderDrawerCart(); // Will render empty state
+        // Also update header badge directly just in case logic is split
+        const headerCartCount = document.getElementById('cart-count');
+        if (headerCartCount) headerCartCount.innerText = '0';
+    @endif
+});
+
+// Global Cart Event Listener (handles all .add-to-cart clicks)
+document.addEventListener('click', function (e) {
+    if (!e.target.classList.contains('add-to-cart') && !e.target.closest('.add-to-cart')) return;
+
+    // Prevent default if it's a link (though usually buttons)
+    // e.preventDefault(); 
+
+    let btn = e.target.closest('.add-to-cart') || e.target;
+    let cart = getCart();
+    let id = btn.dataset.id;
+    
+    if(!id) return; // Safety check
+
+    if (!cart[id]) {
+        cart[id] = {
+            id: id,
+            title: btn.dataset.title,
+            price: parseFloat(btn.dataset.price),
+            qty: 1,
+            stock: parseInt(btn.dataset.stock || 100), // Default stock if missing
+            img: btn.dataset.img
+        };
+    } else {
+        if (cart[id].qty >= cart[id].stock) {
+            alert('Stock limit reached');
+            return;
+        }
+        cart[id].qty++;
+    }
+
+    saveCart(cart);
+    
+    // Show notification if function exists
+    if(typeof showCartNotification === 'function') {
+        showCartNotification();
+    } else if(typeof showNotification === 'function') {
+        // Fallback to local name if different
+        showNotification();
+    } else {
+        // Fallback if no notification function
+        let drawer = document.getElementById('drawer-cart');
+        if(drawer) new bootstrap.Offcanvas(drawer).show();
+    }
+});
+
+// Dummy function to prevent inline onclick errors if they exist
+window.addToCart = function(id) {
+    // Logic handled by event listener
+    console.log('addToCart called via inline handler - handled by event listener');
+};
 </script>

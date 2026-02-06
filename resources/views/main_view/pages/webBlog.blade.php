@@ -11,212 +11,189 @@
     <meta name="description" content="Sajal">
     @php
     $proName = App\Models\Profile::first();
-
-    if($proName->freelance_status==1){
-    $FS='Available';}
-    else{
-    $FS='Busy';}
     @endphp
 
-    @php
-    $content = App\Models\Content::first();
-
-    @endphp
     <!-- title -->
     <title>
-        {{ $proName->name }}
+        {{ $proName->name }} - Blog
     </title>
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-    @include('frontend.include.css')
+    @include('main_view.include.css')
+    <style>
+        .blog-grid-item {
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .blog-grid-img {
+            height: 200px;
+            overflow: hidden;
+        }
+        .blog-grid-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        .blog-grid-item:hover .blog-grid-img img {
+            transform: scale(1.1);
+        }
+        .blog-gird-info {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-gird-info h5 {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        .blog-gird-info h5 a {
+            color: #333;
+            text-decoration: none;
+        }
+        .blog-gird-info h5 a:hover {
+            color: var(--primary-color);
+        }
+        .b-meta {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .btn-grid {
+            margin-top: auto;
+        }
+        .m-btn-link {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .m-btn-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <!-- Body Start -->
 
 <body data-spy="scroll" data-target="#navbar-collapse-toggle" data-offset="70">
-    <!-- page loading -->
-
-    <!-- end page loading  <div id="loading">
-        <div class="load-circle"><span class="one"></span></div>
-    </div>-->
-    <header>
-        <nav class="navbar header-nav header-dark navbar-expand-lg">
-            <div class="container">
-                <!-- Brand -->
-                <a class="navbar-brand" href="{{route('home')}}"> {{ $proName->name }}<span class="theme-bg"></span></a>
-                <!-- / -->
-                <!-- Mobile Toggle -->
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbar-collapse-toggle" aria-controls="navbar-collapse-toggle" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <!-- / -->
-                <!-- Top Menu -->
-                <div class="collapse navbar-collapse justify-content-end" id="navbar-collapse-toggle">
-                    <ul class="navbar-nav ml-auto">
-                        <li><a class="nav-link active" href="{{route('home')}}#home">Home</a></li>
-                        <li><a class="nav-link" href="{{ route('home') }}#about">About Us</a></li>
-                        <li><a class="nav-link" href="{{ route('home') }}#services">services</a></li>
-                        <li><a class="nav-link" href="{{ route('home') }}#work">Portfolio</a></li>
-                        <li><a class="nav-link" href="{{route('web.blog')}}#blog">Blog</a></li>
-                        <li><a class="nav-link" href="{{ route('home') }}#contactus">Contact</a></li>
-                    </ul>
-                </div>
-                <!-- / -->
-            </div><!-- Container -->
-        </nav> <!-- Navbar -->
-    </header>
+   
+    @include('main_view.include.header')
+    
     <!-- Main -->
     <main>
         <section class="home-banner-01">
-            <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg"
-                            class="d-block w-100" alt="Slide 1">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1 Style="color:white;">Blogs</h1>
-                        </div>
-                    </div>
-
+            <div class="position-relative">
+                <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="Blog Banner">
+                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                    <h1 class="text-white display-4 font-weight-bold">Our Magazine</h1>
                 </div>
             </div>
         </section>
 
-        <!-- Include jQuery -->
-
-
-
-
         <section id="blog" class="section">
             <div class="container">
-
-                <div class="container mt-4">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <!-- Search and Category Sidebar -->
-                            @php
-                            $cats = App\Models\Category::orderBy('created_at', 'asc')->get();
-                            $count=0;
-                            @endphp
-                            <div class="mb-4">
-                                <h4>Search</h4>
-                                <form method="GET" action="{{route('sort.category')}}">
-                                    <div class="form-group">
-                                        <!-- <label for="category">Category:</label> -->
-                                        <select class="form-control" id="blog_category" name="blog_category" required>
-                                            <option value="">All Categories</option>
-                                            @foreach( $cats as $category)
+                <div class="row pt-5">
+                    <div class="col-lg-3 col-md-4 mb-4">
+                        <!-- Search and Category Sidebar -->
+                        <div class="sidebar p-4 bg-light rounded">
+                            <h4 class="mb-3">Search</h4>
+                            <form method="GET" action="{{route('sort.category')}}">
+                                <div class="form-group mb-3">
+                                    <select class="form-control" id="blog_category" name="blog_category" required>
+                                        <option value="">All Categories</option>
+                                        @foreach($cats as $category)
                                             @php
-                                            $count++;
-                                            @endphp
-                                            @php
-                                            // Count the number of blogs for the current category
-                                            $blogCount = App\Models\Blog::where('blog_cat',
-                                            $category->cat_name)->count();
+                                                $blogCount = App\Models\Blog::where('blog_cat', $category->cat_name)->count();
                                             @endphp
                                             @if($blogCount > 0)
-                                            <option value="{{ $category->cat_name }}">{{ $category->cat_name }}</option>
+                                                <option value="{{ $category->cat_name }}">{{ $category->cat_name }} ({{$blogCount}})</option>
                                             @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </form>
-                            </div>
-                            <div>
-                                <!-- Category List with Stock Status -->
-                                <h4>Categories</h4>
-                                <ul class="list-group">
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block w-100">Filter</button>
+                            </form>
 
-                                    @foreach($cats as $category)
+                            <h4 class="mt-5 mb-3">Categories</h4>
+                            <ul class="list-group list-group-flush bg-transparent">
+                                @foreach($cats as $category)
                                     @php
-                                    // Count the number of blogs for the current category
-                                    $blogCount = App\Models\Blog::where('blog_cat', $category->cat_name)->count();
+                                        $blogCount = App\Models\Blog::where('blog_cat', $category->cat_name)->count();
                                     @endphp
                                     @if($blogCount > 0)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
                                         {{ $category->cat_name }}
-                                        <span class="badge bg-primary rounded-pill">{{ $blogCount }} Blog</span>
+                                        <span class="badge bg-primary rounded-pill">{{ $blogCount }}</span>
                                     </li>
                                     @endif
-                                    @endforeach
-                                </ul>
-                            </div>
+                                @endforeach
+                            </ul>
                         </div>
-                        <div class="col-md-9">
-                            <!-- Product Cards -->
-                            <div class="row">
-                                <!-- Sample Product Card (Repeat for each product) -->
-                                @php
-                                $blogs = App\Models\Blog::orderBy('created_at', 'asc')->get();
-                                @endphp
+                    </div>
 
-                                @foreach( $blogs as $blog)
-
-                                <div class="col-lg-4 m-15px-tb">
-
-                                    <div id="blogContainer" class="blog-grid ">
-
+                    <div class="col-lg-9 col-md-8">
+                        <div class="row">
+                            @if($blogs->count() > 0)
+                                @foreach($blogs as $blog)
+                                    @php
+                                        // Always link to internal details page
+                                        $link = route('web.blog.details', $blog->id);
+                                        $target = '_self';
+                                    @endphp
+                                    <div class="col-lg-4 col-md-6 mb-4">
                                         <div class="blog-grid-item">
                                             <div class="blog-grid-img">
-                                                <a href="{{ $blog->blog_link }}" target="_blank">
-                                                    <img src="{{ asset('uploads/'. $blog->blog_image) }}" title=""
-                                                        alt="">
+                                                <a href="{{ $link }}" target="{{ $target }}">
+                                                    <img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="{{ $blog->blog_title }}">
                                                 </a>
                                             </div>
                                             <div class="blog-gird-info">
                                                 <div class="b-meta">
-                                                <span class="date">{{ date('d M y', strtotime($blog->created_at)) }}</span>
+                                                    <span class="date"><i class="far fa-calendar-alt text-primary mr-1"></i> {{ date('d M Y', strtotime($blog->created_at)) }}</span>
+                                                    @if($blog->blog_Cat)
+                                                    <span class="meta-sep">|</span>
+                                                    <span class="category">{{ $blog->blog_Cat }}</span>
+                                                    @endif
                                                 </div>
-                                                <h5><a href="{{ $blog->blog_link }}"
-                                                        target="_blank">{{ $blog->blog_title }}</a></h5>
-
+                                                <h5>
+                                                    <a href="{{ $link }}" target="{{ $target }}">{{ Str::limit($blog->blog_title, 50) }}</a>
+                                                </h5>
                                                 <div class="btn-grid">
-                                                    <a class="m-btn-link" href="{{ $blog->blog_link }}"
-                                                        target="_blank">Read More</a>
+                                                    <a class="m-btn-link" href="{{ $link }}" target="{{ $target }}">Read More <i class="fas fa-arrow-right ml-1"></i></a>
                                                 </div>
                                             </div>
                                         </div>
-
-                                    </div>
-                                </div> <!-- col -->
-
+                                    </div> 
                                 @endforeach
-                                <!-- Repeat this product card for each product -->
-                            </div>
+                            @else
+                                <div class="col-12 text-center">
+                                    <h3 class="text-muted">No Blog Posts Found</h3>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </section>
     </main>
-    <!-- main end -->
-    <!-- Footer-->
-    <footer class="footer">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 m-10px-tb">
-                    <div class="nav justify-content-center justify-content-md-start">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-pinterest"></i></a>
-                    </div>
-                </div>
-                <div class="col-md-6 m-10px-tb text-center text-md-right">
-                    <a href="{{route('login')}}">Login</a>
-                    <!-- jquery -->
-
-
-                    @include('frontend.include.script')
-                    <!-- end -->
-                    <!-- end body -->
+    
+    @include('main_view.include.footer')
+    <!-- all js -->
+    @include('main_view.include.script')
+    
 </body>
-
 </html>

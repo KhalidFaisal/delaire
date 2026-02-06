@@ -5,25 +5,31 @@
         
     <style>
         :root {
-            --primary-color: #de2e79;
-            --secondary-color: #df95bc;
+            /* Dynamic Brand Colors */
+            --primary-color: {{ $portfolio->brand_color_1 ?? '#de2e79' }};
+            --secondary-color: {{ $portfolio->brand_color_2 ?? '#000000' }};
+            --accent-color: {{ $portfolio->brand_color_3 ?? '#ffffff' }};
+
+            /* Derived Bootstrap/Component Variables */
+            --bs-primary: var(--primary-color);
+            --bs-secondary: var(--secondary-color);
 
             --btn-primary-border-radius: 0.25rem;
             --btn-primary-color: #fff;
-            --btn-primary-background-color: #de2e79;
-            --btn-primary-border-color: #de2e79;
+            --btn-primary-background-color: var(--primary-color);
+            --btn-primary-border-color: var(--primary-color);
             --btn-primary-hover-color: #fff;
-            --btn-primary-background-hover-color: #de2e79;
-            --btn-primary-border-hover-color: #de2e79;
+            --btn-primary-background-hover-color: var(--secondary-color);
+            --btn-primary-border-hover-color: var(--secondary-color);
             --btn-primary-font-weight: 500;
 
             --btn-secondary-border-radius: 0.25rem;
-            --btn-secondary-color: #de2e79;
+            --btn-secondary-color: var(--primary-color);
             --btn-secondary-background-color: transparent;
-            --btn-secondary-border-color: #de2e79;
+            --btn-secondary-border-color: var(--primary-color);
             --btn-secondary-hover-color: #fff;
-            --btn-secondary-background-hover-color: #de2e79;
-            --btn-secondary-border-hover-color: #de2e79;
+            --btn-secondary-background-hover-color: var(--primary-color);
+            --btn-secondary-border-hover-color: var(--primary-color);
             --btn-secondary-font-weight: 500;
 
             --heading-color: #000;
@@ -49,6 +55,30 @@
             --section-subheading-font-family: 'Poppins', sans-serif;
             --section-subheading-font-size: 16px;
             --section-subheading-font-weight: 400;
+        }
+
+        /* Utility Classes forcing Brand Colors */
+        .text-primary, .primary-color { color: var(--primary-color) !important; }
+        .text-secondary, .secondary-color { color: var(--secondary-color) !important; }
+        .bg-primary { background-color: var(--primary-color) !important; }
+        .bg-secondary { background-color: var(--secondary-color) !important; }
+        
+        /* Button Overrides */
+        .btn-primary { 
+            background-color: var(--primary-color) !important; 
+            border-color: var(--primary-color) !important; 
+            color: #fff !important;
+        }
+        .btn-primary:hover {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+
+        /* Common Elements Override */
+        .star-rating, .testimonial-icon-quote svg path, .wishlist-btn.active svg { 
+            fill: var(--primary-color); 
+            color: var(--primary-color); 
+            stroke: var(--primary-color);
         }
     </style>
 

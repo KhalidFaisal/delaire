@@ -37,9 +37,10 @@
           <label for="blogKey">Blog Keywords:</label>
           <input type="text" class="form-control" id="blog_key" name="blog_key" placeholder="Enter keywords" required>
         </div>
+
         <div class="form-group">
-          <label for="blogLink">Blog Description:</label>
-          <input type="textarea" class="form-control" id="blog_link" name="blog_link" placeholder="Enter the Description" required>
+          <label for="blogDescription">Blog Content:</label>
+          <textarea class="form-control" id="blog_description" name="blog_description" placeholder="Write your blog content here"></textarea>
         </div>
        
 
@@ -55,9 +56,19 @@
   </div><br>
 
 
-  <!-- Add Bootstrap JS and jQuery scripts (optional but may be required for certain features) -->
- 
+  <!-- Add Summernote Assets -->
+  <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/summernote.css')}}">
+  <script src="{{asset('backend/assets/js/editor/summernote/summernote.js')}}"></script>
+  <script src="{{asset('backend/assets/js/editor/summernote/summernote.custom.js')}}"></script>
 
+  <script>
+      $(document).ready(function() {
+          $('#blog_description').summernote({
+              height: 300,
+              placeholder: 'Write your blog content here...'
+          });
+      });
+  </script>
 @endsection
 
 @section('script')

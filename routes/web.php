@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ProController;
@@ -10,16 +12,41 @@ use App\Http\Controllers\ProCatController;
 use App\Http\Controllers\ProSubCatController;
 use App\Http\Controllers\ProBrandController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\UserDashboardController;
+use App\Http\Controllers\FeatureCategoryController;
+use App\Http\Controllers\Backend\PortfolioController;
+use App\Http\Controllers\Backend\TestimonialController;
 
 Route::get('/', function () {
-    return view('index');
+    $featureCategories = App\Models\FeatureCategory::orderBy('order')->with('subcategory')->get();
+    $wishlistProductIds = Illuminate\Support\Facades\Auth::check() 
+        ? Illuminate\Support\Facades\Auth::user()->wishlists()->pluck('product_id')->toArray() 
+        : [];
+    $testimonials = App\Models\Testimonial::orderBy('created_at', 'desc')->get();
+    return view('index', compact('featureCategories', 'wishlistProductIds', 'testimonials'));
 })->name('home');
-Route::get('/blogs', function () {
-    return view('frontend.pages.webBlog');
-})->name('web.blog');
-Route::get('/Products/Search', function () {
-    return view('main_View.pages.proSearch');
-})->name('search.product');
+
+Route::get('/blogs', [BlogController::class, 'webIndex'])->name('web.blog');
+Route::get('/blog/{id}', [BlogController::class, 'show'])->name('web.blog.details');
+
+Route::get('/contact', function () {
+    return view('main_view.pages.contact');
+})->name('contact');
+
+Route::post('/contact', function (\Illuminate\Http\Request $request) {
+    return back()->with('success', 'Thank you! Your message has been sent (Dummy Action).');
+})->name('contact.submit');
+
+Route::view('/return-policy', 'main_view.pages.return_policy')->name('return.policy');
+Route::view('/terms-and-conditions', 'main_view.pages.terms_conditions')->name('terms.conditions');
+Route::view('/privacy-policy', 'main_view.pages.privacy_policy')->name('privacy.policy');
+Route::view('/faq', 'main_view.pages.faq')->name('faq');
+Route::view('/about-us', 'main_view.pages.about_us')->name('about');
+Route::get('/Products/Search', [ProductController::class, 'search'])->name('search.product');
+
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -33,14 +60,31 @@ Route::get('/Products/Search', function () {
 
 require __DIR__.'/auth.php';
 
-Route::middleware('auth')->group(function () {
+// User Auth Routes (Accessible to guests)
+Route::middleware('guest')->group(function () {
+    Route::get('/user-login', function () {
+        return view('main_view.pages.user_login');
+    })->name('user_login');
+    Route::post('/user-login', [LoginController::class, 'store'])->name('login.store');
+
+    Route::get('/user-register', function () {
+        return view('main_view.pages.user_register');
+    })->name('user_register');
+    Route::post('/user-register', [RegisterController::class, 'store'])->name('register.store');
+
+    Route::get('/otp_validation', function () {
+        return view('main_view.pages.otp_validation');
+    })->name('otp_validation');
+    Route::post('/verify-otp', [RegisterController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/resend-otp', [RegisterController::class, 'resendOtp'])->name('otp.resend');
+});
+
+
+Route::middleware('auth:admin')->group(function () {
    
 
 
-
-    Route::get('/dashboard', function () {
-        return view('backend.pages.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Backend\AdminDashboardController::class, 'index'])->name('dashboard');
     //Manage product category start here 
 
     Route::get('/product/all/Categories', function () {
@@ -62,6 +106,14 @@ Route::middleware('auth')->group(function () {
 
     Route::post('product/create', [ProductController::class, 'createProduct'])->name('create.product');
     Route::post('product/destroy', [ProductController::class,'destroyProduct'])->name('destroy.product');
+
+    // Product Edit & Update
+    Route::get('/product/edit/{id}', [ProductController::class, 'editProduct'])->name('edit.product');
+    Route::post('/product/update/{id}', [ProductController::class, 'updateProduct'])->name('update.product');
+
+    // Bulk Upload
+    Route::post('/product/bulk-upload', [ProductController::class, 'processBulkUpload'])->name('product.bulk.upload');
+    Route::get('/product/download-demo-csv', [ProductController::class, 'downloadDemoCsv'])->name('product.demo.csv');
    
 
     //Manage product Sub category start here 
@@ -92,21 +144,57 @@ Route::middleware('auth')->group(function () {
   //product Category route End
 
 //manage product categoryEnd here
-Route::get('/user-login', function () {
-    return view('main_view.pages.user_login');
-})->name('user_login');
 
+});
 
+// User dashboard (logged-in users)
+Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile/edit', [UserDashboardController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/orders', [UserDashboardController::class, 'orders'])->name('orders');
+    Route::get('/orders/{id}/invoice', [UserDashboardController::class, 'downloadInvoice'])->name('orders.invoice');
+    Route::get('/returns', [UserDashboardController::class, 'returns'])->name('returns');
+    Route::post('/returns', [UserDashboardController::class, 'storeReturn'])->name('returns.store');
+    Route::delete('/returns/{id}', [UserDashboardController::class, 'destroyReturn'])->name('returns.destroy');
+    Route::get('/wishlist', [UserDashboardController::class, 'wishlist'])->name('wishlist');
+    Route::post('/wishlist', [UserDashboardController::class, 'storeWishlist'])->name('wishlist.store');
+    Route::post('/wishlist/toggle', [UserDashboardController::class, 'toggleWishlist'])->name('wishlist.toggle');
+    Route::delete('/wishlist/{id}', [UserDashboardController::class, 'destroyWishlist'])->name('wishlist.destroy');
+    Route::get('/reviews', [UserDashboardController::class, 'reviews'])->name('reviews');
+    Route::post('/reviews', [UserDashboardController::class, 'storeReview'])->name('reviews.store');
+    Route::put('/reviews/{id}', [UserDashboardController::class, 'updateReview'])->name('reviews.update');
+    Route::put('/reviews/{id}', [UserDashboardController::class, 'updateReview'])->name('reviews.update');
+    Route::delete('/reviews/{id}', [UserDashboardController::class, 'destroyReview'])->name('reviews.destroy');
+    Route::get('/orders/{id}/edit', [UserDashboardController::class, 'editOrder'])->name('order.edit');
+    Route::post('/orders/{id}/update', [UserDashboardController::class, 'updateOrder'])->name('order.update');
+    Route::post('/orders/{id}/cancel', [UserDashboardController::class, 'cancelOrder'])->name('order.cancel');
+});
+
+// Test mail (only when APP_DEBUG=true) — visit /test-mail?email=your@email.com to send a test OTP
+if (config('app.debug')) {
+    Route::get('/test-mail', function (\Illuminate\Http\Request $request) {
+        $email = $request->query('email');
+        if (! $email || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return 'Add ?email=your@email.com to the URL (e.g. /test-mail?email=you@gmail.com)';
+        }
+        $otp = (string) random_int(100000, 999999);
+        try {
+            Mail::to($email)->send(new OtpMail($otp, $email));
+            return "Test OTP email sent to {$email}. Code: {$otp} (check inbox or spam)";
+        } catch (\Throwable $e) {
+            return 'Mail failed: ' . $e->getMessage();
+        }
+    });
+}
 
 // Checkout
-Route::get('/checkout', function () {
-    if (!auth()->check()) {
-        return redirect()->route('loginuser');
-    }
-    return view('main_view/pages/checkout');
-})->name('checkout');
+Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout');
+Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 
     //blog route
+    Route::middleware('auth:admin')->group(function () {
                 Route::get('/blog', function () {
                     return view('backend.pages.blog.allBlog');
                 })->name('all.blog');
@@ -167,6 +255,29 @@ Route::get('/checkout', function () {
     Route::get('/manage/admin', function () {
         return view('backend.pages.admin.manageAdmin');
         })->name('manage.admin');
+
+    // Feature Category Routes
+    Route::get('/manage/feature-category', [FeatureCategoryController::class, 'index'])->name('manage.feature.category');
+    Route::post('/manage/feature-category', [FeatureCategoryController::class, 'update'])->name('update.feature.category');
+
+    // Portfolio Management Routes
+    Route::get('/manage/portfolio', [PortfolioController::class, 'index'])->name('manage.portfolio');
+    Route::post('/manage/portfolio', [PortfolioController::class, 'update'])->name('update.portfolio');
+    
+    // Order Management Routes
+    Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('admin.orders.show');
+    Route::get('/orders/{id}/pdf', [App\Http\Controllers\OrderController::class, 'downloadPdf'])->name('admin.orders.pdf');
+    Route::post('/orders/{id}/status', [App\Http\Controllers\OrderController::class, 'updateStatus'])->name('admin.orders.status');
+
+    // Testimonial Management Routes
+    Route::get('/manage/testimonial', [TestimonialController::class, 'index'])->name('manage.testimonial');
+    Route::get('/manage/testimonial/create', [TestimonialController::class, 'create'])->name('create.testimonial');
+    Route::post('/manage/testimonial/store', [TestimonialController::class, 'store'])->name('store.testimonial');
+    Route::get('/manage/testimonial/edit/{id}', [TestimonialController::class, 'edit'])->name('edit.testimonial');
+    Route::put('/manage/testimonial/update/{id}', [TestimonialController::class, 'update'])->name('update.testimonial');
+    Route::delete('/manage/testimonial/destroy/{id}', [TestimonialController::class, 'destroy'])->name('destroy.testimonial');
+
     //Login Profile route Start
     
     // });
@@ -181,4 +292,5 @@ Route::get('/checkout', function () {
   
     });
     Route::post('/items/filter', [ProductController::class,'filterProduct']);
+    Route::get('/ajax/search', [ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
    
