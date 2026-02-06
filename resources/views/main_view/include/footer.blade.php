@@ -65,14 +65,14 @@
                             <div class="col-xl-4 col-lg-5 col-md-6 col-12 footer-widget">
                                 <div class="footer-widget-inner">
                                     <h4 class="footer-logo">
-                                        <a href="{{ route('home') }}"><img style="width:40%;" src="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo-accent.png') }}" alt="{{ $portfolio->company_name ?? 'Pinkush' }}"></a>
+                                        <a href="{{ route('home') }}"><img style="width:40%;" src="{{ optional($portfolio)->logo ? asset($portfolio->logo) : asset('main_view/assets/img/logo-accent.png') }}" alt="{{ optional($portfolio)->company_name}}"></a>
                                     </h4>
                                     
                                         <div class="footer-social-wrapper">
                                             <ul
                                                 class="footer-social list-unstyled d-flex align-items-center flex-wrap mb-0">
                                                 <li class="footer-social-item">
-                                                    <a href="{{ $portfolio->linkedin_link ?? '#' }}" target="_blank">
+                                                    <a href="{{ optional($portfolio)->linkedin_link ? (\Illuminate\Support\Str::startsWith(optional($portfolio)->linkedin_link, ['http://', 'https://']) ? optional($portfolio)->linkedin_link : 'https://' . optional($portfolio)->linkedin_link) : '#' }}" target="_blank">
                                                         <svg class="icon icon-linkedin" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke="var(--primary-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                                             <rect x="2" y="9" width="4" height="12" stroke="var(--primary-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -81,7 +81,7 @@
                                                     </a>
                                                 </li>
                                                 <li class="footer-social-item">
-                                                    <a href="{{ $portfolio->facebook_link ?? '#' }}" target="_blank">
+                                                    <a href="{{ optional($portfolio)->facebook_link ? (\Illuminate\Support\Str::startsWith(optional($portfolio)->facebook_link, ['http://', 'https://']) ? optional($portfolio)->facebook_link : 'https://' . optional($portfolio)->facebook_link) : '#' }}" target="_blank">
                                                         <svg class="icon icon-facebook" width="20" height="20"
                                                             viewBox="0 0 20 20" fill="none"
                                                             xmlns="http://www.w3.org/2000/svg">
@@ -92,7 +92,7 @@
                                                     </a>
                                                 </li>
                                                 <li class="footer-social-item">
-                                                    <a href="{{ $portfolio->instagram_link ?? '#' }}" target="_blank">
+                                                    <a href="{{ optional($portfolio)->instagram_link ? (\Illuminate\Support\Str::startsWith(optional($portfolio)->instagram_link, ['http://', 'https://']) ? optional($portfolio)->instagram_link : 'https://' . optional($portfolio)->instagram_link) : '#' }}" target="_blank">
                                                         <svg class="icon icon-instagram" width="20" height="20"
                                                             viewBox="0 0 20 20" fill="none"
                                                             xmlns="http://www.w3.org/2000/svg">
@@ -102,19 +102,9 @@
                                                         </svg>
                                                     </a>
                                                 </li>
+                                                
                                                 <li class="footer-social-item">
-                                                    <a href="#">
-                                                        <svg class="icon icon-tiktok" width="20" height="20"
-                                                            viewBox="0 0 20 20" fill="none"
-                                                            xmlns="http://www.w3.org/2000/svg">
-                                                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                                                d="M13.2367 1C13.5336 3.55445 14.9591 5.0774 17.4375 5.23942V8.11251C16.0012 8.25292 14.7431 7.78307 13.2799 6.89739V12.2709C13.2799 19.0972 5.8393 21.2304 2.84795 16.3375C0.925716 13.189 2.10282 7.66426 8.26909 7.44284V10.4725C7.79933 10.5481 7.29717 10.667 6.83821 10.8236C5.46673 11.288 4.68919 12.1575 4.90518 13.6913C5.32094 16.6292 10.7097 17.4986 10.2615 11.7579V1.0054H13.2367V1Z"
-                                                                fill="var(--primary-color)" />
-                                                        </svg>
-                                                    </a>
-                                                </li>
-                                                <li class="footer-social-item">
-                                                    <a href="{{ $portfolio->youtube_link ?? '#' }}" target="_blank">
+                                                    <a href="{{ optional($portfolio)->youtube_link ? (\Illuminate\Support\Str::startsWith(optional($portfolio)->youtube_link, ['http://', 'https://']) ? optional($portfolio)->youtube_link : 'https://' . optional($portfolio)->youtube_link) : '#' }}" target="_blank">
                                                         <svg class="icon icon-youtube" width="20" height="20"
                                                             viewBox="0 0 20 20" fill="none"
                                                             xmlns="http://www.w3.org/2000/svg">
@@ -137,7 +127,7 @@
     <div class="container">
         <div class="footer-bottom-inner d-flex flex-column justify-content-center align-items-center text-center">
             <p style="color:var(--primary-color)" class="copyright footer-text mb-0">
-                ©<span class="current-year"></span> {{ $portfolio->company_name ?? 'Pinkush' }} Designed by
+                ©<span class="current-year"></span> {{ optional($portfolio)->company_name }} Designed by
                 <a style="color:var(--secondary-color)">Byte Engineers</a>
             </p>
         </div>

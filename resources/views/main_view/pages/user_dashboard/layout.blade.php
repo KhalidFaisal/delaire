@@ -10,8 +10,9 @@
     <style>
         .dashboard-wrap { display: flex; min-height: 80vh; }
         .dashboard-sidebar { width: 260px; flex-shrink: 0; background: #f8f9fa; border-right: 1px solid #eee; padding: 1.5rem 0; }
-        .dashboard-sidebar a { display: block; padding: 10px 20px; color: #333; text-decoration: none; }
-        .dashboard-sidebar a:hover, .dashboard-sidebar a.active { background: var(--secondary-color); color: var(--primary-color); }
+        .dashboard-sidebar a { display: block; padding: 12px 20px; color: #333; text-decoration: none; transition: all 0.3s ease; border-left: 3px solid transparent; }
+        .dashboard-sidebar a:hover { background: #e9ecef; color: #000; }
+        .dashboard-sidebar a.active { background: #fff; color: var(--primary-color); border-left-color: var(--primary-color); font-weight: 600; }
         .dashboard-content { flex: 1; padding: 1.5rem 2rem; }
         @media (max-width: 768px) {
             .dashboard-wrap { flex-direction: column; }

@@ -67,7 +67,7 @@
                                     </h2>
                                     
                                     <a class="btn-primary slide-btn animate__animated animate__fadeInUp"
-                                        href="collection-left-sidebar.html"
+                                        href="{{ route('search.product') }}"
                                         data-animation="animate__animated animate__fadeInUp">SHOP
                                         NOW</a>
                                 </div>
@@ -89,7 +89,7 @@
                                        
                                     </p>
                                     <a class="btn-primary slide-btn animate__animated animate__fadeInUp"
-                                        href="collection-left-sidebar.html"
+                                        href="{{ route('search.product') }}"
                                         data-animation="animate__animated animate__fadeInUp">SHOP
                                         NOW</a>
                                 </div>
@@ -108,7 +108,7 @@
                                     </h2>
                                     
                                     <a class="btn-primary slide-btn animate__animated animate__fadeInUp"
-                                        href="collection-left-sidebar.html"
+                                        href="{{ route('search.product') }}"
                                         data-animation="animate__animated animate__fadeInUp">SHOP
                                         NOW</a>
                                 </div>
@@ -395,7 +395,7 @@
                                     
                                 </p>
                                 <a class="btn-primary single-banner-btn animate__animated animate__fadeInUp"
-                                    href="collection-left-sidebar.html"
+                                    href="{{ route('search.product') }}"
                                     data-animation="animate__animated animate__fadeInUp" data-aos="fade-up"
                                     data-aos-duration="700">
                                     DISCOVER NOW

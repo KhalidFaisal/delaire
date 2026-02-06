@@ -223,8 +223,27 @@ class UserDashboardController extends Controller
 
     public function reviews()
     {
-        $reviews = Auth::user()->reviews()->with('product')->latest()->paginate(10);
-        return view('main_view.pages.user_dashboard.reviews', compact('reviews'));
+        $user = Auth::user();
+        
+        // Get IDs of products already reviewed by user
+        $reviewedProductIds = $user->reviews()->pluck('product_id')->toArray();
+
+        // Get unique products from delivered orders that haven't been reviewed yet
+        $productsToReview = $user->orders()
+            ->where('status', 'delivered') // Only delivered orders
+            ->with('items.product')
+            ->get()
+            ->flatMap(function ($order) {
+                return $order->items->map(function ($item) {
+                    return $item->product; 
+                });
+            })
+            ->whereNotIn('id', $reviewedProductIds)
+            ->unique('id'); // Ensure uniqueness
+
+        $reviews = $user->reviews()->with('product')->latest()->paginate(10);
+        
+        return view('main_view.pages.user_dashboard.reviews', compact('reviews', 'productsToReview'));
     }
 
     public function storeReview(Request $request)
