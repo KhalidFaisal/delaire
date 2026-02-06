@@ -251,16 +251,153 @@
                                             fill="black" />
                                     </svg>
                                 </a>
-                                <a class="header-action-item header-cart ms-4" href="#drawer-cart"
-                                    data-bs-toggle="offcanvas">
-                                    <svg class="icon icon-cart" width="24" height="26" viewBox="0 0 24 26" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 0.000183105C9.25391 0.000183105 7 2.25409 7 5.00018V6.00018H2.0625L2 6.93768L1 24.9377L0.9375 26.0002H23.0625L23 24.9377L22 6.93768L21.9375 6.00018H17V5.00018C17 2.25409 14.7461 0.000183105 12 0.000183105ZM12 2.00018C13.6562 2.00018 15 3.34393 15 5.00018V6.00018H9V5.00018C9 3.34393 10.3438 2.00018 12 2.00018ZM3.9375 8.00018H7V11.0002H9V8.00018H15V11.0002H17V8.00018H20.0625L20.9375 24.0002H3.0625L3.9375 8.00018Z"
-                                            fill="black" />
-                                    </svg>
-                                </a>
-                                <a class="header-action-item header-hamburger ms-4 d-lg-none" href="#drawer-menu"
+                           <a class="header-action-item header-cart ms-4 position-relative" href="#drawer-cart" data-bs-toggle="offcanvas">
+                                <svg class="icon icon-cart" width="24" height="26" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 0.000183105C9.25391 0.000183105 7 2.25409 7 5.00018V6.00018H2.0625L2 6.93768L1 24.9377L0.9375 26.0002H23.0625L23 24.9377L22 6.93768L21.9375 6.00018H17V5.00018C17 2.25409 14.7461 0.000183105 12 0.000183105ZM12 2.00018C13.6562 2.00018 15 3.34393 15 5.00018V6.00018H9V5.00018C9 3.34393 10.3438 2.00018 12 2.00018ZM3.9375 8.00018H7V11.0002H9V8.00018H15V11.0002H17V8.00018H20.0625L20.9375 24.0002H3.0625L3.9375 8.00018Z" fill="black"/>
+                                </svg>
+
+                                <!-- Cart count badge -->
+                                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    0
+                                </span>
+                                
+                            </a>
+                           <div class="header-profile-wrapper ms-4 d-none d-lg-block">
+    <!-- PROFILE ICON -->
+<a href="javascript:void(0)" class="header-profile-toggle">
+    <svg class="icon icon-profile" width="26" height="26" viewBox="0 0 24 24"
+         fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 4-8 8-8s8 4 8 8"/>
+    </svg>
+</a>
+
+<!-- DROPDOWN -->
+<div class="profile-dropdown" style="
+    display:none;
+    position:absolute;
+    right:0;
+    top:60px;
+    background:#fff;
+    border:1px solid #ddd;
+    width:220px;
+    padding:12px;
+    z-index:9999;
+">
+    <!-- NOT LOGGED IN -->
+    <div class="not-logged-in">
+        <p>You are not logged in</p>
+        <a href="{{ route('user_login') }}" class="btn-primary">Login</a>
+    </div>
+
+    <!-- LOGGED IN -->
+    <div class="logged-in" style="display:none;">
+        <a href="" class="btn-primary">My Profile</a>
+    </div>
+</div>
+
+<script>
+const profileToggle = document.querySelector('.header-profile-toggle');
+const dropdown = document.querySelector('.profile-dropdown');
+
+// set true after login
+let isLoggedIn = false;
+
+profileToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    dropdown.style.display =
+        dropdown.style.display === 'block' ? 'none' : 'block';
+
+    dropdown.querySelector('.not-logged-in').style.display = isLoggedIn ? 'none' : 'block';
+    dropdown.querySelector('.logged-in').style.display = isLoggedIn ? 'block' : 'none';
+});
+
+document.addEventListener('click', () => {
+    dropdown.style.display = 'none';
+});
+</script>
+
+
+<style>
+.header-profile-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.header-profile-toggle svg {
+    transition: 0.2s;
+}
+
+.header-profile-wrapper:hover svg {
+    stroke: #000; /* You can change color on hover */
+    transform: scale(1.1);
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 36px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 12px;
+    font-family: sans-serif;
+    display: none;
+    z-index: 100;
+}
+
+.profile-dropdown p {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.btn-login, .view-profile {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    background: black;
+    color: white;
+    padding: 6px 0;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 6px;
+    transition: 0.2s;
+}
+
+.btn-login:hover, .view-profile:hover {
+    background: #333;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.user-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: #000;
+}
+
+</Style>
+
+
+<a class="header-action-item header-hamburger ms-4 d-lg-none" href="#drawer-menu"
                                     data-bs-toggle="offcanvas">
                                     <svg class="icon icon-hamburger" xmlns="http://www.w3.org/2000/svg" width="24"
                                         height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2"
@@ -302,3 +439,4 @@
             </div>
         </header>
         <!-- header end -->
+      

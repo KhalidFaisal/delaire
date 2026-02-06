@@ -92,7 +92,19 @@ Route::middleware('auth')->group(function () {
   //product Category route End
 
 //manage product categoryEnd here
+Route::get('/user-login', function () {
+    return view('main_view.pages.user_login');
+})->name('user_login');
 
+
+
+// Checkout
+Route::get('/checkout', function () {
+    if (!auth()->check()) {
+        return redirect()->route('loginuser');
+    }
+    return view('main_view/pages/checkout');
+})->name('checkout');
 
     //blog route
                 Route::get('/blog', function () {

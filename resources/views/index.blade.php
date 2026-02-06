@@ -9,12 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="meta description">
     <link rel="shortcut icon" href="{{asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- all css -->
     @include('main_view.include.css')
+    <style>
+        #cart-notification {
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+
+    </style>
 </head>
 
 <body>
+    
     <div class="body-wrapper">
         
         @include('main_view.include.header')
@@ -218,6 +227,8 @@
             </div>
             <!-- banner end -->
 
+            <!-- Notification -->
+
             <!-- collection start -->
             <div class="featured-collection mt-100 overflow-hidden">
                 <div class="collection-tab-inner">
@@ -302,8 +313,43 @@
                                         <div class="product-card-price">
                                             <span class="card-price-regular"> ৳ {{ $product->pro_sprice }}</span>
                                             <span class="card-price-compare text-decoration-line-through">৳ {{ $product->pro_price }}</span>
+                                            
                                         </div>
+                                       <button
+                                                    onclick="addToCart({{ $product->id }}); showCartNotification();"
+                                                    class="add-to-cart btn btn-primary"
+                                                    data-id="{{ $product->id }}"
+                                                    data-title="{{ $product->pro_title }}"
+                                                    data-price="{{ $product->pro_sprice ?? $product->pro_price }}"
+                                                    data-stock="{{ $product->pro_qty }}"
+                                                    data-img="{{ asset('uploads/'.$product->pro_img1) }}"
+                                                >
+                                                    Add to Cart
+                                                </button>
                                     </div>
+                                    <div id="cart-notification" style="
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #16a34a;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    z-index: 9999;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+">
+    Great choice! Item added to cart
+    <button onclick="closeNotification()" style="
+        margin-left: 10px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    ">×</button>
+</div>
                                 </div>
                             </div>
                             
@@ -517,7 +563,72 @@
         @include('main_view.include.css')
         <script src="{{asset('main_view/assets/js/main.js')}}"></script>
         <script src="{{asset('main_view/assets/js/vendor.js')}}"></script>
+
+
+<script>
+    <script>
+function showNotification() {
+    const box = document.getElementById('cart-notification');
+    box.style.display = 'block';
+
+    // Automatically hide after 3 seconds
+    setTimeout(() => {
+        box.style.display = 'none';
+    }, 3000);
+}
+
+function closeNotification() {
+    document.getElementById('cart-notification').style.display = 'none';
+}
+
+// Add this inside your add-to-cart click handler
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('add-to-cart') && !e.target.closest('.add-to-cart')) return;
+
+    // Call the notification
+    showNotification();
+});
+</script>
+</script>
+
+        
 </body>
 
 
 </html>
+
+<script>
+
+   document.addEventListener('click', function (e) {
+    if (!e.target.classList.contains('add-to-cart')) return;
+
+    let btn = e.target;
+    let cart = getCart();
+    let id = btn.dataset.id;
+
+    if (!cart[id]) {
+        cart[id] = {
+            id: id,
+            title: btn.dataset.title,
+            price: parseFloat(btn.dataset.price),
+            qty: 1,
+            stock: parseInt(btn.dataset.stock),
+            img: btn.dataset.img
+        };
+    } else {
+        if (cart[id].qty >= cart[id].stock) {
+            alert('Stock limit reached');
+            return;
+        }
+        cart[id].qty++;
+    }
+
+    saveCart(cart);
+    showCartToast();
+
+    let drawer = document.getElementById('drawer-cart');
+    new bootstrap.Offcanvas(drawer).show();
+});
+
+</script>
+
