@@ -419,7 +419,7 @@
     object-fit: cover;
 }
 </style>
-
+</div>
 
 <a class="header-action-item header-hamburger ms-4 d-lg-none" href="#drawer-menu"
                                     data-bs-toggle="offcanvas">
@@ -431,7 +431,6 @@
                                         <line x1="3" y1="18" x2="21" y2="18"></line>
                                     </svg>
                                 </a>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -563,6 +562,134 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+            </div>
+            <!-- Mobile Menu Drawer -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="drawer-menu">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title fw-bold">Menu</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body p-0">
+                    <nav class="mobile-nav">
+                        <ul class="list-unstyled m-0">
+                            <!-- User Auth Links (Mobile) -->
+                            <li class="mobile-nav-item bg-light p-3">
+                                @auth
+                                    <div class="d-flex align-items-center mb-2">
+                                        @if(auth()->user()->avatar)
+                                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+                                        @else
+                                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                        <div>
+                                            <h6 class="m-0">{{ auth()->user()->name }}</h6>
+                                            <small class="text-muted">Logged in</small>
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('user.dashboard') }}" class="btn btn-primary w-100 btn-sm mb-2">Dashboard</a>
+                                    <form action="{{ route('user.logout') }}" method="POST">
+                                        @csrf
+                                        <button class="btn btn-outline-danger w-100 btn-sm">Logout</button>
+                                    </form>
+                                @else
+                                    <h6 class="mb-2">Welcome!</h6>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('user_login') }}" class="btn btn-outline-primary w-100 btn-sm">Login</a>
+                                        <a href="{{ route('user_register') }}" class="btn btn-primary w-100 btn-sm">Register</a>
+                                    </div>
+                                @endauth
+                            </li>
+
+                            <!-- Main Links -->
+                            <li class="mobile-nav-item border-bottom">
+                                <a href="{{ route('home') }}" class="mobile-nav-link p-3 d-block text-dark text-decoration-none">Home</a>
+                            </li>
+
+                            <!-- Categories Accordion -->
+                            <li class="mobile-nav-item border-bottom">
+                                <div class="accordion accordion-flush" id="mobileCatAccordion">
+                                    <div class="accordion-item border-0">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed p-3 shadow-none bg-transparent fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseCats">
+                                                Categories
+                                            </button>
+                                        </h2>
+                                        <div id="flush-collapseCats" class="accordion-collapse collapse" data-bs-parent="#mobileCatAccordion">
+                                            <div class="accordion-body p-0">
+                                                <ul class="list-unstyled m-0">
+                                                    @foreach(App\Models\Procategory::orderBy('created_at', 'asc')->get() as $cat)
+                                                    <li class="border-bottom bg-light">
+                                                        @php
+                                                            $subcats = App\Models\Prosubcategory::where('main_Cat', $cat->id)->get();
+                                                            $hasSub = $subcats->count() > 0;
+                                                        @endphp
+                                                        
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            @if($hasSub)
+                                                                <a href="#subcat-{{ $cat->id }}" data-bs-toggle="collapse" class="d-block p-3 text-dark text-decoration-none flex-grow-1">
+                                                                    {{ $cat->proCat_name }}
+                                                                </a>
+                                                                <a class="p-3 text-dark" data-bs-toggle="collapse" href="#subcat-{{ $cat->id }}" role="button">
+                                                                    <i class="fas fa-chevron-down small"></i>
+                                                                </a>
+                                                            @else
+                                                                <a href="{{ route('search.product', ['pro_category' => $cat->id]) }}" class="d-block p-3 text-dark text-decoration-none flex-grow-1">
+                                                                    {{ $cat->proCat_name }}
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                        
+                                                        @if($hasSub)
+                                                            <div class="collapse" id="subcat-{{ $cat->id }}">
+                                                                <ul class="list-unstyled ps-4 bg-white">
+                                                                    <li class="border-bottom">
+                                                                        <a href="{{ route('search.product', ['pro_category' => $cat->id]) }}" class="d-block p-2 text-primary text-decoration-none small fw-bold">
+                                                                            View All {{ $cat->proCat_name }}
+                                                                        </a>
+                                                                    </li>
+                                                                    @foreach($subcats as $sub)
+                                                                        <li class="border-bottom">
+                                                                            <a href="{{ route('search.product', ['pro_category' => $cat->id, 'pro_sub_category' => $sub->id]) }}" class="d-block p-2 text-muted text-decoration-none small">
+                                                                                {{ $sub->proSubCat_name }}
+                                                                            </a>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                        @endif
+                                                    </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="mobile-nav-item border-bottom">
+                                <a href="{{ route('contact') }}" class="mobile-nav-link p-3 d-block text-dark text-decoration-none">Contact Us</a>
+                            </li>
+                             <li class="mobile-nav-item border-bottom">
+                                <a href="{{ route('about') }}" class="mobile-nav-link p-3 d-block text-dark text-decoration-none">About Us</a>
+                            </li>
+                             <li class="mobile-nav-item border-bottom">
+                                <a href="{{ route('faq') }}" class="mobile-nav-link p-3 d-block text-dark text-decoration-none">FAQ</a>
+                            </li>
+                            <li class="mobile-nav-item border-bottom">
+                                <a href="{{ route('user.wishlist') }}" class="mobile-nav-link p-3 d-block text-dark text-decoration-none">
+                                    <i class="far fa-heart me-2"></i> Wishlist
+                                </a>
+                            </li>
+                             <li class="mobile-nav-item border-bottom">
+                                <a href="tel:{{ $portfolio->contact_number ?? '+88 01712429662' }}" class="mobile-nav-link p-3 d-block text-dark text-decoration-none">
+                                    <i class="fas fa-phone-alt me-2"></i> {{ $portfolio->contact_number ?? '+88 01712429662' }}
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </header>
         <!-- header end -->
