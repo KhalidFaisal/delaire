@@ -31,6 +31,7 @@
 
         <!-- jQuery  -->
         @include('backend.includes.scripts')
+        @yield('scripts')
 
 
     </body>

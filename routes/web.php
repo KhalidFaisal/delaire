@@ -285,6 +285,10 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
     Route::get('/promo-codes/status/{id}', [App\Http\Controllers\Backend\PromoCodeController::class, 'updateStatus'])->name('promo.status');
     
     // Order Management Routes
+    Route::get('/product/ajax-search', [\App\Http\Controllers\ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
+    Route::get('/orders/create', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'create'])->name('admin.orders.create');
+    Route::post('/orders/store', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'store'])->name('admin.orders.store');
+
     Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('admin.orders.show');
     Route::get('/orders/{id}/pdf', [App\Http\Controllers\OrderController::class, 'downloadPdf'])->name('admin.orders.pdf');
@@ -319,6 +323,11 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
         Route::delete('/manage/reviews/{id}', [\App\Http\Controllers\Backend\ReviewController::class, 'destroy'])->name('destroy.review');
 
     });
+    // Damage Stock Management Routes
+    Route::get('/damage-stock', [\App\Http\Controllers\Backend\DamageStockController::class, 'index'])->name('admin.damage.stock');
+    Route::post('/damage-stock/{id}/restore', [\App\Http\Controllers\Backend\DamageStockController::class, 'restore'])->name('admin.damage.restore');
+    Route::delete('/damage-stock/{id}/delete', [\App\Http\Controllers\Backend\DamageStockController::class, 'destroy'])->name('admin.damage.destroy');
+
     Route::post('/items/filter', [ProductController::class,'filterProduct']);
     Route::get('/ajax/search', [ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
    

@@ -1,0 +1,28 @@
+/* Custom CSS to fix sidebar visibility */
+.page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .main-navbar .nav-menu {
+    height: calc(100vh - 100px) !important;
+    overflow-y: auto !important;
+    padding-bottom: 100px !important;
+    /* Ensure last items are visible */
+}
+
+/* Ensure the scrollbar handles are visible */
+.page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .main-navbar .nav-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.page-wrapper.compact-wrapper .page-body-wrapper header.main-nav .main-navbar .nav-menu::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+/* Fix for potential z-index or overflow issues on the container */
+.page-wrapper .page-body-wrapper header.main-nav {
+    z-index: 999;
+    /* Ensure it's on top */
+}
+
+/* Ensure full width visibility if it was being cut off horizontally */
+.page-wrapper.compact-wrapper .page-body-wrapper header.main-nav:hover .main-navbar .nav-menu {
+    width: 100%;
+}

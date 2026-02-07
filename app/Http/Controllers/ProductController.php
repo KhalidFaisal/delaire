@@ -332,8 +332,8 @@ class ProductController extends Controller
             return response()->json([]);
         }
 
-        $products = Product::where('pro_title', 'LIKE', "%{$query}%")
-                           ->select('id', 'pro_title', 'pro_img1', 'pro_price', 'pro_sprice')
+        $products = Product::with('sizes')->where('pro_title', 'LIKE', "%{$query}%")
+                           ->select('id', 'pro_title', 'pro_img1', 'pro_price', 'pro_sprice', 'pro_qty')
                            ->take(8)
                            ->get();
         
@@ -343,6 +343,13 @@ class ProductController extends Controller
                 'title' => $product->pro_title,
                 'image' => asset('uploads/' . $product->pro_img1),
                 'price' => $product->pro_sprice ?: $product->pro_price,
+                'sizes' => $product->sizes->map(function($size) {
+                    return [
+                        'size' => $size->size,
+                        'stock' => $size->stock
+                    ];
+                }),
+                'stock' => $product->sizes->count() > 0 ? $product->sizes->sum('stock') : $product->pro_qty,
                 'url' => route('product.show', $product->id)
             ];
         });

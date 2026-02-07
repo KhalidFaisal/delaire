@@ -11,24 +11,25 @@
             </li>
             
             <li class="dropdown"><a class="nav-link menu-title link-nav" href="{{route('dashboard')}}"><i data-feather="home"></i><span>Dashboard</span></a>
-          
             </li>
-          
-           <!-- Blog Area Start-->
+
+            <!-- Product Management Area Start-->
             <li class="dropdown">
                   <a class="nav-link menu-title" href="javascript:void(0)">
-                      <i class="fa fa-newspaper-o"></i>
-                      <span style="margin-left: 5px;">Manage Blog</span>
+                      <i class="fa fa-shopping-cart"></i>
+                      <span style="margin-left: 5px;">Product Management</span>
                   </a>
-
                   <ul class="nav-submenu menu-content">
-                  <li><a href="{{route('create.category')}}"><i class="fa fa-plus"></i> Add Category</a></li>
-                    <li><a href="{{route('create.blog')}}"><i class="fa fa-pencil"></i> Write Blog</a></li>
-                    <li><a href="{{route('all.blog')}}"><i class="fa fa-list"></i> All Blog's</a></li>
+                    <li><a href="{{route('manage.procat')}}"><i class="fa fa-list"></i> Manage Category</a></li>
+                    <li><a href="{{route('manage.proSubCat')}}"><i class="fa fa-list-alt"></i> Manage Sub Category</a></li>
+                    <li><a href="{{route('manage.brand')}}"><i class="fa fa-bold"></i> Manage Brand</a></li>
+                    <li><a href="{{route('all.product')}}"><i class="fa fa-shopping-bag"></i> Manage Product</a></li>
+                    <li><a href="{{route('admin.damage.stock')}}"><i class="fa fa-trash"></i> Damage Stock</a></li>
                   </ul>
-
             </li>
-             <!-- Blog Area Start-->
+             <!-- Product Management Area End-->
+          
+        
              
            <!-- Profile Area Start-->
             <li class="dropdown">
@@ -59,7 +60,21 @@
             </li>
              <!-- banner Area Start-->
             
+   <!-- Blog Area Start-->
+            <li class="dropdown">
+                  <a class="nav-link menu-title" href="javascript:void(0)">
+                      <i class="fa fa-newspaper-o"></i>
+                      <span style="margin-left: 5px;">Manage Blog</span>
+                  </a>
 
+                  <ul class="nav-submenu menu-content">
+                  <li><a href="{{route('create.category')}}"><i class="fa fa-plus"></i> Add Category</a></li>
+                    <li><a href="{{route('create.blog')}}"><i class="fa fa-pencil"></i> Write Blog</a></li>
+                    <li><a href="{{route('all.blog')}}"><i class="fa fa-list"></i> All Blog's</a></li>
+                  </ul>
+
+            </li>
+             <!-- Blog Area Start-->
            
             
           </ul>

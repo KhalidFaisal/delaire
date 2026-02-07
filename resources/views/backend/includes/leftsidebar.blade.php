@@ -27,6 +27,7 @@
 
                     <li><a href="{{route('all.product')}}"><i class="fa fa-laptop"></i>Manage products</a></li>
                     <li><a href="{{route('manage.reviews')}}"><i class="fa fa-star"></i>Manage Reviews</a></li>
+                    <li><a href="{{route('admin.damage.stock')}}"><i class="fa fa-trash"></i> Damage Stock</a></li>
                   </ul>
 
             </li>
@@ -37,6 +38,7 @@
                       <span style="margin-left: 5px;">Manage Orders</span>
                   </a>
                   <ul class="nav-submenu menu-content">
+                    <li><a href="{{route('admin.orders.create')}}"><i class="fa fa-plus"></i> Create Order</a></li>
                     <li><a href="{{route('admin.orders.index')}}"><i class="fa fa-list"></i> All Orders</a></li>
                     <li><a href="{{route('admin.returns.index')}}"><i class="fa fa-undo"></i> Return Requests</a></li>
                   </ul>

@@ -11,7 +11,7 @@ class UserOrder extends Model
     protected $table = 'user_orders';
 
     protected $fillable = [
-        'user_id', 'order_number', 'subtotal', 'total', 'status', 'notes',
+        'user_id', 'admin_id', 'order_number', 'subtotal', 'total', 'status', 'notes',
         'shipping_name', 'shipping_email', 'shipping_phone',
         'shipping_address', 'shipping_city', 'shipping_zip',
         'payment_method', 'is_viewed',

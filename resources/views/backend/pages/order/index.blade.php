@@ -76,7 +76,12 @@
                                         <span class="text-muted">No Items</span>
                                     @endif
                                 </td>
-                                <td>{{ $order->user ? $order->user->name : 'Guest' }}</td>
+                                <td>
+                                    {{ $order->user ? $order->user->name : 'Guest' }}
+                                    @if($order->admin_id)
+                                        <br><small class="text-info">(Created by Admin)</small>
+                                    @endif
+                                </td>
                                 <td>৳{{ number_format($order->total, 2) }}</td>
                                 <td>
                                     @if($order->status == 'Pending')

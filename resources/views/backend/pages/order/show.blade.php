@@ -22,6 +22,9 @@
                         <p>
                             <strong>Name:</strong> {{ $order->user ? $order->user->name : 'Guest' }}<br>
                             <strong>Email:</strong> {{ $order->user ? $order->user->email : 'N/A' }}
+                            @if($order->admin_id)
+                                <br><strong class="text-info">Created by Admin</strong>
+                            @endif
                         </p>
                     </div>
                     <div class="col-md-4">
