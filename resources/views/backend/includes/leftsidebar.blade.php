@@ -13,6 +13,19 @@
             <li class="dropdown"><a class="nav-link menu-title link-nav" href="{{route('dashboard')}}"><i data-feather="home"></i><span>Dashboard</span></a>
           
             </li>
+            
+            <!-- Stock Management Area Start-->
+            <li class="dropdown">
+                  <a class="nav-link menu-title" href="javascript:void(0)">
+                      <i class="fa fa-shopping-cart"></i>
+                      <span style="margin-left: 5px;">Manage Stock</span>
+                  </a>
+                  <ul class="nav-submenu menu-content">
+                    <li><a href="{{ route('admin.inventory.index') }}"><i class="fa fa-list-alt"></i> Inventory</a></li>
+                    <li><a href="{{ route('admin.damage.stock') }}"><i class="fa fa-trash"></i> Damage Stock</a></li>
+                  </ul>
+            </li>
+            <!-- Stock Management Area End-->
           <!-- Product Area Start-->
             <li class="dropdown">
                   <a class="nav-link menu-title" href="javascript:void(0)">
@@ -27,7 +40,6 @@
 
                     <li><a href="{{route('all.product')}}"><i class="fa fa-laptop"></i>Manage products</a></li>
                     <li><a href="{{route('manage.reviews')}}"><i class="fa fa-star"></i>Manage Reviews</a></li>
-                    <li><a href="{{route('admin.damage.stock')}}"><i class="fa fa-trash"></i> Damage Stock</a></li>
                   </ul>
 
             </li>

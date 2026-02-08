@@ -20,7 +20,7 @@ class ProductController extends Controller
         $product->pro_model = $request->pro_model;
         $product->pro_price = $request->pro_price;
         $product->pro_sprice = $request->pro_sprice;
-        $product->pro_qty = $request->pro_qty; // This will be overwritten by sum of sizes if sizes are present, or we can enforce it.
+        $product->pro_qty = 0; // Default to 0, will be updated when sizes/stock added in edit
         $product->pro_waranty = $request->pro_waranty;
         // $product->pro_datasheet = $request->pro_datasheet; // Deprecated or mapped to size chart if needed, but we have a dedicated field now
         $product->pro_desc = $request->pro_desc;
@@ -58,31 +58,6 @@ class ProductController extends Controller
         }
 
         $product->save();
-
-        // Handle Product Sizes
-        if ($request->has('sizes') && $request->has('stocks')) {
-            $sizes = $request->sizes;
-            $stocks = $request->stocks;
-            $totalStock = 0;
-
-            foreach ($sizes as $key => $size) {
-                if (!empty($size) && isset($stocks[$key])) {
-                    $stock = (int)$stocks[$key];
-                    \App\Models\ProductSize::create([
-                        'product_id' => $product->id,
-                        'size' => $size,
-                        'stock' => $stock
-                    ]);
-                    $totalStock += $stock;
-                }
-            }
-            
-            // Update total qty if sizes were added
-            if ($totalStock > 0) {
-                $product->pro_qty = $totalStock;
-                $product->save();
-            }
-        }
 
        return redirect()->route('all.product')->with('success', 'Product Added successfully.');
 

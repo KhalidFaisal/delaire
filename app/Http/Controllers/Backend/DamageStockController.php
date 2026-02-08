@@ -3,63 +3,92 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserReturn;
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\ProductSize;
+use App\Models\Stock;
+use Illuminate\Support\Facades\DB;
 
 class DamageStockController extends Controller
 {
     public function index()
     {
-        // Fetch approved returns where reason indicates damage
-        $damagedItems = UserReturn::with(['user', 'order', 'product'])
-            ->where('status', 'approved')
-            ->where(function($query) {
-                $query->where('reason', 'like', '%damage%') // Covers "Damage", "Damaged/Defective"
-                      ->orWhere('reason', 'like', '%defective%');
-            })
-            ->latest()
-            ->get();
-
-        $totalItems = $damagedItems->count();
-        $totalPrice = $damagedItems->sum(function($item) {
-             return $item->product ? $item->product->pro_sprice : 0; // Using selling price as value, or maybe order price? 
-             // Ideally we should use the price at which it was sold, but product price is a good proxy for inventory value.
-        });
-
-        return view('backend.pages.stock.damage_stock', compact('damagedItems', 'totalItems', 'totalPrice'));
+        $damageStocks = Stock::where('type', 'damage')
+                             ->with(['product', 'productSize'])
+                             ->orderBy('entry_date', 'desc')
+                             ->paginate(20);
+        return view('admin_view.damage_stock.index', compact('damageStocks'));
     }
 
-    public function restore($id)
+    public function create()
     {
-        $return = UserReturn::with('product')->findOrFail($id);
-        
-        // Restore stock
-        if($return->product) {
-            $return->product->increment('pro_qty');
+        $products = Product::where('pro_status', '1')->get();
+        return view('admin_view.damage_stock.create', compact('products'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'product_size_id' => 'nullable|exists:product_sizes,id',
+            'quantity' => 'required|integer|min:1',
+            'lot_number' => 'nullable|string',
+            'entry_date' => 'required|date',
+            'note' => 'nullable|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Check if enough stock exists before declaring damage? 
+            // Optional, but good practice. For now, we assume admin knows best.
+            // But strict check:
+            /*
+            $currentStock = 0;
+            if ($request->product_size_id) {
+                $currentStock = ProductSize::find($request->product_size_id)->stock;
+            } else {
+                $currentStock = Product::find($request->product_id)->pro_qty;
+            }
+            if ($request->quantity > $currentStock) {
+                 return back()->with('error', 'Not enough stock to mark as damaged.');
+            }
+            */
+
+            $stock = new Stock();
+            $stock->product_id = $request->product_id;
+            $stock->product_size_id = $request->product_size_id;
+            $stock->quantity = -($request->quantity); // Negative quantity for damage
+            $stock->type = 'damage';
+            $stock->lot_number = $request->lot_number;
+            $stock->entry_date = $request->entry_date;
+            $stock->note = $request->note;
+            $stock->save();
+
+            // Update Product Quantity
+            $product = Product::find($request->product_id);
+            
+            if ($request->product_size_id) {
+                $productSize = ProductSize::find($request->product_size_id);
+                $productSize->stock -= $request->quantity;
+                $productSize->save();
+            }
+
+            if ($product->sizes()->count() > 0) {
+                 $product->pro_qty = $product->sizes()->sum('stock');
+            } else {
+                 $product->pro_qty -= $request->quantity;
+            }
+            
+            $product->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.damage.stock')->with('success', 'Damage stock recorded successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-
-        // Update status to indicate it's been processed/restored
-        // We use a custom status 'restored' or maybe delete the return record?
-        // User asked "move damage item to current stock", implies stock increment.
-        // The return request itself should probably be marked as 'restocked' so it doesn't show up in the list anymore.
-        $return->status = 'restocked'; 
-        $return->save();
-
-        return redirect()->back()->with('success', 'Product moved back to current stock successfully.');
-    }
-
-    public function destroy($id)
-    {
-        $return = UserReturn::findOrFail($id);
-        
-        // "Delete the product" - context likely means remove from damage list (dispose), not delete the Product model itself.
-        // If they meant delete the Product model, that's drastic. 
-        // "The damage stock admin can ... delete the product". 
-        // Usually means "Remove from damage list" (e.g. disposed of).
-        // I will implement "mark as disposed" or delete the return record. 
-        // Deleting the return record removes it from the list.
-        $return->delete(); 
-
-        return redirect()->back()->with('success', 'Damage record deleted successfully.');
     }
 }

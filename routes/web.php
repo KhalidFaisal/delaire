@@ -322,11 +322,17 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
         Route::get('/manage/reviews', [\App\Http\Controllers\Backend\ReviewController::class, 'index'])->name('manage.reviews');
         Route::delete('/manage/reviews/{id}', [\App\Http\Controllers\Backend\ReviewController::class, 'destroy'])->name('destroy.review');
 
+        // Inventory Management Routes
+        Route::get('/inventory', [\App\Http\Controllers\Backend\InventoryController::class, 'index'])->name('admin.inventory.index');
+        Route::get('/inventory/create', [\App\Http\Controllers\Backend\InventoryController::class, 'create'])->name('admin.inventory.create');
+        Route::post('/inventory/store', [\App\Http\Controllers\Backend\InventoryController::class, 'store'])->name('admin.inventory.store');
+        Route::get('/inventory/get-sizes/{productId}', [\App\Http\Controllers\Backend\InventoryController::class, 'getProductSizes'])->name('admin.inventory.get-sizes');
+
+        // Damage Stock Management Routes
+        Route::get('/damage-stock', [\App\Http\Controllers\Backend\DamageStockController::class, 'index'])->name('admin.damage.stock');
+        Route::get('/damage-stock/create', [\App\Http\Controllers\Backend\DamageStockController::class, 'create'])->name('admin.damage.create');
+        Route::post('/damage-stock/store', [\App\Http\Controllers\Backend\DamageStockController::class, 'store'])->name('admin.damage.store');
     });
-    // Damage Stock Management Routes
-    Route::get('/damage-stock', [\App\Http\Controllers\Backend\DamageStockController::class, 'index'])->name('admin.damage.stock');
-    Route::post('/damage-stock/{id}/restore', [\App\Http\Controllers\Backend\DamageStockController::class, 'restore'])->name('admin.damage.restore');
-    Route::delete('/damage-stock/{id}/delete', [\App\Http\Controllers\Backend\DamageStockController::class, 'destroy'])->name('admin.damage.destroy');
 
     Route::post('/items/filter', [ProductController::class,'filterProduct']);
     Route::get('/ajax/search', [ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
