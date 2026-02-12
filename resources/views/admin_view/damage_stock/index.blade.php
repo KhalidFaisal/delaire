@@ -34,6 +34,7 @@
                         <th>Lot Number</th>
                         <th>Quantity (Damaged)</th>
                         <th>Note</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,6 +46,13 @@
                         <td>{{ $stock->lot_number }}</td>
                         <td>{{ abs($stock->quantity) }}</td>
                         <td>{{ $stock->note }}</td>
+                        <td>
+                            <a href="{{ route('admin.damage.restore', $stock->id) }}" 
+                               class="btn btn-sm btn-success" 
+                               onclick="return confirm('Are you sure you want to restore this item to sellable inventory?')">
+                                <i class="fa fa-refresh"></i> Restore
+                            </a>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

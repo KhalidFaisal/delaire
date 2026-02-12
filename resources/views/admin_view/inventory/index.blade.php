@@ -65,6 +65,7 @@
                             @if($batch->type == 'initial') <span class="badge bg-info">Initial</span>
                             @elseif($batch->type == 'purchase') <span class="badge bg-primary">Purchase</span>
                             @elseif($batch->type == 'damage') <span class="badge bg-danger">Damage</span>
+                            @elseif($batch->type == 'damage_restored') <span class="badge bg-success">Restored</span>
                             @elseif($batch->type == 'return') <span class="badge bg-warning">Return</span>
                             @else <span class="badge bg-secondary">{{ $batch->type }}</span>
                             @endif

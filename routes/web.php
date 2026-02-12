@@ -105,7 +105,14 @@ Route::middleware('auth:admin')->group(function () {
     })->name('add.product');
 
     Route::post('product/create', [ProductController::class, 'createProduct'])->name('create.product');
-    Route::post('product/destroy', [ProductController::class,'destroyProduct'])->name('destroy.product');
+    
+    // Restricted Delete Routes
+    Route::middleware(['role:super_admin,admin'])->group(function () {
+        Route::post('product/destroy', [ProductController::class,'destroyProduct'])->name('destroy.product');
+        Route::post('product/category/destroy', [ProCatController::class,'destroyProCat'])->name('destroy.proCat');
+        Route::post('product/category', [ProSubCatController::class,'destroySubProCat'])->name('destroy.proSubCategory');
+        Route::post('product/destroy/brand', [ProBrandController::class,'destroyBrand'])->name('destroy.ProBrand');
+    });
 
     // Product Edit & Update
     Route::get('/product/edit/{id}', [ProductController::class, 'editProduct'])->name('edit.product');
@@ -129,18 +136,18 @@ Route::middleware('auth:admin')->group(function () {
 
   //product Category route Start
   Route::post('product/create/category', [ProCatController::class, 'createProCategory'])->name('create.proCategory');
-  Route::post('product/category/destroy', [ProCatController::class,'destroyProCat'])->name('destroy.proCat');
+  
   
   //product Category route End
 
 
   
   Route::post('product/create/sub/category', [ProSubCatController::class, 'createSubProCategory'])->name('create.proSubCategory');
-  Route::post('product/category', [ProSubCatController::class,'destroySubProCat'])->name('destroy.proSubCategory');
+  
   
 
   Route::post('product/create/brand', [ProBrandController::class, 'createBrand'])->name('create.proBrand');
-  Route::post('product/destroy/brand', [ProBrandController::class,'destroyBrand'])->name('destroy.ProBrand');
+  
   //product Category route End
 
 //manage product categoryEnd here
@@ -332,6 +339,22 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
         Route::get('/damage-stock', [\App\Http\Controllers\Backend\DamageStockController::class, 'index'])->name('admin.damage.stock');
         Route::get('/damage-stock/create', [\App\Http\Controllers\Backend\DamageStockController::class, 'create'])->name('admin.damage.create');
         Route::post('/damage-stock/store', [\App\Http\Controllers\Backend\DamageStockController::class, 'store'])->name('admin.damage.store');
+        Route::get('/damage-stock/restore/{id}', [\App\Http\Controllers\Backend\DamageStockController::class, 'restore'])->name('admin.damage.restore');
+
+        // Manage Admins
+        Route::get('/manage-admins', [\App\Http\Controllers\Backend\AdminManagementController::class, 'index'])->name('admin.manage.index');
+        
+        Route::middleware(['role:super_admin'])->group(function () {
+            Route::get('/manage-admins/create', [\App\Http\Controllers\Backend\AdminManagementController::class, 'create'])->name('admin.manage.create');
+            Route::post('/manage-admins', [\App\Http\Controllers\Backend\AdminManagementController::class, 'store'])->name('admin.manage.store');
+        });
+
+        Route::get('/manage-admins/{id}/edit', [\App\Http\Controllers\Backend\AdminManagementController::class, 'edit'])->name('admin.manage.edit');
+        Route::put('/manage-admins/{id}', [\App\Http\Controllers\Backend\AdminManagementController::class, 'update'])->name('admin.manage.update');
+        
+        Route::delete('/manage-admins/{id}', [\App\Http\Controllers\Backend\AdminManagementController::class, 'destroy'])
+             ->middleware('role:super_admin,admin')
+             ->name('admin.manage.destroy');
     });
 
     Route::post('/items/filter', [ProductController::class,'filterProduct']);

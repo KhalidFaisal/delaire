@@ -113,6 +113,7 @@
                     <li><a href="{{route('manage.offers')}}"><i class="fa fa-percent"></i> Manage Offers</a></li>
                     <li><a href="{{route('manage.charges')}}"><i class="fa fa-truck"></i> Manage Charges</a></li>
                     <li><a href="{{route('manage.promocodes')}}"><i class="fa fa-ticket"></i> Manage Promo Codes</a></li>
+                    <li><a href="{{route('admin.manage.index')}}"><i class="fa fa-user-plus"></i> Manage Admin</a></li>
                   </ul>
             </li>
              <!-- banner Area Start-->

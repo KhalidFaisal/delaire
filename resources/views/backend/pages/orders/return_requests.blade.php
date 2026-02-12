@@ -83,7 +83,12 @@
                                             <form action="{{ route('admin.returns.status', $return->id) }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="status" value="approved">
-                                                <button type="submit" class="btn btn-sm btn-success" title="Accept"><i class="fa fa-check"></i></button>
+                                                <button type="submit" class="btn btn-sm btn-success" title="Accept (Restock)"><i class="fa fa-check"></i></button>
+                                            </form>
+                                            <form action="{{ route('admin.returns.status', $return->id) }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="status" value="approved_damaged">
+                                                <button type="submit" class="btn btn-sm btn-warning" title="Accept (Damaged)" onclick="return confirm('Are you sure this item is damaged? It will be moved to Damage Stock.')"><i class="fa fa-exclamation-triangle"></i></button>
                                             </form>
                                             <form action="{{ route('admin.returns.status', $return->id) }}" method="POST">
                                                 @csrf

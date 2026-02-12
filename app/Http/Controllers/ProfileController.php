@@ -27,7 +27,14 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $data = $request->validated();
+        
+        // Remove password from data if it is null (so we don't overwrite with null/empty)
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        $request->user()->fill($data);
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

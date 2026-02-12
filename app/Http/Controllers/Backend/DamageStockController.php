@@ -91,4 +91,45 @@ class DamageStockController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+    public function restore($id)
+    {
+        DB::beginTransaction();
+        try {
+            $stock = Stock::findOrFail($id);
+
+            if ($stock->type !== 'damage') {
+                return redirect()->back()->with('error', 'Only damaged stock can be restored.');
+            }
+
+            // Update Stock entry status
+            $stock->type = 'damage_restored';
+            $stock->save();
+
+            // Restore to Sellable Inventory
+            $product = Product::findOrFail($stock->product_id);
+            
+            if ($stock->product_size_id) {
+                $productSize = ProductSize::find($stock->product_size_id);
+                if ($productSize) {
+                    $productSize->stock += abs($stock->quantity);
+                    $productSize->save();
+                }
+            }
+
+            if ($product->sizes()->count() > 0) {
+                 $product->pro_qty = $product->sizes()->sum('stock');
+            } else {
+                 $product->pro_qty += abs($stock->quantity);
+            }
+            $product->save();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Stock restored to inventory successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
 }
