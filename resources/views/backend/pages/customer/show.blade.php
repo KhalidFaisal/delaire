@@ -87,7 +87,7 @@
                                     <tbody>
                                         @forelse($customer->orders as $order)
                                         <tr>
-                                            <td>#{{ $order->id }}</td>
+                                            <td>#{{ $order->order_number }}</td>
                                             <td>{{ $order->created_at->format('d M Y') }}</td>
                                             <td>৳{{ number_format($order->total, 2) }}</td>
                                             <td><span class="badge bg-secondary">{{ $order->status }}</span></td>
@@ -136,7 +136,7 @@
                                     @forelse($customer->returns as $return)
                                     <tr>
                                         <td>#{{ $return->id }}</td>
-                                        <td>{{ $item->product->pro_title ?? 'Unknown' }}</td> <!-- Assuming product relation exists on return -->
+                                        <td>{{ $return->product->pro_title ?? 'Unknown' }}</td> <!-- Assuming product relation exists on return -->
                                         <td>{{ Str::limit($return->reason, 20) }}</td>
                                         <td><span class="badge bg-warning">{{ $return->status }}</span></td>
                                     </tr>
