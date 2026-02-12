@@ -116,6 +116,15 @@
                     <li><a href="{{route('admin.manage.index')}}"><i class="fa fa-user-plus"></i> Manage Admin</a></li>
                   </ul>
             </li>
+            
+            @if(auth('admin')->user()->hasRole('super_admin'))
+            <li class="dropdown">
+                  <a class="nav-link menu-title link-nav" href="{{ route('admin.customers.index') }}">
+                      <i class="fa fa-users"></i>
+                      <span style="margin-left: 5px;">Manage Customers</span>
+                  </a>
+            </li>
+            @endif
              <!-- banner Area Start-->
             
 

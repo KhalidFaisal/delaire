@@ -66,10 +66,10 @@
             <div class="text-center mb-3 text-muted">or</div>
 
             <!-- Google Login -->
-           <button type="button" class="btn btn-google w-100 d-flex align-items-center justify-content-center">
+           <a href="{{ route('auth.google') }}" class="btn btn-google w-100 d-flex align-items-center justify-content-center">
                 <i class="fab fa-google me-2"></i>
                 <span>Login with Google</span>
-            </button>
+            </a>
 
             <div class="text-center mt-3">
                 <a href="{{route('user_register')}}">Don't have an account? Sign Up</a>
@@ -84,12 +84,4 @@
         var btn = this.querySelector('button[type="submit"]');
         if (btn) { btn.disabled = true; btn.textContent = 'Logging in...'; }
     });
-
-    // Google Login button (wire to your OAuth route when ready)
-    var googleBtn = document.querySelector('button.btn-google');
-    if (googleBtn) {
-        googleBtn.addEventListener('click', function() {
-            window.location.href = '/auth/google';
-        });
-    }
 </script>

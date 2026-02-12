@@ -28,8 +28,10 @@ class OtpMail extends Mailable
 
     public function content(): Content
     {
+        $portfolio = \App\Models\Portfolio::first();
         return new Content(
             view: 'emails.otp',
+            with: ['portfolio' => $portfolio],
         );
     }
 }

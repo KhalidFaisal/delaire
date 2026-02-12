@@ -93,13 +93,7 @@
                     <i class="fas fa-shield-alt text-primary" style="font-size: 2.5rem;"></i>
                 </div>
                 <h3>Verify your account</h3>
-                <p class="text-muted mb-0">We sent a 6-digit code to your email. Enter it below.</p>
-                @if(config('app.debug') && session('otp'))
-                    <div class="alert alert-info mt-3 mb-0">
-                        <small class="d-block text-muted mb-1">DEV MODE: OTP Preview</small>
-                        <span class="h4 font-monospace">{{ session('otp') }}</span>
-                    </div>
-                @endif
+
             </div>
 
             @if(session('error'))

@@ -62,6 +62,10 @@ require __DIR__.'/auth.php';
 
 // User Auth Routes (Accessible to guests)
 Route::middleware('guest')->group(function () {
+    // Google Auth Routes
+    Route::get('/auth/google', [App\Http\Controllers\Auth\GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleLoginController::class, 'handleGoogleCallback']);
+
     Route::get('/user-login', function () {
         return view('main_view.pages.user_login');
     })->name('user_login');
@@ -355,6 +359,12 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
         Route::delete('/manage-admins/{id}', [\App\Http\Controllers\Backend\AdminManagementController::class, 'destroy'])
              ->middleware('role:super_admin,admin')
              ->name('admin.manage.destroy');
+
+        // Customer Management (Super Admin only)
+        Route::middleware(['role:super_admin'])->group(function () {
+            Route::get('/manage-customers', [\App\Http\Controllers\Backend\CustomerController::class, 'index'])->name('admin.customers.index');
+            Route::get('/manage-customers/{id}', [\App\Http\Controllers\Backend\CustomerController::class, 'show'])->name('admin.customers.show');
+        });
     });
 
     Route::post('/items/filter', [ProductController::class,'filterProduct']);
