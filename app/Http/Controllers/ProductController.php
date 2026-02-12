@@ -25,6 +25,10 @@ class ProductController extends Controller
         // $product->pro_datasheet = $request->pro_datasheet; // Deprecated or mapped to size chart if needed, but we have a dedicated field now
         $product->pro_desc = $request->pro_desc;
         $product->pro_short_desc = $request->pro_short_desc;
+        // SEO Fields
+        $product->meta_title = $request->meta_title;
+        $product->meta_description = $request->meta_description;
+        $product->meta_keywords = $request->meta_keywords;
 
 
         // Upload Images
@@ -164,6 +168,10 @@ class ProductController extends Controller
         $product->pro_waranty = $request->pro_waranty;
         $product->pro_desc = $request->pro_desc;
         $product->pro_short_desc = $request->pro_short_desc;
+        // SEO Fields
+        $product->meta_title = $request->meta_title;
+        $product->meta_description = $request->meta_description;
+        $product->meta_keywords = $request->meta_keywords;
 
 
         // Upload Images
@@ -248,14 +256,14 @@ class ProductController extends Controller
             'Content-Disposition' => 'attachment; filename="product_upload_demo.csv"',
         ];
 
-        $columns = ['Title', 'MainCategory_ID', 'SubCategory_ID', 'Brand_ID', 'Model', 'Price', 'SpecialPrice', 'Stock_Qty', 'Warranty', 'Description', 'ShortDescription'];
+        $columns = ['Title', 'MainCategory_ID', 'SubCategory_ID', 'Brand_ID', 'Model', 'Price', 'SpecialPrice', 'Stock_Qty', 'Warranty', 'Description', 'ShortDescription', 'Meta Title', 'Meta Description', 'Meta Keywords'];
 
         $callback = function() use ($columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
             
             // Example row
-            fputcsv($file, ['Sample Product', '1', '1', '1', 'Model-X', '1000', '900', '10', '1 Year', 'Description here', 'Short desc']);
+            fputcsv($file, ['Sample Product', '1', '1', '1', 'Model-X', '1000', '900', '10', '1 Year', 'Description here', 'Short desc', 'SEO Title', 'SEO Desc', 'SEO Keywords']);
             
             fclose($file);
         };
@@ -276,7 +284,7 @@ class ProductController extends Controller
         fgetcsv($fileHandle);
 
         while (($row = fgetcsv($fileHandle)) !== false) {
-            // Mapping: 0:Title, 1:MainCat, 2:SubCat, 3:Brand, 4:Model, 5:Price, 6:SPrice, 7:Qty, 8:Warranty, 9:Desc, 10:ShortDesc
+            // Mapping: 0:Title, 1:MainCat, 2:SubCat, 3:Brand, 4:Model, 5:Price, 6:SPrice, 7:Qty, 8:Warranty, 9:Desc, 10:ShortDesc, 11:MetaTitle, 12:MetaDesc, 13:MetaKeywords
             if(count($row) < 11) continue; // Skip invalid rows
 
             Product::create([
@@ -291,6 +299,9 @@ class ProductController extends Controller
                 'pro_waranty' => $row[8],
                 'pro_desc' => $row[9],
                 'pro_short_desc' => $row[10],
+                'meta_title' => $row[11] ?? null,
+                'meta_description' => $row[12] ?? null,
+                'meta_keywords' => $row[13] ?? null,
                 'pro_img1' => 'default.jpg' // Default image or placeholder
             ]);
         }
@@ -307,7 +318,12 @@ class ProductController extends Controller
             return response()->json([]);
         }
 
-        $products = Product::with('sizes')->where('pro_title', 'LIKE', "%{$query}%")
+        $products = Product::where(function($q) use ($query) {
+                                $q->where('pro_title', 'LIKE', "%{$query}%")
+                                  ->orWhere('meta_keywords', 'LIKE', "%{$query}%")
+                                  ->orWhere('pro_short_desc', 'LIKE', "%{$query}%")
+                                  ->orWhere('pro_desc', 'LIKE', "%{$query}%");
+                            })
                            ->select('id', 'pro_title', 'pro_img1', 'pro_price', 'pro_sprice', 'pro_qty')
                            ->take(8)
                            ->get();
@@ -318,13 +334,8 @@ class ProductController extends Controller
                 'title' => $product->pro_title,
                 'image' => asset('uploads/' . $product->pro_img1),
                 'price' => $product->pro_sprice ?: $product->pro_price,
-                'sizes' => $product->sizes->map(function($size) {
-                    return [
-                        'size' => $size->size,
-                        'stock' => $size->stock
-                    ];
-                }),
-                'stock' => $product->sizes->count() > 0 ? $product->sizes->sum('stock') : $product->pro_qty,
+                // 'sizes' => ..., // Sizes not strictly needed for search suggestion preview
+                'qty' => $product->pro_qty, // Use pro_qty for simpler stock check
                 'url' => route('product.show', $product->id)
             ];
         });
@@ -391,6 +402,12 @@ class ProductController extends Controller
             ? \Illuminate\Support\Facades\Auth::user()->wishlists()->pluck('product_id')->toArray() 
             : [];
 
-        return view('main_view.pages.proSearch', compact('products', 'wishlistProductIds'));
+        // 5. SEO Data (Category-based)
+        $category = null;
+        if ($request->has('pro_category')) {
+            $category = Procategory::find($request->query('pro_category'));
+        }
+
+        return view('main_view.pages.proSearch', compact('products', 'wishlistProductIds', 'category'));
     }
 }

@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="en" class="no-js">
 <head>
-    <title>{{ $product->pro_title }} | {{ $portfolio->company_name ?? 'Pinkush' }}</title>
+    <title>{{ $product->meta_title ?? $product->pro_title }} | {{ $portfolio->company_name ?? 'Pinkush' }}</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="{{ $product->pro_desc }}">
+    <meta name="description" content="{{ $product->meta_description ?? Str::limit(strip_tags($product->pro_desc), 160) }}">
+    <meta name="keywords" content="{{ $product->meta_keywords ?? '' }}">
     <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
     @include('main_view.include.css')
     <style>

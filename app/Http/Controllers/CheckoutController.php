@@ -115,10 +115,39 @@ class CheckoutController extends Controller
                         'price' => $item['price'],
                         'size' => $item['size'] ?? null
                     ]);
+
+                     // Low Level Stock Notification
+                     if ($product->pro_qty <= 5) {
+                        try {
+                            $admins = \App\Models\Admin::all();
+                             \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\AdminNotification([
+                                'type' => 'stock',
+                                'message' => 'Low Stock: ' . \Illuminate\Support\Str::limit($product->pro_name, 20) . ' (' . $product->pro_qty . ' left)',
+                                'link' => route('edit.product', $product->id),
+                                'created_at' => now()
+                            ]));
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error('Stock Notification Error: ' . $e->getMessage());
+                        }
+                     }
                 }
             }
 
             DB::commit();
+
+            // Notify Admins
+            try {
+                $admins = \App\Models\Admin::all();
+                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\AdminNotification([
+                    'type' => 'order',
+                    'message' => 'New Order Placed: ' . $order->order_number,
+                    'link' => route('admin.orders.show', $order->id),
+                    'created_at' => now()
+                ]));
+            } catch (\Exception $e) {
+                // Log error but don't fail the order
+                \Illuminate\Support\Facades\Log::error('Notification Error: ' . $e->getMessage());
+            }
 
             return redirect()->route('user.orders')->with([
                 'success' => 'Order placed successfully!',

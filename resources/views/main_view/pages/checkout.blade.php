@@ -87,7 +87,7 @@
                     <div class="row">
                         <!-- Left Column: Shipping & Payment -->
                         <div class="col-lg-8 col-md-12">
-                            <form id="checkoutForm" method="POST" action="{{ route('checkout.store') }}">
+                            <form id="checkout-form" method="POST" action="{{ route('checkout.store') }}">
                                 @csrf
                                 <input type="hidden" name="cart_data" id="cart-data">
                                 <input type="hidden" name="promo_code" id="applied-promo-code">
@@ -98,6 +98,16 @@
                                     
                                     @if(session('error'))
                                         <div class="alert alert-danger mb-4">{{ session('error') }}</div>
+                                    @endif
+
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
                                     @endif
 
                                     <div class="mb-4">
@@ -422,7 +432,12 @@
                         const confirmBtn = document.getElementById('confirm-order-btn');
                         if(confirmBtn) {
                             confirmBtn.addEventListener('click', function() {
-                                document.getElementById('checkout-form').submit();
+                                const form = document.getElementById('checkout-form');
+                                if (form.checkValidity()) {
+                                    form.submit();
+                                } else {
+                                    form.reportValidity();
+                                }
                             });
                         }
                     }, 0);

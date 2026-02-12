@@ -18,6 +18,9 @@ use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\FeatureCategoryController;
 use App\Http\Controllers\Backend\PortfolioController;
 use App\Http\Controllers\Backend\TestimonialController;
+use App\Http\Controllers\SitemapController;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 Route::get('/', function () {
     $featureCategories = App\Models\FeatureCategory::orderBy('order')->with('subcategory')->get();
@@ -48,9 +51,15 @@ Route::get('/Products/Search', [ProductController::class, 'search'])->name('sear
 
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    if (Auth::guard('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    } elseif (Auth::guard('web')->check()) {
+        return redirect()->route('user.dashboard');
+    } else {
+        return redirect()->route('login');
+    }
+});
 
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -84,11 +93,18 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::middleware('auth:admin')->group(function () {
+Route::middleware('auth:admin')->prefix('admin')->group(function () {
    
 
 
-    Route::get('/dashboard', [\App\Http\Controllers\Backend\AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Backend\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+    // Notification Routes
+    Route::get('/notifications/get', [\App\Http\Controllers\Backend\NotificationController::class, 'index'])->name('admin.notifications.get');
+    Route::get('/notifications/unread-count', [\App\Http\Controllers\Backend\NotificationController::class, 'unreadCount'])->name('admin.notifications.count');
+    Route::post('/notifications/read', [\App\Http\Controllers\Backend\NotificationController::class, 'markAsRead'])->name('admin.notifications.read');
+    Route::get('/notifications/all', [\App\Http\Controllers\Backend\NotificationController::class, 'viewAll'])->name('admin.notifications.all');
+
     //Manage product category start here 
 
     Route::get('/product/all/Categories', function () {
@@ -140,6 +156,8 @@ Route::middleware('auth:admin')->group(function () {
 
   //product Category route Start
   Route::post('product/create/category', [ProCatController::class, 'createProCategory'])->name('create.proCategory');
+  Route::get('/product/category/edit/{id}', [ProCatController::class, 'editProCat'])->name('edit.proCat');
+  Route::post('/product/category/update/{id}', [ProCatController::class, 'updateProCat'])->name('update.proCat');
   
   
   //product Category route End
@@ -205,8 +223,19 @@ Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::class, 'applyPromo'])->name('checkout.promo');
 
-    //blog route
-    Route::middleware('auth:admin')->group(function () {
+Route::group([], function () {
+    Route::get('/orders/{id}', function ($id) {
+        return redirect()->route('admin.orders.show', $id);
+    });
+    Route::get('/return-requests', function () {
+        return redirect()->route('admin.returns.index');
+    });
+    Route::get('/product/edit/{id}', function ($id) {
+        return redirect()->route('edit.product', $id);
+    });
+});
+
+Route::middleware('auth:admin')->prefix('admin')->group(function () {
                 Route::get('/blog', function () {
                     return view('backend.pages.blog.allBlog');
                 })->name('all.blog');
@@ -296,7 +325,7 @@ Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::c
     Route::get('/promo-codes/status/{id}', [App\Http\Controllers\Backend\PromoCodeController::class, 'updateStatus'])->name('promo.status');
     
     // Order Management Routes
-    Route::get('/product/ajax-search', [\App\Http\Controllers\ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
+    // Route::get('/product/ajax-search', [\App\Http\Controllers\ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
     Route::get('/orders/create', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'create'])->name('admin.orders.create');
     Route::post('/orders/store', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'store'])->name('admin.orders.store');
 

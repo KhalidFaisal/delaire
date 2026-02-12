@@ -462,6 +462,7 @@
                 </div>
 
 <style>
+/* Using Bootstrap list-group styles to match Admin Panel Search */
 .search-results {
     position: absolute;
     top: 100%;
@@ -474,36 +475,7 @@
     overflow-y: auto;
     display: none;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border-radius: 0 0 8px 8px;
-}
-.search-result-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    transition: background 0.2s;
-    text-decoration: none;
-    color: inherit;
-}
-.search-result-item:hover {
-    background: #f9f9f9;
-}
-.search-result-item img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    margin-right: 15px;
-    border-radius: 4px;
-}
-.search-result-info h6 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-.search-result-info span {
-    font-size: 12px;
-    color: #888;
+    border-radius: 0 0 4px 4px;
 }
 </style>
 
@@ -511,18 +483,23 @@
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
+    const searchForm = searchInput.closest('form');
     let timeoutId;
 
     if(searchInput) {
         searchInput.addEventListener('input', function() {
             clearTimeout(timeoutId);
-            const query = this.value;
+            const query = this.value.trim();
 
             if (query.length < 2) {
                 searchResults.style.display = 'none';
                 searchResults.innerHTML = '';
                 return;
             }
+
+            // Show loading
+            searchResults.style.display = 'block';
+            searchResults.innerHTML = '<div class="p-3 text-center text-muted"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...</div>';
 
             timeoutId = setTimeout(function() {
                 fetch(`{{ route('product.search.ajax') }}?query=${encodeURIComponent(query)}`)
@@ -533,23 +510,37 @@ document.addEventListener('DOMContentLoaded', function() {
                             data.forEach(product => {
                                 const item = document.createElement('a');
                                 item.href = product.url;
-                                item.className = 'search-result-item';
+                                // Using bootstrap list-group classes to match admin style
+                                item.className = 'list-group-item list-group-item-action border-0 border-bottom';
                                 item.innerHTML = `
-                                    <img src="${product.image}" alt="${product.title}">
-                                    <div class="search-result-info">
-                                        <h6>${product.title}</h6>
-                                        <span>$${product.price}</span>
+                                    <div class="d-flex align-items-center">
+                                        <img src="${product.image}" class="me-3 rounded" width="40" height="40" style="object-fit:cover;">
+                                        <div>
+                                            <h6 class="mb-0 text-dark">${product.title}</h6>
+                                            <small class="text-muted">৳ ${product.price}</small>
+                                        </div>
                                     </div>
                                 `;
                                 searchResults.appendChild(item);
                             });
+                            
+                            // Add "View all results" link
+                            const viewAll = document.createElement('a');
+                            viewAll.href = `{{ route('search.product') }}?query=${encodeURIComponent(query)}`;
+                            viewAll.className = 'list-group-item list-group-item-action text-center fw-bold text-primary bg-light border-0';
+                            viewAll.innerHTML = `View all results for "${query}"`;
+                            searchResults.appendChild(viewAll);
+
                             searchResults.style.display = 'block';
                         } else {
-                            searchResults.innerHTML = '<div class="p-2 text-center text-muted">No results found</div>';
+                            searchResults.innerHTML = '<div class="p-2 text-center text-muted">No products found</div>';
                             searchResults.style.display = 'block';
                         }
                     })
-                    .catch(error => console.error('Error fetching search results:', error));
+                    .catch(error => {
+                        console.error('Error fetching search results:', error);
+                        searchResults.innerHTML = '<div class="p-2 text-center text-danger">Error fetching results</div>';
+                    });
             }, 300);
         });
 
@@ -559,6 +550,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 searchResults.style.display = 'none';
             }
         });
+
+        // Prevent form submit on enter if results are open to let user choose? 
+        // Actually, Enter should submit the standard search which is fine.
     }
 });
 </script>

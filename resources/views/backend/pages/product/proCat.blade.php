@@ -25,6 +25,22 @@
           <input type="text" class="form-control" id="pro_category" name="pro_category" placeholder="Enter the Product Category" required>
         </div>
        
+        <!-- SEO Section -->
+        <br><h5 class="text-primary">SEO Information</h5><hr>
+        <div class="form-group">
+          <label for="meta_title">Meta Title:</label>
+          <input type="text" class="form-control" id="meta_title" name="meta_title" placeholder="Meta Title">
+        </div>
+        <div class="form-group">
+          <label for="meta_description">Meta Description:</label>
+          <textarea class="form-control" id="meta_description" name="meta_description" placeholder="Meta Description" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="meta_keywords">Meta Keywords:</label>
+          <textarea class="form-control" id="meta_keywords" name="meta_keywords" placeholder="Meta Keywords (comma separated)" rows="2"></textarea>
+        </div>
+        <br>
+       
         
 
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -64,9 +80,9 @@
   
           <td>
          
-          <!-- <a href="">
-              <button class="btn btn-primary btn-sm">Edit</button>
-          </a> -->
+          <a href="{{ route('edit.proCat', $category->id) }}">
+              <button class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></button>
+          </a>
          
           <form method="post" action="{{ route('destroy.proCat') }}">
             @csrf

@@ -54,6 +54,7 @@
     {{-- <script src="{{ asset('backend/assets/js/theme-customizer/customizer.js') }}"></script> --}}
     <!-- login js-->
     <!-- Plugin used-->
+    <script src="{{ asset('backend/assets/js/admin_notifications.js') }}"></script>
 
     @if (isset($successMessage))
     <script>

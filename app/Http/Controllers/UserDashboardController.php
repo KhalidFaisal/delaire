@@ -203,7 +203,20 @@ class UserDashboardController extends Controller
             $data['return_image'] = $path;
         }
 
-        Auth::user()->returns()->create($data);
+        $returnRequest = Auth::user()->returns()->create($data);
+
+        // Notify Admins
+        try {
+            $admins = \App\Models\Admin::all();
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\AdminNotification([
+                'type' => 'return',
+                'message' => 'New Return Request: Order #' . $order->order_number,
+                'link' => route('admin.returns.index'), // or specific return detail if available
+                'created_at' => now()
+            ]));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Return Notification Error: ' . $e->getMessage());
+        }
 
         return redirect()->route('user.returns')->with('success', 'Return request submitted.');
     }
@@ -281,10 +294,25 @@ class UserDashboardController extends Controller
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string',
         ]);
-        Auth::user()->reviews()->updateOrCreate(
+        $review = Auth::user()->reviews()->updateOrCreate(
             ['product_id' => $request->product_id],
             ['rating' => $request->rating, 'comment' => $request->comment]
         );
+
+        // Notify Admins
+        try {
+            $admins = \App\Models\Admin::all();
+            $productName = \App\Models\Product::find($request->product_id)->pro_name ?? 'Product';
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\AdminNotification([
+                'type' => 'review',
+                'message' => 'New Review for ' . Str::limit($productName, 20),
+                'link' => route('manage.reviews'),
+                'created_at' => now()
+            ]));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Review Notification Error: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Review saved.');
     }
 

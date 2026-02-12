@@ -12,6 +12,10 @@ class proCatController extends Controller
     public function createProCategory(Request $request){
         $category = new Procategory();
         $category->proCat_name = $request->pro_category;
+        // SEO Fields
+        $category->meta_title = $request->meta_title;
+        $category->meta_description = $request->meta_description;
+        $category->meta_keywords = $request->meta_keywords;
         
         
        $category->save();
@@ -34,4 +38,23 @@ class proCatController extends Controller
             }
 
             
+            public function editProCat($id)
+            {
+                $category = Procategory::findOrFail($id);
+                return view('backend.pages.product.editProCat', compact('category'));
+            }
+
+            public function updateProCat(Request $request, $id)
+            {
+                $category = Procategory::findOrFail($id);
+                $category->proCat_name = $request->pro_category;
+                
+                // SEO Fields
+                $category->meta_title = $request->meta_title;
+                $category->meta_description = $request->meta_description;
+                $category->meta_keywords = $request->meta_keywords;
+
+                $category->save();
+                return redirect()->route('manage.procat')->with('success', 'Category Updated successfully.');
+            }
 }

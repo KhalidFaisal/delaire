@@ -19,7 +19,13 @@ class BlogController extends Controller
         $blog->blog_image = $request->blog_image;
         $blog->blog_Cat = $request->blog_category;
         $blog->blog_key = $request->blog_key;
+        $blog->blog_key = $request->blog_key;
         $blog->blog_description = $request->blog_description;
+
+        // SEO Fields
+        $blog->meta_title = $request->meta_title;
+        $blog->meta_description = $request->meta_description;
+        $blog->meta_keywords = $request->meta_keywords;
         if ($request->hasFile('blog_image')) {
             $image = $request->file('blog_image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
@@ -45,6 +51,9 @@ class BlogController extends Controller
         'blog_key' => 'nullable',      // Add validation for blog_key
         'blog_image' => 'nullable',
         'blog_description' => 'nullable',
+        'meta_title' => 'nullable',
+        'meta_description' => 'nullable',
+        'meta_keywords' => 'nullable',
     ]);
 
     // Retrieve the existing blog post
@@ -62,6 +71,17 @@ class BlogController extends Controller
     }
     if (isset($validatedData['blog_description'])) {
         $blog->blog_description = $validatedData['blog_description'];
+    }
+
+    // SEO Fields Update
+    if (isset($validatedData['meta_title'])) {
+        $blog->meta_title = $validatedData['meta_title'];
+    }
+    if (isset($validatedData['meta_description'])) {
+        $blog->meta_description = $validatedData['meta_description'];
+    }
+    if (isset($validatedData['meta_keywords'])) {
+        $blog->meta_keywords = $validatedData['meta_keywords'];
     }
 
     if ($request->hasFile('blog_image')) {

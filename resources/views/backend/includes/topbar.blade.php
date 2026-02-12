@@ -6,10 +6,10 @@
                 $portfolio = App\Models\Portfolio::first();
                 $companyName = $portfolio ? $portfolio->company_name : config('app.name');
             @endphp
-            <div class="logo-wrapper"><a href="{{ route('dashboard') }}">
+            <div class="logo-wrapper"><a href="{{ route('admin.dashboard') }}">
                     <h4>{{ $companyName }}</h4>
                 </a></div>
-            <div class="dark-logo-wrapper "><a href="{{ route('dashboard') }}">
+            <div class="dark-logo-wrapper "><a href="{{ route('admin.dashboard') }}">
                     <h4>{{ $companyName }}</h4>
                 </a></div>
             <div class="toggle-sidebar"><i class="status_toggle middle" data-feather="align-center"
@@ -28,6 +28,23 @@
                             data-feather="maximize"></i></a></li>
                 <li>
                     <div class="mode"><i class="fa fa-moon-o"></i></div>
+                </li>
+                <li class="onhover-dropdown">
+                    <div class="notification-box">
+                        <i data-feather="bell"></i><span class="badge rounded-pill badge-secondary" id="notification-count"></span>
+                    </div>
+                    <ul class="notification-dropdown onhover-show-div">
+                        <li>
+                            <i data-feather="bell"></i>
+                            <h6 class="f-18 mb-0">Notifications</h6>
+                        </li>
+                        <div id="notification-items" style="max-height: 300px; overflow-y: auto;">
+                            <!-- Items injected via JS -->
+                        </div>
+                        <li class="p-0 text-center border-top-0">
+                            <a class="btn btn-primary btn-sm btn-block" href="{{ route('admin.notifications.all') }}">View All</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="onhover-dropdown">
                     <div class="bookmark-box">

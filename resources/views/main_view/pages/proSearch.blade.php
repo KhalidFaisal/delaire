@@ -4,12 +4,27 @@
 
 
 <head>
-<title>{{ $portfolio->company_name ?? 'Pinkush' }}</title>
+    @php
+        $pageTitle = $portfolio->company_name ?? 'Pinkush';
+        $metaDesc = "Shop the latest collection at " . ($portfolio->company_name ?? 'Pinkush');
+        $metaKeywords = "";
+
+        if(isset($category) && $category) {
+            $pageTitle = ($category->meta_title ?? $category->proCat_name) . " | " . ($portfolio->company_name ?? 'Pinkush');
+            $metaDesc = $category->meta_description ?? ("Browse our " . $category->proCat_name . " collection.");
+            $metaKeywords = $category->meta_keywords ?? "";
+        } elseif(request()->has('query')) {
+             $pageTitle = "Search Results for \"" . request()->query('query') . "\" | " . ($portfolio->company_name ?? 'Pinkush');
+        }
+    @endphp
+
+    <title>{{ $pageTitle }}</title>
     <!-- meta tags -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="meta description">
+    <meta name="description" content="{{ $metaDesc }}">
+    <meta name="keywords" content="{{ $metaKeywords }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
 
@@ -1308,5 +1323,5 @@
 </body>
 
 
-<!-- Mirrored from spreethemesprevious.github.io/bisum/html/collection-left-sidebar.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 30 Sep 2023 04:01:24 GMT -->
+
 </html>

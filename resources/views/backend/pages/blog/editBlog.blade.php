@@ -60,6 +60,22 @@ $blogName = App\Models\Blog::find($id);
             </div>
 
 
+            <!-- SEO Section -->
+            <br><h5 class="text-primary">SEO Information</h5><hr>
+            <div class="form-group">
+                <label for="meta_title">Meta Title:</label>
+                <input type="text" class="form-control" id="meta_title" name="meta_title" placeholder="Meta Title" value="{{ $blogName->meta_title }}">
+            </div>
+            <div class="form-group">
+                <label for="meta_description">Meta Description:</label>
+                <textarea class="form-control" id="meta_description" name="meta_description" placeholder="Meta Description" rows="2">{{ $blogName->meta_description }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="meta_keywords">Meta Keywords:</label>
+                <textarea class="form-control" id="meta_keywords" name="meta_keywords" placeholder="Meta Keywords (comma separated)" rows="2">{{ $blogName->meta_keywords }}</textarea>
+            </div>
+            <br>
+
             <div class="form-group">
                 <label for="blogDescription">Blog Content:</label>
                 <textarea class="form-control" id="blog_description" name="blog_description" placeholder="Write your blog content here">{{ $blogName->blog_description }}</textarea>

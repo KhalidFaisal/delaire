@@ -7,9 +7,11 @@
     <meta name="author" content="About Us">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="{{ $blog->meta_description ?? Str::limit(strip_tags($blog->blog_description), 160) }}">
+    <meta name="keywords" content="{{ $blog->meta_keywords ?? '' }}">
     <!-- title -->
     <title>
-        {{ $blog->blog_title }} - Blog
+        {{ $blog->meta_title ?? $blog->blog_title }} - Blog
     </title>
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
