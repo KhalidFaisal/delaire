@@ -31,11 +31,44 @@ class AdminDashboardController extends Controller
         $totalUsers = User::count();
 
         // 5. Low Stock Products (< 10)
-        $lowStockProducts = Product::where('pro_qty', '<', 10)
-            ->select('id', 'pro_title', 'pro_img1', 'pro_qty')
-            ->orderBy('pro_qty', 'asc')
+        // 5. Low Stock Products (< 5)
+        $lowStockThreshold = 5;
+
+        // Get products with sizes that are low stock
+        $lowStockSizes = \App\Models\ProductSize::where('stock', '<', $lowStockThreshold)
+            ->with(['product' => function($q) {
+                $q->select('id', 'pro_title', 'pro_img1');
+            }])
             ->limit(5)
-            ->get();
+            ->get()
+            ->map(function($size) {
+                return (object) [
+                    'id' => $size->product->id,
+                    'pro_title' => $size->product->pro_title,
+                    'pro_img1' => $size->product->pro_img1,
+                    'stock' => $size->stock,
+                    'size' => $size->size
+                ];
+            });
+
+        // Get products without sizes that are low stock
+        $lowStockNoSizes = Product::doesntHave('sizes')
+            ->where('pro_qty', '<', $lowStockThreshold)
+            ->select('id', 'pro_title', 'pro_img1', 'pro_qty')
+            ->limit(5)
+            ->get()
+            ->map(function($product) {
+                return (object) [
+                    'id' => $product->id,
+                    'pro_title' => $product->pro_title,
+                    'pro_img1' => $product->pro_img1,
+                    'stock' => $product->pro_qty,
+                    'size' => null
+                ];
+            });
+
+        // Merge and sort
+        $lowStockProducts = $lowStockSizes->merge($lowStockNoSizes)->sortBy('stock')->take(5);
 
         // 6. Top Selling Products
         // Group by product_id in OrderItem, sum qty

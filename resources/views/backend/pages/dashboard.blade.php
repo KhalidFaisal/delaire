@@ -108,14 +108,23 @@
                                     @foreach ($lowStockProducts as $product)
                                         <tr>
                                             <td class="d-flex align-items-center">
+                                                @if($product->pro_img1)
                                                 <img src="{{ asset('uploads/' .$product->pro_img1) }}" alt=""
                                                     class="img-fluid img-40 rounded-circle me-2">
+                                                @else
+                                                <div class="img-fluid img-40 rounded-circle me-2 bg-light d-flex align-items-center justify-content-center">
+                                                    <i data-feather="image"></i>
+                                                </div>
+                                                @endif
                                                 <div class="flex-grow-1">
                                                     <h6 class="f-w-600 mb-0">{{ Str::limit($product->pro_title, 20) }}</h6>
+                                                    @if($product->size)
+                                                        <small class="text-muted">Size: {{ $product->size }}</small>
+                                                    @endif
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge badge-danger">{{ $product->pro_qty }}</span>
+                                                <span class="badge badge-danger">{{ $product->stock }}</span>
                                             </td>
                                         </tr>
                                     @endforeach

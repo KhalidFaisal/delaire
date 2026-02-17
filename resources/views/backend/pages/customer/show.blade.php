@@ -7,7 +7,7 @@
             <div class="col-sm-6">
                 <h3>Customer Details</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('admin.customers.index') }}">Customers</a></li>
                     <li class="breadcrumb-item active">{{ $customer->name }}</li>
                 </ol>

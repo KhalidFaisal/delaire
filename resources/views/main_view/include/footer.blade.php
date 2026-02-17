@@ -128,7 +128,7 @@
         <div class="footer-bottom-inner d-flex flex-column justify-content-center align-items-center text-center">
             <p style="color:var(--primary-color)" class="copyright footer-text mb-0">
                 ©<span class="current-year"></span> {{ optional($portfolio)->company_name }} Designed by
-                <a style="color:var(--secondary-color)">Byte Engineers</a>
+                <a href="https://byteengrs.com/" target="_blank" style="color:var(--secondary-color)">Byte Engineers</a>
             </p>
         </div>
     </div>

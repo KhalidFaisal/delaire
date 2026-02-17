@@ -30,7 +30,7 @@
             <div class="col-sm-6">
                 <h3>Create New Order</h3>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item">Orders</li>
                     <li class="breadcrumb-item active">Create Order</li>
                 </ol>

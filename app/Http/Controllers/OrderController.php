@@ -77,6 +77,30 @@ class OrderController extends Controller
         ]);
 
         $order = UserOrder::findOrFail($id);
+        
+        // Check if we are cancelling an active order
+        if ($request->status == 'Cancelled' && $order->status != 'Cancelled') {
+            // Restore Stock
+             foreach($order->items as $item) {
+                $product = $item->product;
+                
+                // Restore Global Stock
+                if($product) {
+                     $product->increment('pro_qty', $item['qty']);
+                }
+    
+                // Restore Size Stock
+                if ($item->size) {
+                    $productSize = \App\Models\ProductSize::where('product_id', $item->product_id)
+                                                          ->where('size', $item->size)
+                                                          ->first();
+                    if ($productSize) {
+                        $productSize->increment('stock', $item['qty']);
+                    }
+                }
+            }
+        }
+
         $order->update(['status' => $request->status]);
 
         return redirect()->route('admin.orders.show', $id)->with('success', 'Order status updated successfully.');

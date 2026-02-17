@@ -318,7 +318,8 @@ class ProductController extends Controller
             return response()->json([]);
         }
 
-        $products = Product::where(function($q) use ($query) {
+        $products = Product::with('sizes')
+                            ->where(function($q) use ($query) {
                                 $q->where('pro_title', 'LIKE', "%{$query}%")
                                   ->orWhere('meta_keywords', 'LIKE', "%{$query}%")
                                   ->orWhere('pro_short_desc', 'LIKE', "%{$query}%")
@@ -334,8 +335,10 @@ class ProductController extends Controller
                 'title' => $product->pro_title,
                 'image' => asset('uploads/' . $product->pro_img1),
                 'price' => $product->pro_sprice ?: $product->pro_price,
-                // 'sizes' => ..., // Sizes not strictly needed for search suggestion preview
-                'qty' => $product->pro_qty, // Use pro_qty for simpler stock check
+                'sizes' => $product->sizes->map(function($s) {
+                    return ['size' => $s->size, 'stock' => $s->stock];
+                }),
+                'qty' => $product->pro_qty,
                 'url' => route('product.show', $product->id)
             ];
         });

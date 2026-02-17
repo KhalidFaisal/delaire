@@ -82,21 +82,21 @@ class UserDashboardController extends Controller
         // Restore stock
         foreach($order->items as $item) {
             $product = $item->product; 
-            // Note: If we had precise size stock tracking, we would restore that too. 
-            // Since we track global stock ($product->pro_qty) and sizes ($product->sizes), 
-            // we should try to restore both if possible.
-            // However, checkout logic only deducted global stock in simple flow (lines 78/88 in CheckoutController).
-            // But complex logic might have been skipped.
-            // Let's look at CheckoutController again.
-            // It did: $product->pro_qty -= $item['qty'];
-            // It did NOT deduct from $product->sizes explicitly in the code I saw earlier?
-            // Actually I didn't verify that part fully. The snippet only showed global deduction.
-            // If I want to be safe, I restore global.
+            
+            // Restore Global Stock
             if($product) {
-                 $product->pro_qty += $item['qty'];
-                 $product->save();
+                 $product->increment('pro_qty', $item['qty']);
             }
-             // If we implement size stock deduction later, we need to restore here too.
+
+            // Restore Size Stock
+            if ($item->size) {
+                $productSize = \App\Models\ProductSize::where('product_id', $item->product_id)
+                                                      ->where('size', $item->size)
+                                                      ->first();
+                if ($productSize) {
+                    $productSize->increment('stock', $item['qty']);
+                }
+            }
         }
 
         return back()->with('success', 'Order cancelled successfully.');

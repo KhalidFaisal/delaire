@@ -24,7 +24,7 @@
                 <div class="card-header pb-0">
                     <h5>All Notifications</h5>
                     <div class="card-header-right">
-                         <button class="btn btn-primary btn-sm" onclick="markAllRead()">Mark All as Read</button>
+                         <button class="btn btn-primary btn-sm" onclick="markAllNotificationsRead()">Mark All as Read</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -79,11 +79,16 @@
 </div>
 
 <script>
-    function markAllRead() {
+    function markAllNotificationsRead() {
         $.post("{{ route('admin.notifications.read') }}", {
             _token: "{{ csrf_token() }}"
-        }, function(){
+        })
+        .done(function() {
             location.reload();
+        })
+        .fail(function(xhr) {
+            console.error('Error marking notifications as read:', xhr);
+            alert('Failed to mark notifications as read. Please try again.');
         });
     }
     function markItemRead(id) {

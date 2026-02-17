@@ -22,6 +22,7 @@
                   </a>
                   <ul class="nav-submenu menu-content">
                     <li><a href="{{ route('admin.inventory.index') }}"><i class="fa fa-list-alt"></i> Inventory</a></li>
+                    <li><a href="{{ route('admin.current.stock') }}"><i class="fa fa-cubes"></i> Current Stock Items</a></li>
                     <li><a href="{{ route('admin.damage.stock') }}"><i class="fa fa-trash"></i> Damage Stock</a></li>
                   </ul>
             </li>

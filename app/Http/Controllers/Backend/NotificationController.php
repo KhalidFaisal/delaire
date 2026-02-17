@@ -31,7 +31,7 @@ class NotificationController extends Controller
                 $notification->markAsRead();
             }
         } else {
-            $user->unreadNotifications->markAsRead();
+            $user->unreadNotifications()->update(['read_at' => now()]);
         }
         return response()->json(['success' => true]);
     }

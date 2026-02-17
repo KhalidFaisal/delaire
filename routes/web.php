@@ -374,6 +374,9 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
         Route::post('/damage-stock/store', [\App\Http\Controllers\Backend\DamageStockController::class, 'store'])->name('admin.damage.store');
         Route::get('/damage-stock/restore/{id}', [\App\Http\Controllers\Backend\DamageStockController::class, 'restore'])->name('admin.damage.restore');
 
+        // Current Stock Management Routes
+        Route::get('/current-stock', [\App\Http\Controllers\Backend\StockController::class, 'index'])->name('admin.current.stock');
+
         // Manage Admins
         Route::get('/manage-admins', [\App\Http\Controllers\Backend\AdminManagementController::class, 'index'])->name('admin.manage.index');
         

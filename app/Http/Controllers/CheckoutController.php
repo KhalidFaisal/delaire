@@ -107,6 +107,17 @@ class CheckoutController extends Controller
                      // Check stock if needed, but for now we just process
                      $product->pro_qty -= $item['qty'];
                      $product->save();
+
+                     // Handle Size Stock Decrement
+                     if (!empty($item['size'])) {
+                         $productSize = \App\Models\ProductSize::where('product_id', $productId)
+                                                               ->where('size', $item['size'])
+                                                               ->first();
+                         if ($productSize) {
+                             $productSize->stock -= $item['qty'];
+                             $productSize->save();
+                         }
+                     }
                      
                      OrderItem::create([
                         'order_id' => $order->id,

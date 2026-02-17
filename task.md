@@ -1,0 +1,29 @@
+# Task List
+
+- [x] Research existing product and inventory structure
+  - [x] Analyze `Product`, `ProductSize`, `Stock` models
+  - [x] Investigate `InventoryController` in `Backend` directory
+  - [x] Check `web.php` routes
+- [x] Implement "Current Stock items" feature
+  - [x] Create `StockController`
+  - [x] Create `index.blade.php` with basic table
+  - [x] Add route and sidebar link
+- [x] Verification & Fixes
+  - [x] Verify data accuracy
+  - [x] Fix "Route [dashboard] not defined"
+  - [x] Fix stock mismatch (decrement logic in Checkout)
+  - [x] Refine calculation (Start = Current + Sold)
+- [x] UI/UX Improvement
+  - [x] Exclude cancelled orders from "Sold" count
+  - [x] Redesign "Current Stock Items" page (Modern Minimalist)
+- [x] Size-wise Low Stock on Dashboard
+  - [x] Modify `AdminDashboardController` logic to include `ProductSize`
+  - [x] Update `dashboard.blade.php` to show size info
+- [x] Stock Restoration on Cancellation
+  - [x] Modify `UserDashboardController` for user cancellation
+  - [x] Modify `OrderController` for admin cancellation
+- [x] Update Domain Link
+  - [x] Replace `byteengineers.me` with `byteengrs.com` in footer files
+- [x] Update Frontend Footer
+  - [x] Ensure Brand Name is dynamic (Verified: uses `company_name` from Portfolio)
+  - [x] update "Byte Engineers" to link to `https://byteengrs.com/`
