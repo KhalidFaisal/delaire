@@ -91,7 +91,7 @@
                                             @if($item->product)
                                                 <div class="d-flex align-items-center">
                                                     @if($item->product->pro_img1)
-                                                    <img src="{{ asset('uploads/'.$item->product->pro_img1) }}" style="width: 30px; height: 30px; object-fit: cover; margin-right: 5px;">
+                                                    <img src="{{ asset('uploads/'.$item->product->pro_img1) }}" style="width: 30px; height: 30px; object-fit: cover; margin-right: 5px;" loading="lazy"  class="lazy-image" >
                                                     @endif
                                                     {{ $item->product->pro_title }}
                                                 </div>

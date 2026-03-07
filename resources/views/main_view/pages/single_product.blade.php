@@ -133,20 +133,20 @@
                     <div class="col-md-6 mb-4">
                         <div class="row">
                             <div class="col-12 mb-3">
-                                <img id="main-product-image" class="img-fluid rounded w-100" src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}">
+                                <img id="main-product-image" class="lazy-image img-fluid rounded w-100" src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}" loading="lazy" >
                             </div>
                             <!-- Thumbnails -->
                             <div class="col-4">
-                                <img class="img-fluid rounded product-gallery-thumb active" src="{{ asset('uploads/'. $product->pro_img1) }}" onclick="updateMainImage(this)" alt="Thumb 1">
+                                <img class="lazy-image img-fluid rounded product-gallery-thumb active" src="{{ asset('uploads/'. $product->pro_img1) }}" onclick="updateMainImage(this)" alt="Thumb 1" loading="lazy" >
                             </div>
                             @if($product->pro_img2)
                             <div class="col-4">
-                                <img class="img-fluid rounded product-gallery-thumb" src="{{ asset('uploads/'. $product->pro_img2) }}" onclick="updateMainImage(this)" alt="Thumb 2">
+                                <img class="lazy-image img-fluid rounded product-gallery-thumb" src="{{ asset('uploads/'. $product->pro_img2) }}" onclick="updateMainImage(this)" alt="Thumb 2" loading="lazy" >
                             </div>
                             @endif
                             @if($product->pro_img3)
                             <div class="col-4">
-                                <img class="img-fluid rounded product-gallery-thumb" src="{{ asset('uploads/'. $product->pro_img3) }}" onclick="updateMainImage(this)" alt="Thumb 3">
+                                <img class="lazy-image img-fluid rounded product-gallery-thumb" src="{{ asset('uploads/'. $product->pro_img3) }}" onclick="updateMainImage(this)" alt="Thumb 3" loading="lazy" >
                             </div>
                             @endif
                         </div>
@@ -261,7 +261,7 @@
                             </li>
                             @if($product->pro_size_chart)
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="size-tab" data-bs-toggle="tab" data-bs-target="#size-chart" type="button" role="tab">Size Chart</button>
+                                <button class="nav-link" id="size-tab" data-bs-toggle="tab" data-bs-target="#size-chart" type="button" role="tab">Chart</button>
                             </li>
                             @endif
                         </ul>
@@ -349,7 +349,7 @@
 
                             @if($product->pro_size_chart)
                             <div class="tab-pane fade" id="size-chart" role="tabpanel">
-                                <img src="{{ asset('uploads/'. $product->pro_size_chart) }}" class="img-fluid rounded" alt="Size Chart">
+                                <img src="{{ asset('uploads/'. $product->pro_size_chart) }}" class="lazy-image img-fluid rounded" alt="Chart" loading="lazy" >
                             </div>
                             @endif
                         </div>
@@ -361,7 +361,7 @@
                     <div class="col-12 mb-4">
                         <h2 class="section-heading primary-color text-center">Related Products</h2>
                     </div>
-                    @foreach($related_products as $r_product)
+                    @forelse($related_products as $r_product)
                         @php
                             $adjusted = $r_product->adjusted_price;
                             $final = $r_product->final_price;
@@ -374,7 +374,7 @@
                         <div class="col-lg-3 col-md-6 col-6 mb-4">
                             <div class="minimalist-card" onclick="window.location='{{ route('product.show', $r_product->id) }}'">
                                 <div class="position-relative product-img-wrapper">
-                                    <img src="{{ asset('uploads/'. $r_product->pro_img1) }}" alt="{{ $r_product->pro_title }}">
+                                    <img src="{{ asset('uploads/'. $r_product->pro_img1) }}" alt="{{ $r_product->pro_title }}" loading="lazy"  class="lazy-image" >
                                     
                                     <div class="position-absolute top-0 end-0 m-3" onclick="event.stopPropagation()">
                                         <div class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" onclick="toggleWishlist(this)" data-product-id="{{ $r_product->id }}">
@@ -407,7 +407,11 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <h5 class="text-muted">No Related Products Found</h5>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </main>

@@ -30,15 +30,15 @@
                     @php
                         $current = $featureCategories->where('order', $i + 1)->first();
                         $heading = match($i) {
-                            0 => 'Slot 1 (Large - Left)',
-                            1 => 'Slot 2 (Small - Top Right)',
-                            2 => 'Slot 3 (Small - Bottom Right)',
+                            0 => 'Slot 1 (Small- Left-top)',
+                            1 => 'Slot 2 (Small - Bottom Left)',
+                            2 => 'Slot 3 (Large- Right)',
                             default => 'Slot ' . ($i + 1)
                         };
                         $sizeRecommended = match($i) {
-                            0 => 'Recommended Size: 600x800px',
+                            0 => 'Recommended Size: 600x390 px',
                             1 => 'Recommended Size: 600x390px',
-                            2 => 'Recommended Size: 600x390px',
+                            2 => 'Recommended Size: 600x800 px',
                             default => ''
                         };
                     @endphp
@@ -61,13 +61,21 @@
 
                             <div class="form-group mb-3">
                                 <label>Banner Image</label>
-                                <input type="file" name="slots[{{ $i }}][banner_image]" class="form-control-file" accept="image/*">
+                                @php
+                                    $cropRatio = match($i) {
+                                        0 => '600/390',
+                                        1 => '600/390',
+                                        2 => '3/4',
+                                        default => ''
+                                    };
+                                @endphp
+                                <input type="file" name="slots[{{ $i }}][banner_image]" class="form-control-file" accept="image/*" data-crop="true" data-crop-ratio="{{ $cropRatio }}">
                             </div>
 
                             @if ($current && $current->banner_image)
                                 <div class="mt-2">
                                     <label>Current Image:</label><br>
-                                    <img src="{{ asset('uploads/' . $current->banner_image) }}" alt="Current Banner" class="img-fluid rounded" style="max-height: 150px;">
+                                    <img src="{{ asset('uploads/' . $current->banner_image) }}" alt="Current Banner" class="lazy-image img-fluid rounded" style="max-height: 150px;" loading="lazy" >
                                 </div>
                             @endif
                         </div>

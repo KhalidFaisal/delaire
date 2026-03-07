@@ -97,7 +97,7 @@
     <main>
         <section class="home-banner-01">
             <div class="position-relative">
-                <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="Blog Banner">
+                <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg" class="lazy-image d-block w-100" style="height: 300px; object-fit: cover;" alt="Blog Banner" loading="lazy" >
                 <div class="position-absolute top-50 start-50 translate-middle text-center">
                     <h1 class="text-white display-4 font-weight-bold">Our Magazine</h1>
                 </div>
@@ -158,7 +158,7 @@
                                         <div class="blog-grid-item">
                                             <div class="blog-grid-img">
                                                 <a href="{{ $link }}" target="{{ $target }}">
-                                                    <img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="{{ $blog->blog_title }}">
+                                                    <img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="{{ $blog->blog_title }}" loading="lazy"  class="lazy-image" >
                                                 </a>
                                             </div>
                                             <div class="blog-gird-info">

@@ -30,8 +30,8 @@
                                             @if($review->product->pro_img1)
                                                 <img src="{{ asset('uploads/' . $review->product->pro_img1) }}" 
                                                      alt="Product" 
-                                                     class="img-fluid rounded me-2" 
-                                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                                     class="lazy-image img-fluid rounded me-2" 
+                                                     style="width: 40px; height: 40px; object-fit: cover;" loading="lazy" >
                                             @endif
                                             <span class="d-block text-truncate" style="max-width: 150px;" title="{{ $review->product->pro_title }}">
                                                 {{ $review->product->pro_title }}

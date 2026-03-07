@@ -20,25 +20,25 @@
                                             "asNavFor": ".qv-thumb-slider"
                                         }'>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/39.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/39.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/38.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/38.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/37.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/37.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/36.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/36.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/34.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/34.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/30.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/30.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="{{asset('main_view/assets/img/products/bags/32.jpg')}}" alt="img">
+                                                <img src="{{asset('main_view/assets/img/products/bags/32.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                         </div>
                                     </div>
@@ -57,37 +57,37 @@
                                         }'>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/39.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/39.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/38.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/38.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/37.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/37.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/36.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/36.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/34.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/34.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/30.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/30.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="{{asset('main_view/assets/img/products/bags/32.jpg')}}" alt="img">
+                                                    <img src="{{asset('main_view/assets/img/products/bags/32.jpg')}}" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                         </div>
@@ -188,9 +188,9 @@
     
                                     <div class="misc d-flex align-items-end justify-content-between mt-4">
                                         <div class="quantity d-flex align-items-center justify-content-between">
-                                            <button class="qty-btn dec-qty"><img src="{{asset('main_view/assets/img/icon/minus.svg')}}" alt="minus"></button>
+                                            <button class="qty-btn dec-qty"><img src="{{asset('main_view/assets/img/icon/minus.svg')}}" alt="minus" loading="lazy"  class="lazy-image" ></button>
                                             <input class="qty-input" type="number" name="qty" value="1" min="0">
-                                            <button class="qty-btn inc-qty"><img src="{{asset('main_view/assets/img/icon/plus.svg')}}" alt="plus"></button>
+                                            <button class="qty-btn inc-qty"><img src="{{asset('main_view/assets/img/icon/plus.svg')}}" alt="plus" loading="lazy"  class="lazy-image" ></button>
                                         </div>
                                         <div class="message-popup d-flex align-items-center">
                                             <span class="message-popup-icon">

@@ -34,30 +34,30 @@ class ProductController extends Controller
         // Upload Images
         if ($request->hasFile('pro_img1')) {
             $image = $request->file('pro_img1');
-            $imageName = time() . '_1.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName);
+            $imageName = time() . '_1.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $product->pro_img1 = $imageName;
         }
 
         if ($request->hasFile('pro_img2')) {
             $image = $request->file('pro_img2');
-            $imageName = time() . '_2.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName);
+            $imageName = time() . '_2.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $product->pro_img2 = $imageName;
         }
 
         if ($request->hasFile('pro_img3')) {
             $image = $request->file('pro_img3');
-            $imageName = time() . '_3.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName);
+            $imageName = time() . '_3.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $product->pro_img3 = $imageName;
         }
 
         // Upload Size Chart
         if ($request->hasFile('pro_datasheet')) { // Using 'pro_datasheet' input name for size chart as per user request to replace it
             $file = $request->file('pro_datasheet');
-            $fileName = time() . '_chart.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $fileName);
+            $fileName = time() . '_chart.webp';
+            \Intervention\Image\ImageManager::gd()->read($file)->toWebp(80)->save(public_path('uploads/' . $fileName));
             $product->pro_size_chart = $fileName;
         }
 
@@ -181,8 +181,8 @@ class ProductController extends Controller
                 unlink(public_path('uploads/'.$product->pro_img1));
             }
             $image = $request->file('pro_img1');
-            $imageName = time() . '_1.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName);
+            $imageName = time() . '_1.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $product->pro_img1 = $imageName;
         }
 
@@ -191,8 +191,8 @@ class ProductController extends Controller
                 unlink(public_path('uploads/'.$product->pro_img2));
             }
             $image = $request->file('pro_img2');
-            $imageName = time() . '_2.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName);
+            $imageName = time() . '_2.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $product->pro_img2 = $imageName;
         }
 
@@ -201,8 +201,8 @@ class ProductController extends Controller
                 unlink(public_path('uploads/'.$product->pro_img3));
             }
             $image = $request->file('pro_img3');
-            $imageName = time() . '_3.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName);
+            $imageName = time() . '_3.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $product->pro_img3 = $imageName;
         }
 
@@ -212,8 +212,8 @@ class ProductController extends Controller
                 unlink(public_path('uploads/'.$product->pro_size_chart));
             }
             $file = $request->file('pro_datasheet');
-            $fileName = time() . '_chart.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads'), $fileName);
+            $fileName = time() . '_chart.webp';
+            \Intervention\Image\ImageManager::gd()->read($file)->toWebp(80)->save(public_path('uploads/' . $fileName));
             $product->pro_size_chart = $fileName;
         }
 
@@ -318,8 +318,7 @@ class ProductController extends Controller
             return response()->json([]);
         }
 
-        $products = Product::with('sizes')
-                            ->where(function($q) use ($query) {
+        $products = Product::with('sizes')->where(function($q) use ($query) {
                                 $q->where('pro_title', 'LIKE', "%{$query}%")
                                   ->orWhere('meta_keywords', 'LIKE', "%{$query}%")
                                   ->orWhere('pro_short_desc', 'LIKE', "%{$query}%")
@@ -398,7 +397,7 @@ class ProductController extends Controller
         }
 
         // 3. Pagination & Execution
-        $products = $productsQuery->paginate(12)->withQueryString();
+        $products = $productsQuery->with(['sizes', 'brand'])->paginate(12)->withQueryString();
         
         // 4. Wishlist Data
         $wishlistProductIds = \Illuminate\Support\Facades\Auth::check() 

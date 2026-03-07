@@ -4471,11 +4471,10 @@ blockquote {
   }
 
   .grid-container-2 {
-    grid-auto-flow: row;
-    -ms-grid-columns: auto;
-    grid-template-columns: auto;
-    -ms-grid-rows: auto;
-    grid-template-rows: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 150px;
+    grid-gap: 10px;
   }
 
   .grid-container-2 .grid-item.grid-item-1,
@@ -4483,6 +4482,22 @@ blockquote {
   .grid-container-2 .grid-item.grid-item-3 {
     grid-column: auto;
     grid-row: auto;
+    height: 100%;
+  }
+
+  /* Minimalistic text for 3-column mobile layout */
+  .grid-container-2 .banner-content {
+    padding: 10px !important;
+  }
+
+  .grid-container-2 .banner-content .heading_34 {
+    font-size: 14px !important;
+    line-height: 1.2;
+    margin-bottom: 2px;
+  }
+
+  .grid-container-2 .banner-content .text_12 {
+    display: none !important;
   }
 
   .scattered-item:nth-child(even) .scattered-details {

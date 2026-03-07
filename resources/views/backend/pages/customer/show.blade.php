@@ -23,7 +23,7 @@
             <div class="card h-100">
                 <div class="card-body text-center">
                     <img src="{{ $customer->avatar ?? asset('main_view/assets/img/user.png') }}" 
-                         class="rounded-circle mb-3 object-fit-cover" width="100" height="100" alt="Avatar">
+                         class="lazy-image rounded-circle mb-3 object-fit-cover" width="100" height="100" alt="Avatar" loading="lazy" >
                     <h5 class="mb-1">{{ $customer->name }}</h5>
                     <p class="text-muted mb-1">{{ $customer->email }}</p>
                     <p class="text-muted small">Member Since: {{ $customer->created_at ? $customer->created_at->format('d M Y') : 'N/A' }}</p>
@@ -109,7 +109,7 @@
                                 @forelse($customer->wishlists as $item)
                                 <div class="col-md-4 mb-3">
                                     <div class="card h-100 shadow-sm">
-                                        <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" class="card-img-top" alt="Product">
+                                        <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" class="lazy-image card-img-top" alt="Product" loading="lazy" >
                                         <div class="card-body p-2">
                                             <p class="small mb-1">{{ $item->product->pro_title }}</p>
                                         </div>

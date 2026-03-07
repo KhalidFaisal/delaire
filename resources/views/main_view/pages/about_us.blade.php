@@ -20,7 +20,7 @@
             <div class="container py-5">
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-4 mb-lg-0">
-                         <img src="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}" alt="{{ $portfolio->company_name ?? 'Pinkush' }}" class="img-fluid rounded shadow-sm">
+                         <img src="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}" alt="{{ $portfolio->company_name ?? 'Pinkush' }}" class="lazy-image img-fluid rounded shadow-sm" loading="lazy" >
                     </div>
                     <div class="col-lg-6">
                         <h2 class="section-heading primary-color mb-4">About {{ $portfolio->company_name ?? 'Pinkush' }}</h2>

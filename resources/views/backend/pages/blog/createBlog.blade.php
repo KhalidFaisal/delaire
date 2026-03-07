@@ -61,8 +61,8 @@
        
 
         <div class="form-group">
-          <label for="blogThumbnail">Blog Thumbnail:</label>
-          <input type="file" class="form-control-file" id="blog_image" name="blog_image" accept="image/*" required>
+          <label for="blog_image">Blog Image:</label>
+          <input type="file" class="form-control-file" id="blog_image" name="blog_image" accept="image/*" data-crop="true" required>
         </div>
 
 

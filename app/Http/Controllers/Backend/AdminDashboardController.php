@@ -17,9 +17,24 @@ class AdminDashboardController extends Controller
     public function index()
     {
         // 1. Total Sales (Sum of total column in user_orders table)
-        // Adjust status check if you have specific statuses for completed orders (e.g., 'completed', 'delivered')
-        // For now taking all valid orders or maybe exclude cancelled ones if there is a status
-        $totalSales = UserOrder::sum('total');
+        // Exclude cancelled orders
+        $grossSales = UserOrder::where('status', '!=', 'Cancelled')->sum('total');
+
+        // Calculate total amount from approved returns
+        $approvedReturns = \App\Models\UserReturn::where('status', 'approved')->get();
+        $refundedAmount = 0;
+
+        foreach ($approvedReturns as $returnReq) {
+            $refundItem = \App\Models\OrderItem::where('order_id', $returnReq->order_id)
+                                               ->where('product_id', $returnReq->product_id)
+                                               ->first();
+            if ($refundItem) {
+                // Determine the price paid for that quantity
+                $refundedAmount += ($refundItem->price * $refundItem->qty);
+            }
+        }
+
+        $totalSales = max(0, $grossSales - $refundedAmount);
 
         // 2. Total Orders
         $totalOrders = UserOrder::count();
@@ -41,6 +56,7 @@ class AdminDashboardController extends Controller
             }])
             ->limit(5)
             ->get()
+            ->toBase()
             ->map(function($size) {
                 return (object) [
                     'id' => $size->product->id,
@@ -57,6 +73,7 @@ class AdminDashboardController extends Controller
             ->select('id', 'pro_title', 'pro_img1', 'pro_qty')
             ->limit(5)
             ->get()
+            ->toBase()
             ->map(function($product) {
                 return (object) [
                     'id' => $product->id,
@@ -98,6 +115,7 @@ class AdminDashboardController extends Controller
             DB::raw("DATE_FORMAT(created_at,'%M %Y') as months")
         )
         ->where("created_at", ">=", Carbon::now()->subMonths(12))
+        ->where('status', '!=', 'Cancelled')
         ->groupBy('months')
         ->orderBy('created_at', 'asc')
         ->get();

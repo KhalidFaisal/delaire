@@ -42,7 +42,7 @@
                             <td>{{ $count }}</td>
                             <td>
                                 @if($testimonial->image)
-                                    <img src="{{ asset($testimonial->image) }}" alt="image" width="50">
+                                    <img src="{{ asset($testimonial->image) }}" alt="image" width="50" loading="lazy"  class="lazy-image" >
                                 @else
                                     N/A
                                 @endif

@@ -89,11 +89,11 @@
                     <input type="text" class="form-control" id="pro_waranty" name="pro_waranty" placeholder="Warranty" value="{{ $product->pro_waranty }}" required>
                  </div>
               
-                <!-- Upload Size Chart -->
+                <!-- Upload Chart -->
                 <div class="form-group col-md-4">
-                    <label for="pro_datasheet">Upload Size Chart</label><br>
+                    <label for="pro_datasheet">Upload Chart</label><br>
                     @if($product->pro_size_chart)
-                        <img src="{{ asset('uploads/'.$product->pro_size_chart) }}" height="50"><br>
+                        <img src="{{ asset('uploads/'.$product->pro_size_chart) }}" height="50" loading="lazy"  class="lazy-image" ><br>
                     @endif
                     <input type="file" class="form-control-file" id="pro_datasheet" name="pro_datasheet" accept="image/*">
                 </div>
@@ -104,23 +104,23 @@
                     <div class="form-group col-md-4">
                         <label for="pro_img1">Upload Product Image 1 (800x800)</label><br>
                         @if($product->pro_img1)
-                        <img src="{{ asset('uploads/'.$product->pro_img1) }}" height="50"><br>
+                        <img src="{{ asset('uploads/'.$product->pro_img1) }}" height="50" loading="lazy"  class="lazy-image" ><br>
                         @endif        
-                        <input type="file" class="form-control-file" id="pro_img1" name="pro_img1" accept="image/*" onchange="validateImage(this)">
+                        <input type="file" class="form-control-file" id="pro_img1" name="pro_img1" accept="image/*" onchange="validateImage(this)" data-crop="true" data-crop-ratio="1">
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="pro_img2">Upload Product Image 2 (800x800)</label><br>
+                    <div class="col-md-4">
+                        <label for="pro_img2">Product Image 2</label>
                         @if($product->pro_img2)
-                        <img src="{{ asset('uploads/'.$product->pro_img2) }}" height="50"><br>
-                        @endif        
-                        <input type="file" class="form-control-file" id="pro_img2" name="pro_img2" accept="image/*" onchange="validateImage(this)">
+                            <img src="{{ asset('uploads/'.$product->pro_img2) }}" height="50" loading="lazy"  class="lazy-image" ><br>
+                        @endif
+                        <input type="file" class="form-control-file" id="pro_img2" name="pro_img2" accept="image/*" onchange="validateImage(this)" data-crop="true" data-crop-ratio="1">
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="pro_img3">Upload Product Image 3 (800x800)</label><br>
-                         @if($product->pro_img3)
-                        <img src="{{ asset('uploads/'.$product->pro_img3) }}" height="50"><br>
-                        @endif       
-                        <input type="file" class="form-control-file" id="pro_img3" name="pro_img3" accept="image/*" onchange="validateImage(this)">
+                    <div class="col-md-4">
+                        <label for="pro_img3">Product Image 3</label>
+                        @if($product->pro_img3)
+                            <img src="{{ asset('uploads/'.$product->pro_img3) }}" height="50" loading="lazy"  class="lazy-image" ><br>
+                        @endif
+                        <input type="file" class="form-control-file" id="pro_img3" name="pro_img3" accept="image/*" onchange="validateImage(this)" data-crop="true" data-crop-ratio="1">
                     </div>
                 </div>
 
@@ -211,11 +211,9 @@
             };
             reader.readAsDataURL(file);
             img.onload = function () {
-                if (img.width === 800 && img.height === 800) {
-                } else {
-                    alert('Image must be 800x800 pixels.');
-                    input.value = ''; 
-                }
+                // The cropper now handles resizing and aspect ratios,
+                // so we no longer need to restrict uploaded width/height here.
+                return true;
             };
         } else {
             alert('Please upload a valid image file.');

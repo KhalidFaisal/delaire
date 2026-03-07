@@ -42,7 +42,7 @@
                                     <td>{{ $customer->id }}</td>
                                     <td>
                                         <img src="{{ $customer->avatar ?? asset('main_view/assets/img/user.png') }}" 
-                                             alt="{{ $customer->name }}" class="img-fluid rounded-circle" width="40" height="40">
+                                             alt="{{ $customer->name }}" class="lazy-image img-fluid rounded-circle" width="40" height="40" loading="lazy" >
                                     </td>
                                     <td>{{ $customer->name }}</td>
                                     <td>{{ $customer->email }}</td>

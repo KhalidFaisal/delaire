@@ -47,7 +47,7 @@ Current Stock Items
                                     <td>
                                         <div class="d-flex px-3 py-1">
                                             @if($item['product_image'])
-                                                <img src="{{ asset('uploads/'.$item['product_image']) }}" class="avatar avatar-sm me-3 border-radius-lg shadow-sm" alt="product" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                                                <img src="{{ asset('uploads/'.$item['product_image']) }}" class="lazy-image avatar avatar-sm me-3 border-radius-lg shadow-sm" alt="product" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;" loading="lazy" >
                                             @else
                                                 <div class="avatar avatar-sm me-3 border-radius-lg bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 8px;">
                                                     <i class="fa fa-image text-muted"></i>

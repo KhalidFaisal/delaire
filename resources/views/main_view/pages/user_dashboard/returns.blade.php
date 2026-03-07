@@ -20,7 +20,7 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 border-0 shadow-sm p-3">
                         <div class="d-flex mb-3">
-                            <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" alt="{{ $item->product->pro_title }}" class="rounded" style="width: 70px; height: 70px; object-fit: cover;">
+                            <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" alt="{{ $item->product->pro_title }}" class="lazy-image rounded" style="width: 70px; height: 70px; object-fit: cover;" loading="lazy" >
                             <div class="ms-3">
                                 <h6 class="mb-1 fw-bold text-dark">{{ Str::limit($item->product->pro_title ?? 'Unknown Product', 40) }}</h6>
                                 <p class="text-muted small mb-0">Order #{{ $order->order_number }}</p>
@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <div class="d-flex align-items-center mb-4 p-3 bg-light rounded">
-                                        <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" class="lazy-image rounded" style="width: 50px; height: 50px; object-fit: cover;" loading="lazy" >
                                         <div class="ms-3">
                                             <h6 class="mb-0 fw-bold">{{ $item->product->pro_title }}</h6>
                                             <small class="text-muted">Qty: {{ $item->qty }}</small>
@@ -118,7 +118,7 @@
                     <td>
                         <div class="d-flex align-items-center">
                             @if($r->product)
-                                <img src="{{ asset('uploads/' . $r->product->pro_img1) }}" width="40" height="40" class="me-2 rounded" style="object-fit:cover;">
+                                <img src="{{ asset('uploads/' . $r->product->pro_img1) }}" width="40" height="40" class="lazy-image me-2 rounded" style="object-fit:cover;" loading="lazy" >
                                 <div>
                                     <span class="d-block fw-bold small">{{ $r->product->pro_title }}</span>
                                     <small class="text-muted">Order #{{ $r->order?->order_number }}</small>

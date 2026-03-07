@@ -12,7 +12,7 @@
         <div class="col-6 col-md-4 col-lg-3">
             <div class="card h-100">
                 @if($item->product->pro_img1 ?? null)
-                    <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" class="card-img-top" alt="" style="height:140px;object-fit:cover;">
+                    <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" class="lazy-image card-img-top" alt="" style="height:140px;object-fit:cover;" loading="lazy" >
                 @else
                     <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:140px;"><i class="fas fa-image fa-2x text-muted"></i></div>
                 @endif

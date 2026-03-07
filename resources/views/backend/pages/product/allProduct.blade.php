@@ -68,7 +68,7 @@
     @endphp
 
     <!-- Table rows with data -->
-    @foreach($products as $product)
+    @forelse($products as $product)
         @php
             $count++;
             $brand = App\Models\Probrand::find($product->pro_brand);
@@ -87,7 +87,7 @@
             <td>{{ $brandName }}</td>
             <td>{{ $product->pro_price }}</td>
             <td>{{ $product->pro_sprice }}</td>
-            <td><img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="product_Image" width="50"></td>
+            <td><img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="product_Image" width="50" loading="lazy"  class="lazy-image" ></td>
             <td>{{ $product->pro_qty }}</td>
             
             <td>
@@ -104,10 +104,11 @@
                </div>
             </td>
           </tr>
-          @endforeach
-       
-        
-        
+          @empty
+          <tr>
+            <td colspan="10" class="text-center text-muted py-4">No data found in this table.</td>
+          </tr>
+          @endforelse
         <!-- Add more rows as needed -->
       </tbody>
     </table> 
@@ -162,8 +163,10 @@
             var filter = input.value.toLowerCase();
             var table = document.getElementById('productTable');
             var tr = table.getElementsByTagName('tr');
+            var hasVisibleRows = false;
 
             for (var i = 1; i < tr.length; i++) {
+                if (tr[i].classList.contains('no-data-row')) continue;
                 // Search in Title (1), Category (2), Model (3), Brand (4) columns
                 var tdTitle = tr[i].getElementsByTagName('td')[1];
                 var tdCategory = tr[i].getElementsByTagName('td')[2];
@@ -181,10 +184,30 @@
                         txtModel.toLowerCase().indexOf(filter) > -1 ||
                         txtBrand.toLowerCase().indexOf(filter) > -1) {
                         tr[i].style.display = "";
+                        hasVisibleRows = true;
                     } else {
                         tr[i].style.display = "none";
                     }
                 }
+            }
+
+            // Handle "No data found" row
+            let noDataRow = table.querySelector('.no-data-row');
+            if (!hasVisibleRows) {
+                if (!noDataRow) {
+                    const tbody = table.querySelector('tbody');
+                    if (tbody) {
+                        const colCount = tr.length > 1 ? tr[1].cells.length : 10;
+                        const newTr = document.createElement('tr');
+                        newTr.className = 'no-data-row';
+                        newTr.innerHTML = `<td colspan="${colCount}" class="text-center text-muted py-4">No data found</td>`;
+                        tbody.appendChild(newTr);
+                    }
+                } else {
+                    noDataRow.style.display = '';
+                }
+            } else if (noDataRow) {
+                noDataRow.style.display = 'none';
             }
         });
     </script>

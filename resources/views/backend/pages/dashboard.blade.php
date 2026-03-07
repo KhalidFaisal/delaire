@@ -110,7 +110,7 @@
                                             <td class="d-flex align-items-center">
                                                 @if($product->pro_img1)
                                                 <img src="{{ asset('uploads/' .$product->pro_img1) }}" alt=""
-                                                    class="img-fluid img-40 rounded-circle me-2">
+                                                    class="lazy-image img-fluid img-40 rounded-circle me-2" loading="lazy" >
                                                 @else
                                                 <div class="img-fluid img-40 rounded-circle me-2 bg-light d-flex align-items-center justify-content-center">
                                                     <i data-feather="image"></i>
@@ -155,7 +155,7 @@
                                         <tr>
                                             <td class="d-flex align-items-center">
                                                 <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" alt=""
-                                                    class="img-fluid img-40 rounded-circle me-2">
+                                                    class="lazy-image img-fluid img-40 rounded-circle me-2" loading="lazy" >
                                                 <div class="flex-grow-1">
                                                     <h6 class="f-w-600 mb-0">{{ Str::limit($item->product->pro_title, 20) }}
                                                     </h6>
@@ -193,7 +193,7 @@
                                         <tr>
                                             <td class="d-flex align-items-center">
                                                 <img src="{{ asset('uploads/' . $review->product->pro_img1) }}" alt=""
-                                                    class="img-fluid img-40 rounded-circle me-2">
+                                                    class="lazy-image img-fluid img-40 rounded-circle me-2" loading="lazy" >
                                                 <div class="flex-grow-1">
                                                     <h6 class="f-w-600 mb-0">{{ Str::limit($review->product->pro_title, 20) }}
                                                     </h6>

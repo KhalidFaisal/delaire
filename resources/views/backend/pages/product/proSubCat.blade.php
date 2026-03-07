@@ -92,8 +92,8 @@
         </tr>
         @empty
         <tr>
-            <td colspan="4" class="text-center text-muted">
-                No data found
+            <td colspan="4" class="text-center text-muted py-4">
+                No data found in this table.
             </td>
         </tr>
         @endforelse

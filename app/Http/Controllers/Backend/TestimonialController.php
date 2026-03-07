@@ -32,8 +32,8 @@ class TestimonialController extends Controller
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = time() . '_testimonial.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/testimonials/'), $filename);
+            $filename = time() . '_testimonial.webp';
+            \Intervention\Image\ImageManager::gd()->read($file)->toWebp(80)->save(public_path('uploads/testimonials/' . $filename));
             $data['image'] = 'uploads/testimonials/' . $filename;
         }
 
@@ -65,8 +65,8 @@ class TestimonialController extends Controller
                 File::delete(public_path($testimonial->image));
             }
             $file = $request->file('image');
-            $filename = time() . '_testimonial.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/testimonials/'), $filename);
+            $filename = time() . '_testimonial.webp';
+            \Intervention\Image\ImageManager::gd()->read($file)->toWebp(80)->save(public_path('uploads/testimonials/' . $filename));
             $data['image'] = 'uploads/testimonials/' . $filename;
         }
 

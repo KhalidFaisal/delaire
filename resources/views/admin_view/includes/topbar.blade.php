@@ -32,7 +32,7 @@
           </li>
           <li class="onhover-dropdown">
             <div class="bookmark-box">
-                <img class="img-30 rounded-circle"  src="{{ asset('uploads/'. $content->about_image) }}" alt="P">
+                <img class="lazy-image img-30 rounded-circle"  src="{{ asset('uploads/'. $content->about_image) }}" alt="P" loading="lazy" >
             </div>
             <div class="bookmark-dropdown onhover-show-div">
               {{-- <div class="form-group mb-0">
@@ -47,7 +47,7 @@
                 <li class="add-to-bookmark"><i class="bookmark-icon" data-feather="command"></i>Feather Icon<span class="pull-right"><i data-feather="star"></i></span></li>
                 <li class="add-to-bookmark"><i class="bookmark-icon" data-feather="airplay"></i>Widgets<span class="pull-right"><i data-feather="star">   </i></span></li>
               </ul> --}}
-              <div class="sidebar-user text-center"><a class="setting-primary" href="{{route('manage.admin')}}"><i data-feather="settings"></i></a><img class="img-90 rounded-circle" src="{{ asset('uploads/'. $content->about_image) }}" alt="Abt">
+              <div class="sidebar-user text-center"><a class="setting-primary" href="{{route('manage.admin')}}"><i data-feather="settings"></i></a><img class="lazy-image img-90 rounded-circle" src="{{ asset('uploads/'. $content->about_image) }}" alt="Abt" loading="lazy" >
                 <div class="badge-bottom">
                 {{-- <span class="badge badge-primary">New</span> --}}
                 </div>

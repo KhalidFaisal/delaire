@@ -1,4 +1,3 @@
-
 "use strict";
 $(document).ready(function() {
 	var tooltip_init = {
@@ -8,11 +7,20 @@ $(document).ready(function() {
 			$("input").tooltip();
 		}
 	};
-    tooltip_init.init()
+    tooltip_init.init();
+
+    // Re-initialize Feather icons and clean up stray tooltips when DataTables redraws
+    $(document).on('draw.dt', function() {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        $('.tooltip').remove(); // Remove any floating orphaned tooltips left behind by DOM changes
+    });
 });
 
-
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
-})
+// Use delegated initialization for Bootstrap 5 tooltips to support dynamically added elements
+if (typeof bootstrap !== 'undefined') {
+    new bootstrap.Tooltip(document.body, {
+        selector: '[data-bs-toggle="tooltip"]'
+    });
+}

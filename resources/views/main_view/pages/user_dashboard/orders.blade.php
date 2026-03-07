@@ -28,7 +28,7 @@
                         @foreach($order->items as $item)
                         <div class="d-flex align-items-center mb-3">
                             <div class="flex-shrink-0">
-                                <img src="{{ asset('uploads/'.$item->product->pro_img1) }}" alt="{{ $item->product->pro_title }}" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                <img src="{{ asset('uploads/'.$item->product->pro_img1) }}" alt="{{ $item->product->pro_title }}" class="lazy-image rounded" style="width: 60px; height: 60px; object-fit: cover;" loading="lazy" >
                             </div>
                             <div class="flex-grow-1 ms-3">
                                 <h6 class="mb-1 text-dark" style="font-size: 15px;">{{ $item->product->pro_title }}</h6>

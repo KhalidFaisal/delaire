@@ -41,7 +41,7 @@
 
             <div class="form-group">
                 <label for="image">Image</label>
-                <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                <input type="file" class="form-control-file" id="image" name="image" accept="image/*" data-crop="true">
             </div>
 
             <button type="submit" class="btn btn-primary">Save Testimonial</button>

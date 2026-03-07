@@ -103,9 +103,9 @@
                     <input type="text" class="form-control" id="pro_waranty" name="pro_waranty" placeholder="Warranty" required>
                  </div>
               
-                <!-- Upload Size Chart (Replacing Data Sheet) -->
+                <!-- Upload Chart (Replacing Data Sheet) -->
                 <div class="form-group col-md-4">
-                    <label for="pro_datasheet">Upload Size Chart</label><br>        
+                    <label for="pro_datasheet">Upload Chart</label><br>        
                     <input type="file" class="form-control-file" id="pro_datasheet" name="pro_datasheet" accept="image/*">
                 </div>
 
@@ -124,15 +124,15 @@
                 <div class="row">
                     <div class="form-group col-md-4">
                         <label for="pro_img1">Upload Product Image 1 (Required, 800x800)</label><br>        
-                        <input type="file" class="form-control-file" id="pro_img1" name="pro_img1" accept="image/*" onchange="validateImage(this)" required>
+                        <input type="file" class="form-control-file" id="pro_img1" name="pro_img1" accept="image/*" onchange="validateImage(this)" data-crop="true" data-crop-ratio="1" required>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="pro_img2">Upload Product Image 2 (Optional, 800x800)</label><br>        
-                        <input type="file" class="form-control-file" id="pro_img2" name="pro_img2" accept="image/*" onchange="validateImage(this)">
+                    <div class="col-md-4">
+                        <label for="pro_img2">Product Image 2</label>
+                        <input type="file" class="form-control-file" id="pro_img2" name="pro_img2" accept="image/*" onchange="validateImage(this)" data-crop="true" data-crop-ratio="1">
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="pro_img3">Upload Product Image 3 (Optional, 800x800)</label><br>        
-                        <input type="file" class="form-control-file" id="pro_img3" name="pro_img3" accept="image/*" onchange="validateImage(this)">
+                    <div class="col-md-4">
+                        <label for="pro_img3" >Product Image 3</label>
+                        <input type="file" class="form-control-file" id="pro_img3" name="pro_img3" accept="image/*" onchange="validateImage(this)" data-crop="true" data-crop-ratio="1">
                     </div>
                 </div>
 
@@ -193,14 +193,9 @@
             };
             reader.readAsDataURL(file);
             img.onload = function () {
-                // User requirement said 800x800, keeping this check
-                // but might be annoying for optional images if strict. 
-                // Keeping it as per existing code logic.
-                if (img.width === 800 && img.height === 800) {
-                } else {
-                    alert('Image must be 800x800 pixels.');
-                    input.value = ''; 
-                }
+                // The cropper now handles resizing and aspect ratios,
+                // so we no longer need to restrict uploaded width/height here.
+                return true;
             };
         } else {
             alert('Please upload a valid image file.');

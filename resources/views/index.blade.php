@@ -54,10 +54,10 @@
                 @php
                             $content = App\Models\Content::first();
                         @endphp
-
+                   @if($content)
                     <div class="slide-item slide-item-bag position-relative">
-                        <img class="slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->pro_image) }}" alt="slide-1">
-                        <img class="slide-img d-md-none" src="{{ asset('uploads/'. $content->pro_image) }}" alt="slide-1">
+                        <img class="lazy-image slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->pro_image) }}" alt="slide-1" loading="lazy" >
+                        <img class="lazy-image slide-img d-md-none" src="{{ asset('uploads/'. $content->pro_image) }}" alt="slide-1" loading="lazy" >
                         <div class="content-absolute content-slide">
                             <div class="container height-inherit d-flex align-items-center justify-content-end">
                                 <div class="content-box slide-content  py-4 text-center" Style="color:var(--primary-color)">
@@ -75,8 +75,8 @@
                         </div>
                     </div>
                     <div class="slide-item slide-item-bag position-relative">
-                        <img class="slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->about_image) }}" alt="slide-2">
-                        <img class="slide-img d-md-none" src="{{ asset('uploads/'.$content->about_image) }}" alt="slide-2">
+                        <img class="lazy-image slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->about_image) }}" alt="slide-2" loading="lazy" >
+                        <img class="lazy-image slide-img d-md-none" src="{{ asset('uploads/'.$content->about_image) }}" alt="slide-2" loading="lazy" >
                         <div class="content-absolute content-slide">
                             <div class="container height-inherit d-flex align-items-center justify-content-end">
                                 <div class="content-box slide-content  py-4 text-center">
@@ -97,8 +97,8 @@
                         </div>
                     </div>
                     <div class="slide-item slide-item-bag position-relative">
-                        <img class="slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->about_intro) }}" alt="slide-3">
-                        <img class="slide-img d-md-none" src="{{ asset('uploads/'. $content->about_intro) }}" alt="slide-3">
+                        <img class="lazy-image slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->about_intro) }}" alt="slide-3" loading="lazy" >
+                        <img class="lazy-image slide-img d-md-none" src="{{ asset('uploads/'. $content->about_intro) }}" alt="slide-3" loading="lazy" >
                         <div class="content-absolute content-slide">
                             <div class="container height-inherit d-flex align-items-center justify-content-center">
                                 <div class="content-box slide-content  py-4 text-center">
@@ -115,6 +115,15 @@
                             </div>
                         </div>
                     </div>
+                   @else
+                    <div class="slide-item slide-item-bag position-relative d-flex align-items-center justify-content-center" style="min-height: 400px; background: #f8f9fa;">
+                         <div class="text-center">
+                             <h2 class="slide-heading heading_72" style="color:var(--primary-color)">Welcome!</h2>
+                             <p class="mt-3">Please configure slider content in Admin Panel to populate this area.</p>
+                             <a class="btn-primary slide-btn mt-3" href="{{ route('search.product') }}">SHOP NOW</a>
+                         </div>
+                    </div>
+                   @endif
                 </div>
                 <div class="activate-arrows"></div>
                 <div class="activate-dots dot-tools"></div>
@@ -129,7 +138,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <div class="trusted-badge rounded p-0">
                                     <div class="trusted-icon">
-                                        <img class="icon-trusted" src="{{asset('main_view/assets/img/trusted/1.png')}}" alt="icon-1">
+                                        <img class="lazy-image icon-trusted" src="{{asset('main_view/assets/img/trusted/1.png')}}" alt="icon-1" loading="lazy" >
                                     </div>
                                     <div class="trusted-content">
                                         <h2 class="heading_18 trusted-heading">Free Shipping & Return</h2>
@@ -141,7 +150,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <div class="trusted-badge rounded p-0">
                                     <div class="trusted-icon">
-                                        <img class="icon-trusted" src="{{asset('main_view/assets/img/trusted/2.png')}}" alt="icon-2">
+                                        <img class="lazy-image icon-trusted" src="{{asset('main_view/assets/img/trusted/2.png')}}" alt="icon-2" loading="lazy" >
                                     </div>
                                     <div class="trusted-content">
                                         <h2 class="heading_18 trusted-heading">Customer Support 24/7</h2>
@@ -153,7 +162,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <div class="trusted-badge rounded p-0">
                                     <div class="trusted-icon">
-                                        <img class="icon-trusted" src="{{asset('main_view/assets/img/trusted/3.png')}}" alt="icon-3">
+                                        <img class="lazy-image icon-trusted" src="{{asset('main_view/assets/img/trusted/3.png')}}" alt="icon-3" loading="lazy" >
                                     </div>
                                     <div class="trusted-content">
                                         <h2 class="heading_18 trusted-heading">100% Secure Payment</h2>
@@ -184,7 +193,7 @@
                                     <a class="grid-item {{ $gridItemClass }} position-relative rounded mt-0 d-flex"  
                                        href="{{ route('search.product', ['pro_sub_category' => $category->subcategory_id]) }}"
                                        data-aos="{{ $aos }}" data-aos-duration="700">
-                                        <img class="banner-img rounded" src="{{ asset('uploads/' . $category->banner_image) }}" alt="banner-{{ $key + 1 }}">
+                                        <img class="lazy-image banner-img rounded" src="{{ asset('uploads/' . $category->banner_image) }}" alt="banner-{{ $key + 1 }}" loading="lazy" >
                                         <div class="content-absolute content-slide">
                                             <div class="container height-inherit d-flex {{ $containerClass }}">
                                                 <div class="content-box banner-content p-4 {{ $textClass }}">
@@ -322,7 +331,7 @@
                                 }
                             </script>
 
-                            @foreach($products as $product)
+                            @forelse($products as $product)
                                 @php
                                     $count++;
                                     $adjusted = $product->adjusted_price;
@@ -337,7 +346,7 @@
                                 <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-duration="700">
                                     <div class="minimalist-card" onclick="window.location='{{ route('product.show', $product->id) }}'">
                                         <div class="position-relative product-img-wrapper">
-                                            <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}">
+                                            <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}" loading="lazy"  class="lazy-image" >
                                             
                                             <div class="position-absolute top-0 end-0 m-3" onclick="event.stopPropagation()">
                                                 <div class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" onclick="toggleWishlist(this)" data-product-id="{{ $product->id }}">
@@ -368,7 +377,12 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                <div class="col-12 text-center py-5">
+                                    <h4 class="text-muted">No Featured Products Found</h4>
+                                    <p class="text-muted">Please add products to your store.</p>
+                                </div>
+                            @endforelse
                             
                         </div>
                         <div class="view-all text-center" data-aos="fade-up" data-aos-duration="700">
@@ -382,10 +396,10 @@
            
 
             <!-- single banner start -->
-            @if($content->banner_image)
+            @if($content && $content->banner_image)
             <div class="single-banner-section mt-100 overflow-hidden">
                 <div class="position-relative overlay">
-                    <img class="single-banner-img" src="{{asset('uploads/'. $content->banner_image)}}" alt="slide-1">
+                    <img class="lazy-image single-banner-img" src="{{asset('uploads/'. $content->banner_image)}}" alt="slide-1" loading="lazy" >
 
                     <div class="content-absolute content-slide">
                         <div class="container height-inherit d-flex  ">
@@ -451,7 +465,7 @@
                                                         </div>
                                                         <div class="testimonial-icon-star d-flex align-items-center ms-3">
                                                             @for($i = 0; $i < $testimonial->rating; $i++)
-                                                                <img src="{{asset('main_view/assets/img/icon/star.png')}}" alt="star">
+                                                                <img src="{{asset('main_view/assets/img/icon/star.png')}}" alt="star" loading="lazy"  class="lazy-image" >
                                                             @endfor
                                                         </div>
                                                     </div>
@@ -461,7 +475,7 @@
                                                     <div class="testimonial-reviewer d-flex align-items-center">
                                                         <div class="reviewer-img">
                                                             @if($testimonial->image)
-                                                                <img src="{{ asset($testimonial->image) }}" alt="{{ $testimonial->name }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%;">
+                                                                <img src="{{ asset($testimonial->image) }}" alt="{{ $testimonial->name }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%;" loading="lazy"  class="lazy-image" >
                                                             @else
                                                                 <!-- Use a placeholder or keep existing logic if needed, here assuming a default or simple fallback -->
                                                                 <div style="width: 70px; height: 70px; background: #eee; border-radius: 50%;"></div>

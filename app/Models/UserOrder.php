@@ -14,7 +14,7 @@ class UserOrder extends Model
         'user_id', 'admin_id', 'order_number', 'subtotal', 'total', 'status', 'notes',
         'shipping_name', 'shipping_email', 'shipping_phone',
         'shipping_address', 'shipping_city', 'shipping_zip',
-        'payment_method', 'is_viewed',
+        'payment_method', 'is_viewed', 'reference', 'admin_name',
         'delivery_charge', 'promo_code', 'promo_discount'
     ];
 

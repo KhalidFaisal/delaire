@@ -69,7 +69,7 @@
                                         @if($item->product && $item->product->pro_img1)
                                             <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" 
                                                  alt="{{ $item->product->pro_title }}" 
-                                                 style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                                                 style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;" loading="lazy"  class="lazy-image" >
                                         @endif
                                         <span>{{ $item->product ? $item->product->pro_title : 'Product Removed' }}</span>
                                     </div>

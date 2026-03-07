@@ -83,12 +83,12 @@ $blogName = App\Models\Blog::find($id);
 
             <div class="form-group">
                 <label for="blogThumbnail">Blog Thumbnail:</label><br>
-                <td><img src="{{ asset('uploads/'. $blogName->blog_image) }}" alt="Blog Image" width="250"></td><br><br>
+                <td><img src="{{ asset('uploads/'. $blogName->blog_image) }}" alt="Blog Image" width="250" loading="lazy"  class="lazy-image" ></td><br><br>
 
 
 
 
-                <input type="file" class="form-control-file" id="blog_image" name="blog_image" accept="image/*">
+                <input type="file" class="form-control-file" id="blog_image" name="blog_image" accept="image/*" data-crop="true">
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>

@@ -36,8 +36,8 @@
            
                 <div class="form-group">
                     <!-- <label for="pro_image">Slider 1 image</label><br> -->
-                    <td><img src="{{ asset('uploads/'. $content->pro_image) }}" alt="Slide 1" width="250"></td><br><br>           
-                    <input type="file" class="form-control-file" id="pro_image" name="pro_image" accept="image/*">
+                    <td><img src="{{ asset('uploads/'. $content->pro_image) }}" alt="Slide 1" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
+                    <input type="file" class="form-control-file" id="pro_image" name="pro_image" accept="image/*" data-crop="true">
                 </div> <hr>
                 <div class="form-group">
                 <label for="intro">Slider 2 header</label>
@@ -45,8 +45,8 @@
             </div>
                 <div class="form-group">
                     <!-- <label for="about_image">Slider 2 image</label><br> -->
-                    <td><img src="{{ asset('uploads/'. $content->about_image) }}" alt="Slide 2" width="250"></td><br><br>           
-                    <input type="file" class="form-control-file" id="about_image" name="about_image" accept="image/*">
+                    <td><img src="{{ asset('uploads/'. $content->about_image) }}" alt="Slide 2" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
+                    <input type="file" class="form-control-file" id="about_image" name="about_image" accept="image/*" data-crop="true">
                 </div>
     <hr>
             <div class="form-group">
@@ -55,8 +55,8 @@
             </div>
             <div class="form-group">
                 <!-- <label for="about_intro">slide 3 image</label><br> -->
-                <td><img src="{{ asset('uploads/'. $content->about_intro) }}" alt="Slide 3" width="250"></td><br><br>           
-                    <input type="file" class="form-control-file" id="about_intro" name="about_intro" accept="image/*">
+                <td><img src="{{ asset('uploads/'. $content->about_intro) }}" alt="Slide 3" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
+                    <input type="file" class="form-control-file" id="about_intro" name="about_intro" accept="image/*" data-crop="true">
            
             </div>
             <hr>
@@ -68,9 +68,9 @@
             <div class="form-group">
                 <label for="banner_image">Banner Image</label><br>
                 @if($content->banner_image)
-                <td><img src="{{ asset('uploads/'. $content->banner_image) }}" alt="Banner" width="250"></td><br><br>
+                <td><img src="{{ asset('uploads/'. $content->banner_image) }}" alt="Banner" width="250" loading="lazy"  class="lazy-image" ></td><br><br>
                 @endif
-                <input type="file" class="form-control-file" id="banner_image" name="banner_image" accept="image/*">
+                <input type="file" class="form-control-file" id="banner_image" name="banner_image" accept="image/*" data-crop="true" data-crop-ratio="16/9">
             </div>
 
             <button type="submit" class="btn btn-primary">Save</button>

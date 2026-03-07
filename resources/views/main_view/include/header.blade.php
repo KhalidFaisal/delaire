@@ -35,7 +35,7 @@
                                 <div class="currency-wrapper">
                                     <button type="button" class="currency-btn btn-reset text-white"
                                         data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img class="flag" src="{{asset('main_view/assets/img/flag/usd.jpg')}}" alt="img">
+                                        <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/usd.jpg')}}" alt="img" loading="lazy" >
                                         <span>USD</span>
                                         <span>
                                             <svg class="icon icon-dropdown" xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@
                                     <ul class="currency-list dropdown-menu dropdown-menu-end px-2">
                                         <li class="currency-list-item ">
                                             <a class="currency-list-option" href="#" data-value="USD">
-                                                <img class="flag" src="{{asset('main_view/assets/img/flag/BD.jpg')}}" alt="img">
+                                                <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/BD.jpg')}}" alt="img" loading="lazy" >
                                                 <span>BDT</span>
                                             </a>
                                         </li>
@@ -75,7 +75,7 @@
                         <div class="col-lg-3 col-md-4 col-4">
                             <div class="header-logo">
                                 <a href="{{route('home')}}" class="logo-main">
-                                  <img src="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}" style="width:50%;margin:2px;"loading="lazy" alt="{{ $portfolio->company_name ?? 'Pinkush' }}"> 
+                                  <img src="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}" class="lazy-image header-logo-img" loading="lazy" alt="{{ $portfolio->company_name ?? 'Pinkush' }}">
                                 </a>
                             </div>
                         </div>
@@ -207,7 +207,7 @@
                                                             @endphp
                                                             <a class="mega-menu-img nav-link-sub nav-text-sub"
                                                                 href="{{ $randomFeature ? route('search.product', ['pro_sub_category' => $randomFeature->subcategory_id]) : '#' }}">
-                                                                <img class="menu-img" src="{{ $randomImage }}" alt="img">
+                                                                <img class="lazy-image menu-img" src="{{ $randomImage }}" alt="img" loading="lazy" >
                                                                 <h2 class="img-menu-heading text_16 mt-2">Featured
                                                                     Collection</h2>
                                                                 <div
@@ -273,7 +273,7 @@
 <a href="javascript:void(0)" class="header-profile-toggle">
     @auth
         @if(auth()->user()->avatar)
-            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="header-profile-avatar" width="32" height="32">
+            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="lazy-image header-profile-avatar" width="32" height="32" loading="lazy" >
         @else
             <svg class="icon icon-profile" width="26" height="26" viewBox="0 0 24 24"
                  fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -304,7 +304,7 @@
     @auth
     <div class="d-flex align-items-center mb-3 p-2 border-bottom">
         @if(auth()->user()->avatar)
-            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="user-img me-2">
+            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="lazy-image user-img me-2" loading="lazy" >
         @else
             <div class="user-img-placeholder me-2">
                 {{ strtoupper(substr(auth()->user()->name ?: 'U', 0, 1)) }}
@@ -477,6 +477,57 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     border-radius: 0 0 4px 4px;
 }
+
+/* Header Logo Sizing */
+.header-logo-img {
+    width: 65%;
+    max-width: 90px;
+    margin: 2px;
+    padding: 8px 0;
+}
+@media (max-width: 991px) {
+    body {
+        padding-top: 10vh !important;
+    }
+    .sticky-header {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 10vh !important;
+        z-index: 9999 !important;
+        background-color: #fff !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
+    }
+    .header-bottom {
+        flex: 1 !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .header-bottom > .container {
+        width: 100% !important;
+    }
+    .header-logo-img {
+        width: auto !important;
+        height: auto !important;
+        max-height: 7vh !important;
+        object-fit: contain !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
 </style>
 
 <script>
@@ -571,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 @auth
                                     <div class="d-flex align-items-center mb-2">
                                         @if(auth()->user()->avatar)
-                                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle me-2" width="40" height="40" alt="Avatar">
+                                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="lazy-image rounded-circle me-2" width="40" height="40" alt="Avatar" loading="lazy" >
                                         @else
                                             <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
                                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
@@ -681,6 +732,12 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <i class="fas fa-phone-alt me-2"></i> {{ $portfolio->contact_number ?? '+88 01712429662' }}
                                 </a>
                             </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <!-- header end -->
                         </ul>
                     </nav>
                 </div>

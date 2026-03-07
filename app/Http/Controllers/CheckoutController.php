@@ -59,10 +59,10 @@ class CheckoutController extends Controller
                 $checkPromo = \App\Models\PromoCode::where('code', $request->promo_code)
                     ->where('status', true)
                     ->where(function ($q) {
-                        $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                        $q->whereNull('start_date')->orWhereDate('start_date', '<=', now());
                     })
                     ->where(function ($q) {
-                        $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                        $q->whereNull('end_date')->orWhereDate('end_date', '>=', now());
                     })
                     ->first();
 
@@ -181,10 +181,10 @@ class CheckoutController extends Controller
         $promo = \App\Models\PromoCode::where('code', $request->promo_code)
             ->where('status', true)
             ->where(function ($q) {
-                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                $q->whereNull('start_date')->orWhereDate('start_date', '<=', now());
             })
             ->where(function ($q) {
-                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                $q->whereNull('end_date')->orWhereDate('end_date', '>=', now());
             })
             ->first();
 

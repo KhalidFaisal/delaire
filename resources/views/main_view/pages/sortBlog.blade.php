@@ -75,7 +75,7 @@
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg"
-                            class="d-block w-100" alt="Slide 1">
+                            class="lazy-image d-block w-100" alt="Slide 1" loading="lazy" >
                         <div class="carousel-caption d-none d-md-block">
                             <h1 Style="color:white;">Blogs</h1>
                         </div>
@@ -163,7 +163,7 @@
 
 
                                 @endphp
-                                @foreach( $blogsorts as $blog)
+                                @forelse( $blogsorts as $blog)
 
                                 <div class="col-lg-4 m-15px-tb">
 
@@ -173,7 +173,7 @@
                                             <div class="blog-grid-img">
                                                 <a href="{{ $blog->blog_link }}" target="_blank">
                                                     <img src="{{ asset('uploads/'. $blog->blog_image) }}" title=""
-                                                        alt="">
+                                                        alt="" loading="lazy"  class="lazy-image" >
                                                 </a>
                                             </div>
                                             <div class="blog-gird-info">
@@ -193,7 +193,12 @@
 
                                     </div>
                                 </div> <!-- col -->
-                                @endforeach
+                                @empty
+                                <div class="col-12 text-center py-5">
+                                    <h3 class="text-muted">No Blog Posts Found</h3>
+                                    <p class="text-muted">We couldn't find any blog posts matching your selected category.</p>
+                                </div>
+                                @endforelse
                                
                             </div>
                         </div>

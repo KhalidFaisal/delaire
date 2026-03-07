@@ -34,7 +34,7 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @if($return->product->pro_img1)
-                                            <img src="{{ asset('uploads/' . $return->product->pro_img1) }}" alt="" width="50" class="me-2 rounded">
+                                            <img src="{{ asset('uploads/' . $return->product->pro_img1) }}" alt="" width="50" class="lazy-image me-2 rounded" loading="lazy" >
                                         @endif
                                         <div>
                                             <h6 class="mb-0">{{ $return->product->pro_title ?? 'Product not found' }}</h6>
@@ -45,9 +45,9 @@
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @if($return->user->avatar)
-                                            <img src="{{ asset('backend/images/profile/' . $return->user->avatar) }}" alt="" width="40" class="rounded-circle me-2">
+                                            <img src="{{ asset('backend/images/profile/' . $return->user->avatar) }}" alt="" width="40" class="lazy-image rounded-circle me-2" loading="lazy" >
                                         @else
-                                             <img src="{{ asset('backend/images/profile/profile.png') }}" alt="" width="40" class="rounded-circle me-2">
+                                             <img src="{{ asset('backend/images/profile/profile.png') }}" alt="" width="40" class="lazy-image rounded-circle me-2" loading="lazy" >
                                         @endif
                                         <div>
                                             <h6 class="mb-0">{{ $return->user->name ?? 'Unknown User' }}</h6>

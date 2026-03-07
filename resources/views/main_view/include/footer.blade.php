@@ -65,7 +65,7 @@
                             <div class="col-xl-4 col-lg-5 col-md-6 col-12 footer-widget">
                                 <div class="footer-widget-inner">
                                     <h4 class="footer-logo">
-                                        <a href="{{ route('home') }}"><img style="width:40%;" src="{{ optional($portfolio)->logo ? asset($portfolio->logo) : asset('main_view/assets/img/logo-accent.png') }}" alt="{{ optional($portfolio)->company_name}}"></a>
+                                        <a href="{{ route('home') }}"><img style="width:40%;" src="{{ optional($portfolio)->logo ? asset($portfolio->logo) : asset('main_view/assets/img/logo-accent.png') }}" alt="{{ optional($portfolio)->company_name}}" loading="lazy"  class="lazy-image" ></a>
                                     </h4>
                                     
                                         <div class="footer-social-wrapper">

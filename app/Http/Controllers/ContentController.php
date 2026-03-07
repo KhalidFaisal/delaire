@@ -40,34 +40,28 @@ class ContentController extends Controller
 
                 if ($request->hasFile('pro_image')) {
                     $image = $request->file('pro_image');
-                    $imageName = time() . '1.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('uploads'), $imageName); // Store the image in the 'uploads' directory
-                    // You can also save the image details to a database if needed
-                    // return 'Image uploaded successfully';
+                    $imageName = time() . '1.webp';
+                    \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
                     $content->pro_image = $imageName;
                 }
                 if ($request->hasFile('about_image')) {
                     $image = $request->file('about_image');
-                    $imageName = time() . '2.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('uploads'), $imageName); // Store the image in the 'uploads' directory
-                    // You can also save the image details to a database if needed
-                    // return 'Image uploaded successfully';
+                    $imageName = time() . '2.webp';
+                    \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
                     $content->about_image = $imageName;
                 }
                 
                 if ($request->hasFile('about_intro')) {
                     $image = $request->file('about_intro');
-                    $imageName = time() . '3.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('uploads'), $imageName); // Store the image in the 'uploads' directory
-                    // You can also save the image details to a database if needed
-                    // return 'Image uploaded successfully';
+                    $imageName = time() . '3.webp';
+                    \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
                     $content->about_intro = $imageName;
                 }
 
                 if ($request->hasFile('banner_image')) {
                     $image = $request->file('banner_image');
-                    $imageName = time() . 'b.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('uploads'), $imageName); // Store the image in the 'uploads' directory
+                    $imageName = time() . 'b.webp';
+                    \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
                     $content->banner_image = $imageName;
                 }
 

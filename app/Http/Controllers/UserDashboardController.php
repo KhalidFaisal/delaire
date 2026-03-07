@@ -46,8 +46,11 @@ class UserDashboardController extends Controller
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $data['avatar'] = $path;
+            $image = $request->file('avatar');
+            $filename = 'avatars/' . \Illuminate\Support\Str::random(20) . '.webp';
+            \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('avatars');
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(storage_path('app/public/' . $filename));
+            $data['avatar'] = $filename;
         }
 
         $user->update($data);
@@ -199,8 +202,11 @@ class UserDashboardController extends Controller
         ];
 
         if ($request->hasFile('return_image')) {
-            $path = $request->file('return_image')->store('returns', 'public');
-            $data['return_image'] = $path;
+            $image = $request->file('return_image');
+            $filename = 'returns/' . \Illuminate\Support\Str::random(20) . '.webp';
+            \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('returns');
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(storage_path('app/public/' . $filename));
+            $data['return_image'] = $filename;
         }
 
         $returnRequest = Auth::user()->returns()->create($data);

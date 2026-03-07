@@ -47,20 +47,20 @@
                     <input type="email" class="form-control" id="email" name="email" value="{{ $portfolio->email ?? '' }}">
                 </div>
                  <div class="col-md-6 form-group">
-                    <label for="logo">Logo</label><br>
+                    <label for="logo">Logo Image</label><br>
                     @if(isset($portfolio->logo))
-                        <img src="{{ asset($portfolio->logo) }}" alt="Logo" width="100" class="mb-2">
+                        <img src="{{ asset($portfolio->logo) }}" alt="Logo" width="100" class="lazy-image mb-2" loading="lazy" >
                     @endif
-                    <input type="file" class="form-control-file" id="logo" name="logo" accept="image/*">
+                    <input type="file" class="form-control-file" id="logo" name="logo" accept="image/*" data-crop="true">
                 </div>
             </div>
              <div class="row">
                  <div class="col-md-6 form-group">
                     <label for="favicon">Favicon</label><br>
                      @if(isset($portfolio->favicon))
-                        <img src="{{ asset($portfolio->favicon) }}" alt="Favicon" width="32" class="mb-2">
+                        <img src="{{ asset($portfolio->favicon) }}" alt="Favicon" width="32" class="lazy-image mb-2" loading="lazy" >
                     @endif
-                    <input type="file" class="form-control-file" id="favicon" name="favicon" accept="image/*">
+                    <input type="file" class="form-control-file" id="favicon" name="favicon" accept="image/*" data-crop="true" data-crop-ratio="1">
                 </div>
             </div>
 

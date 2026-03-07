@@ -60,8 +60,8 @@
                                             @if($firstItem->product->pro_img1)
                                                 <img src="{{ asset('uploads/' . $firstItem->product->pro_img1) }}" 
                                                      alt="Product" 
-                                                     class="img-fluid rounded me-2" 
-                                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                                     class="lazy-image img-fluid rounded me-2" 
+                                                     style="width: 40px; height: 40px; object-fit: cover;" loading="lazy" >
                                             @endif
                                             <div>
                                                 <span class="d-block text-truncate" style="max-width: 150px;" title="{{ $firstItem->product->pro_title }}">

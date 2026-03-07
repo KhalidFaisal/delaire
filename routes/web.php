@@ -328,6 +328,7 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     // Route::get('/product/ajax-search', [\App\Http\Controllers\ProductController::class, 'ajaxSearch'])->name('product.search.ajax');
     Route::get('/orders/create', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'create'])->name('admin.orders.create');
     Route::post('/orders/store', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'store'])->name('admin.orders.store');
+    Route::post('/orders/apply-promo', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'applyPromo'])->name('apply.promo.ajax');
 
     Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('admin.orders.show');

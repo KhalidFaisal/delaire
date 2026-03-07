@@ -25,5 +25,12 @@
 - [x] Update Domain Link
   - [x] Replace `byteengineers.me` with `byteengrs.com` in footer files
 - [x] Update Frontend Footer
-  - [x] Ensure Brand Name is dynamic (Verified: uses `company_name` from Portfolio)
-  - [x] update "Byte Engineers" to link to `https://byteengrs.com/`
+  - [x] Ensure Brand Name is dynamic
+  - [x] Link "Byte Engineers"
+- [x] Optimize Project
+  - [x] Optimize `StockController`
+  - [x] Optimize `ProductController`
+- [ ] Refactor Inline CSS Colors (Frontend)
+  - [ ] Search for inline `color` styles in `resources/views/main_view`
+  - [ ] Replace hardcoded colors with `var(--primary-color)`, `var(--secondary-color)`, `black`, or `white`
+- [x] Reset database (truncate all tables) <!-- id: 5 -->

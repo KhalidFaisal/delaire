@@ -23,7 +23,7 @@ class FeatureCategoryController extends Controller
         $request->validate([
             'slots' => 'required|array|min:3',
             'slots.*.subcategory_id' => 'required|exists:prosubcategories,id',
-            'slots.*.banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'slots.*.banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         foreach ($request->slots as $key => $slotData) {
@@ -39,8 +39,8 @@ class FeatureCategoryController extends Controller
 
             if ($request->hasFile("slots.$key.banner_image")) {
                 $image = $request->file("slots.$key.banner_image");
-                $imageName = time() . '_feature_' . $order . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('uploads'), $imageName);
+                $imageName = time() . '_feature_' . $order . '.webp';
+                \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
                 $featureCategory->banner_image = $imageName;
             }
 

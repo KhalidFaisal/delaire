@@ -44,8 +44,8 @@ class PortfolioController extends Controller
                 File::delete(public_path($portfolio->logo));
             }
             $file = $request->file('logo');
-            $filename = time() . '_logo.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/portfolio/'), $filename);
+            $filename = time() . '_logo.webp';
+            \Intervention\Image\ImageManager::gd()->read($file)->toWebp(80)->save(public_path('uploads/portfolio/' . $filename));
             $data['logo'] = 'uploads/portfolio/' . $filename;
         }
 
@@ -54,8 +54,8 @@ class PortfolioController extends Controller
                 File::delete(public_path($portfolio->favicon));
             }
             $file = $request->file('favicon');
-            $filename = time() . '_favicon.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/portfolio/'), $filename);
+            $filename = time() . '_favicon.webp';
+            \Intervention\Image\ImageManager::gd()->read($file)->toWebp(80)->save(public_path('uploads/portfolio/' . $filename));
             $data['favicon'] = 'uploads/portfolio/' . $filename;
         }
 

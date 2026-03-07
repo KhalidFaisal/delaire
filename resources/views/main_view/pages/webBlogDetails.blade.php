@@ -79,7 +79,7 @@
     <main>
         <section class="home-banner-01">
             <div class="position-relative">
-                <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg" class="d-block w-100" style="height: 250px; object-fit: cover; filter: brightness(0.7);" alt="Blog Banner">
+                <img src="https://template.canva.com/EAENvp21inc/1/0/1600w-qt_TMRJF4m0.jpg" class="lazy-image d-block w-100" style="height: 250px; object-fit: cover; filter: brightness(0.7);" alt="Blog Banner" loading="lazy" >
                 <div class="position-absolute top-50 start-50 translate-middle text-center">
                     <h1 class="text-white display-4 font-weight-bold">{{ $blog->blog_title }}</h1>
                     <ul class="breadcrumb justify-content-center bg-transparent p-0 mt-3">
@@ -98,7 +98,7 @@
                     <div class="col-lg-8 col-md-12 mb-4">
                         <div class="blog-details-wrapper">
                             <div class="blog-details-img">
-                                <img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="{{ $blog->blog_title }}">
+                                <img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="{{ $blog->blog_title }}" loading="lazy"  class="lazy-image" >
                             </div>
                             <div class="blog-meta d-flex align-items-center flex-wrap">
                                 <span><i class="far fa-calendar-alt"></i> {{ date('d M Y', strtotime($blog->created_at)) }}</span>
@@ -136,7 +136,7 @@
                                         @endphp
                                         <div class="media mb-3 d-flex align-items-center">
                                             <a href="{{ $rLink }}" target="{{ $rTarget }}">
-                                                <img src="{{ asset('uploads/'. $recent->blog_image) }}" class="mr-3" alt="{{ $recent->blog_title }}">
+                                                <img src="{{ asset('uploads/'. $recent->blog_image) }}" class="lazy-image mr-3" alt="{{ $recent->blog_title }}" loading="lazy" >
                                             </a>
                                             <div class="media-body ms-3">
                                                 <h6><a href="{{ $rLink }}" target="{{ $rTarget }}">{{ Str::limit($recent->blog_title, 40) }}</a></h6>

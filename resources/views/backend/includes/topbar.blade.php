@@ -48,14 +48,14 @@
                 </li>
                 <li class="onhover-dropdown">
                     <div class="bookmark-box">
-                        <img class="img-30 rounded-circle" src="{{ asset('backend/assets/images/user/user.png') }}"
-                            alt="Admin">
+                        <img class="lazy-image img-30 rounded-circle" src="{{ asset('backend/assets/images/user/user.png') }}"
+                            alt="Admin" loading="lazy" >
                     </div>
                     <div class="bookmark-dropdown onhover-show-div">
                         <div class="sidebar-user text-center"><a class="setting-primary"
                                 href="{{ route('manage.admin') }}"><i data-feather="settings"></i></a><img
-                                class="img-90 rounded-circle" src="{{ asset('backend/assets/images/user/user.png') }}"
-                                alt="Admin">
+                                class="lazy-image img-90 rounded-circle" src="{{ asset('backend/assets/images/user/user.png') }}"
+                                alt="Admin" loading="lazy" >
                             <div class="badge-bottom">
                             </div>
                             <a href="#">

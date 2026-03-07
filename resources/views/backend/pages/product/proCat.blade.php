@@ -69,7 +69,7 @@
         $count=0;
      @endphp
         <!-- Table rows with data -->
-        @foreach( $cats as $category)
+        @forelse( $cats as $category)
         @php
      
         $count++;
@@ -92,7 +92,11 @@
           
           </td>
         </tr>
-        @endforeach
+        @empty
+        <tr>
+          <td colspan="3" class="text-center text-muted py-4">No data found in this table.</td>
+        </tr>
+        @endforelse
         
         <!-- Add more rows as needed -->
       </tbody>

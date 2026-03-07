@@ -44,10 +44,10 @@
                 <label for="image">Image</label>
                 @if($testimonial->image)
                     <div class="mb-2">
-                        <img src="{{ asset($testimonial->image) }}" alt="Current Image" width="100">
+                        <img src="{{ asset($testimonial->image) }}" alt="Current Image" width="100" loading="lazy"  class="lazy-image" >
                     </div>
                 @endif
-                <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+                <input type="file" class="form-control-file" id="image" name="image" accept="image/*" data-crop="true">
             </div>
 
             <button type="submit" class="btn btn-primary">Update Testimonial</button>

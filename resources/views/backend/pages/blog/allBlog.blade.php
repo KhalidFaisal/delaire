@@ -44,7 +44,7 @@
         @endphp
         <tr>
           <td>{{ $count }}</td>
-          <td><img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="Blog Image" width="50"></td>
+          <td><img src="{{ asset('uploads/'. $blog->blog_image) }}" alt="Blog Image" width="50" loading="lazy"  class="lazy-image" ></td>
           <td> {{ $blog->blog_title }}</td>
           <td> {{ $blog->blog_Cat }}</td>
           <td> {{ date('d M y', strtotime($blog->created_at)) }}</td>

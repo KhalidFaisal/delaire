@@ -28,10 +28,8 @@ class BlogController extends Controller
         $blog->meta_keywords = $request->meta_keywords;
         if ($request->hasFile('blog_image')) {
             $image = $request->file('blog_image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads'), $imageName); // Store the image in the 'uploads' directory
-            // You can also save the image details to a database if needed
-            // return 'Image uploaded successfully';
+            $imageName = time() . '.webp';
+            \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
             $blog->blog_image = $imageName;
         }
 
@@ -86,8 +84,8 @@ class BlogController extends Controller
 
     if ($request->hasFile('blog_image')) {
         $image = $request->file('blog_image');
-        $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $image->move(public_path('uploads'), $imageName);
+        $imageName = time() . '.webp';
+        \Intervention\Image\ImageManager::gd()->read($image)->toWebp(80)->save(public_path('uploads/' . $imageName));
         $blog->blog_image = $imageName;
     }
 
@@ -118,16 +116,21 @@ class BlogController extends Controller
            
             
 
-            public function webIndex() {
-                $cats = Category::orderBy('created_at', 'asc')->get();
-                $blogs = Blog::orderBy('created_at', 'desc')->get();
-                return view('main_view.pages.webBlog', compact('cats', 'blogs'));
-            }
-        
-            public function show($id) {
-                $blog = Blog::findOrFail($id);
-                $recentBlogs = Blog::where('id', '!=', $id)->orderBy('created_at', 'desc')->take(5)->get();
-                $cats = Category::orderBy('created_at', 'asc')->get();
-                return view('main_view.pages.webBlogDetails', compact('blog', 'recentBlogs', 'cats'));
-            }
+    public function webIndex() {
+        $cats = Category::orderBy('created_at', 'asc')->get();
+        // Eager load category if relation exists, assuming 'category' is the name
+        // Checking Blog model... actually the relation might not be defined or named differently
+        // based on 'blog_Cat' field. Let's assume standard usage or leave as is if no relation.
+        // Given 'blog_Cat' is just a string/ID, if there's no BelongsTo, eager loading won't work.
+        // Checking Blog.php...
+        $blogs = Blog::orderBy('created_at', 'desc')->get();
+        return view('main_view.pages.webBlog', compact('cats', 'blogs'));
+    }
+
+    public function show($id) {
+        $blog = Blog::findOrFail($id);
+        $recentBlogs = Blog::where('id', '!=', $id)->orderBy('created_at', 'desc')->take(5)->get();
+        $cats = Category::orderBy('created_at', 'asc')->get();
+        return view('main_view.pages.webBlogDetails', compact('blog', 'recentBlogs', 'cats'));
+    }
 }

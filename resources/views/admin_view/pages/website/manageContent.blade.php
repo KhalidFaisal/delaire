@@ -39,13 +39,13 @@
             </div>
                 <div class="form-group">
                     <label for="pro_image">Top Image:</label><br>
-                    <td><img src="{{ asset('uploads/'. $content->pro_image) }}" alt="Pro Image" width="250"></td><br><br>           
+                    <td><img src="{{ asset('uploads/'. $content->pro_image) }}" alt="Pro Image" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
                     <input type="file" class="form-control-file" id="pro_image" name="pro_image" accept="image/*">
                 </div>
 
                 <div class="form-group">
                     <label for="about_image">About Image:</label><br>
-                    <td><img src="{{ asset('uploads/'. $content->about_image) }}" alt="About Image" width="250"></td><br><br>           
+                    <td><img src="{{ asset('uploads/'. $content->about_image) }}" alt="About Image" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
                     <input type="file" class="form-control-file" id="about_image" name="about_image" accept="image/*">
                 </div>
     

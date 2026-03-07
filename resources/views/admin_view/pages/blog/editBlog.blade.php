@@ -66,7 +66,7 @@ $blogName = App\Models\Blog::find($id);
 
             <div class="form-group">
                 <label for="blogThumbnail">Blog Thumbnail:</label><br>
-                <td><img src="{{ asset('uploads/'. $blogName->blog_image) }}" alt="Blog Image" width="250"></td><br><br>
+                <td><img src="{{ asset('uploads/'. $blogName->blog_image) }}" alt="Blog Image" width="250" loading="lazy"  class="lazy-image" ></td><br><br>
 
 
 

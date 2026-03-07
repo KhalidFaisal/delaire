@@ -14,7 +14,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 border-0 shadow-sm p-3">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                    <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}" class="lazy-image rounded" style="width: 60px; height: 60px; object-fit: cover;" loading="lazy" >
                     <div class="ms-3">
                         <h6 class="mb-0 fw-bold text-dark">{{ Str::limit($product->pro_title, 30) }}</h6>
                         <small class="text-muted">Purchased</small>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="d-flex align-items-center mb-4 p-3 bg-light rounded">
-                                <img src="{{ asset('uploads/'. $product->pro_img1) }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                <img src="{{ asset('uploads/'. $product->pro_img1) }}" class="lazy-image rounded" style="width: 50px; height: 50px; object-fit: cover;" loading="lazy" >
                                 <div class="ms-3">
                                     <h6 class="mb-0 fw-bold">{{ $product->pro_title }}</h6>
                                 </div>

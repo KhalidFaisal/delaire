@@ -206,7 +206,7 @@
                                         }
                                     </style>
 
-                                    @foreach($products as $product)
+                                    @forelse($products as $product)
                                         @php
                                             $adjusted = $product->adjusted_price;
                                             $final = $product->final_price;
@@ -220,7 +220,7 @@
                                         <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-duration="700">
                                             <div class="minimalist-card" onclick="window.location='{{ route('product.show', $product->id) }}'">
                                                 <div class="position-relative product-img-wrapper">
-                                                    <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}">
+                                                    <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}" loading="lazy"  class="lazy-image" >
                                                     
                                                     <div class="position-absolute top-0 end-0 m-3" onclick="event.stopPropagation()">
                                                         <div class="wishlist-btn {{ $inWishlist ? 'active' : '' }}" onclick="toggleWishlist(this)" data-product-id="{{ $product->id }}">
@@ -253,7 +253,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    @empty
+                                        <div class="col-12 text-center py-5">
+                                            <h3 class="text-muted">No Products Found</h3>
+                                            <p class="text-muted">We couldn't find any products matching your search criteria.</p>
+                                        </div>
+                                    @endforelse
                                 </div>
                             </div>
                             
@@ -713,7 +718,7 @@
                         <li class="utilty-menu-item">
                             <button type="button" class="currency-btn btn-reset" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                <img class="flag" src="assets/img/flag/usd.jpg" alt="img">
+                                <img class="lazy-image flag" src="assets/img/flag/usd.jpg" alt="img" loading="lazy" >
                                 <span>USD</span>
                                 <span class="utilty-icon-wrapper">
                                     <svg class="icon icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -727,31 +732,31 @@
                             <ul class="currency-list dropdown-menu dropdown-menu-end px-2">
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="USD">
-                                        <img class="flag" src="assets/img/flag/usd.jpg" alt="img">
+                                        <img class="lazy-image flag" src="assets/img/flag/usd.jpg" alt="img" loading="lazy" >
                                         <span>USD</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="CAD">
-                                        <img class="flag" src="assets/img/flag/cad.jpg" alt="img">
+                                        <img class="lazy-image flag" src="assets/img/flag/cad.jpg" alt="img" loading="lazy" >
                                         <span>CAD</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="EUR">
-                                        <img class="flag" src="assets/img/flag/eur.jpg" alt="img">
+                                        <img class="lazy-image flag" src="assets/img/flag/eur.jpg" alt="img" loading="lazy" >
                                         <span>EUR</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="JPY">
-                                        <img class="flag" src="assets/img/flag/jpy.jpg" alt="img">
+                                        <img class="lazy-image flag" src="assets/img/flag/jpy.jpg" alt="img" loading="lazy" >
                                         <span>JPY</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="GBP">
-                                        <img class="flag" src="assets/img/flag/gbp.jpg" alt="img">
+                                        <img class="lazy-image flag" src="assets/img/flag/gbp.jpg" alt="img" loading="lazy" >
                                         <span>GBP</span>
                                     </a>
                                 </li>
@@ -776,7 +781,7 @@
                         <!-- minicart item -->
                         <div class="minicart-item d-flex">
                             <div class="mini-img-wrapper">
-                                <img class="mini-img" src="assets/img/products/furniture/1.jpg" alt="img">
+                                <img class="lazy-image mini-img" src="assets/img/products/furniture/1.jpg" alt="img" loading="lazy" >
                             </div>
                             <div class="product-info">
                                 <h2 class="product-title"><a href="#">Eliot Reversible Sectional</a></h2>
@@ -784,10 +789,10 @@
                                 <div class="misc d-flex align-items-end justify-content-between">
                                     <div class="quantity d-flex align-items-center justify-content-between">
                                         <button class="qty-btn dec-qty"><img src="assets/img/icon/minus.svg"
-                                                alt="minus"></button>
+                                                alt="minus" loading="lazy"  class="lazy-image" ></button>
                                         <input class="qty-input" type="number" name="qty" value="1" min="0">
                                         <button class="qty-btn inc-qty"><img src="assets/img/icon/plus.svg"
-                                                alt="plus"></button>
+                                                alt="plus" loading="lazy"  class="lazy-image" ></button>
                                     </div>
                                     <div class="product-remove-area d-flex flex-column align-items-end">
                                         <div class="product-price">$580.00</div>
@@ -799,7 +804,7 @@
                         <!-- minicart item -->
                         <div class="minicart-item d-flex">
                             <div class="mini-img-wrapper">
-                                <img class="mini-img" src="assets/img/products/furniture/2.jpg" alt="img">
+                                <img class="lazy-image mini-img" src="assets/img/products/furniture/2.jpg" alt="img" loading="lazy" >
                             </div>
                             <div class="product-info">
                                 <h2 class="product-title"><a href="#">Vita Lounge Chair</a></h2>
@@ -807,10 +812,10 @@
                                 <div class="misc d-flex align-items-end justify-content-between">
                                     <div class="quantity d-flex align-items-center justify-content-between">
                                         <button class="qty-btn dec-qty"><img src="assets/img/icon/minus.svg"
-                                                alt="minus"></button>
+                                                alt="minus" loading="lazy"  class="lazy-image" ></button>
                                         <input class="qty-input" type="number" name="qty" value="1" min="0">
                                         <button class="qty-btn inc-qty"><img src="assets/img/icon/plus.svg"
-                                                alt="plus"></button>
+                                                alt="plus" loading="lazy"  class="lazy-image" ></button>
                                     </div>
                                     <div class="product-remove-area d-flex flex-column align-items-end">
                                         <div class="product-price">$580.00</div>
@@ -822,7 +827,7 @@
                         <!-- minicart item -->
                         <div class="minicart-item d-flex">
                             <div class="mini-img-wrapper">
-                                <img class="mini-img" src="assets/img/products/furniture/3.jpg" alt="img">
+                                <img class="lazy-image mini-img" src="assets/img/products/furniture/3.jpg" alt="img" loading="lazy" >
                             </div>
                             <div class="product-info">
                                 <h2 class="product-title"><a href="#">Sarno Dining Chair</a></h2>
@@ -830,10 +835,10 @@
                                 <div class="misc d-flex align-items-end justify-content-between">
                                     <div class="quantity d-flex align-items-center justify-content-between">
                                         <button class="qty-btn dec-qty"><img src="assets/img/icon/minus.svg"
-                                                alt="minus"></button>
+                                                alt="minus" loading="lazy"  class="lazy-image" ></button>
                                         <input class="qty-input" type="number" name="qty" value="1" min="0">
                                         <button class="qty-btn inc-qty"><img src="assets/img/icon/plus.svg"
-                                                alt="plus"></button>
+                                                alt="plus" loading="lazy"  class="lazy-image" ></button>
                                     </div>
                                     <div class="product-remove-area d-flex flex-column align-items-end">
                                         <div class="product-price">$580.00</div>
@@ -845,7 +850,7 @@
                         <!-- minicart item -->
                         <div class="minicart-item d-flex">
                             <div class="mini-img-wrapper">
-                                <img class="mini-img" src="assets/img/products/furniture/4.jpg" alt="img">
+                                <img class="lazy-image mini-img" src="assets/img/products/furniture/4.jpg" alt="img" loading="lazy" >
                             </div>
                             <div class="product-info">
                                 <h2 class="product-title"><a href="#">Vita Lounge Chair</a></h2>
@@ -853,10 +858,10 @@
                                 <div class="misc d-flex align-items-end justify-content-between">
                                     <div class="quantity d-flex align-items-center justify-content-between">
                                         <button class="qty-btn dec-qty"><img src="assets/img/icon/minus.svg"
-                                                alt="minus"></button>
+                                                alt="minus" loading="lazy"  class="lazy-image" ></button>
                                         <input class="qty-input" type="number" name="qty" value="1" min="0">
                                         <button class="qty-btn inc-qty"><img src="assets/img/icon/plus.svg"
-                                                alt="plus"></button>
+                                                alt="plus" loading="lazy"  class="lazy-image" ></button>
                                     </div>
                                     <div class="product-remove-area d-flex flex-column align-items-end">
                                         <div class="product-price">$580.00</div>
@@ -918,25 +923,25 @@
                                             "asNavFor": ".qv-thumb-slider"
                                         }'>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/39.jpg" alt="img">
+                                                <img src="assets/img/products/bags/39.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/38.jpg" alt="img">
+                                                <img src="assets/img/products/bags/38.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/37.jpg" alt="img">
+                                                <img src="assets/img/products/bags/37.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/36.jpg" alt="img">
+                                                <img src="assets/img/products/bags/36.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/34.jpg" alt="img">
+                                                <img src="assets/img/products/bags/34.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/30.jpg" alt="img">
+                                                <img src="assets/img/products/bags/30.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                             <div class="img-large-wrapper">
-                                                <img src="assets/img/products/bags/32.jpg" alt="img">
+                                                <img src="assets/img/products/bags/32.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                             </div>
                                         </div>
                                     </div>
@@ -955,37 +960,37 @@
                                         }'>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/39.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/39.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/38.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/38.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/37.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/37.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/36.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/36.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/34.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/34.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/30.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/30.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                             <div>
                                                 <div class="img-thumb-wrapper">
-                                                    <img src="assets/img/products/bags/32.jpg" alt="img">
+                                                    <img src="assets/img/products/bags/32.jpg" alt="img" loading="lazy"  class="lazy-image" >
                                                 </div>
                                             </div>
                                         </div>
@@ -1086,9 +1091,9 @@
     
                                     <div class="misc d-flex align-items-end justify-content-between mt-4">
                                         <div class="quantity d-flex align-items-center justify-content-between">
-                                            <button class="qty-btn dec-qty"><img src="assets/img/icon/minus.svg" alt="minus"></button>
+                                            <button class="qty-btn dec-qty"><img src="assets/img/icon/minus.svg" alt="minus" loading="lazy"  class="lazy-image" ></button>
                                             <input class="qty-input" type="number" name="qty" value="1" min="0">
-                                            <button class="qty-btn inc-qty"><img src="assets/img/icon/plus.svg" alt="plus"></button>
+                                            <button class="qty-btn inc-qty"><img src="assets/img/icon/plus.svg" alt="plus" loading="lazy"  class="lazy-image" ></button>
                                         </div>
                                         <div class="message-popup d-flex align-items-center">
                                             <span class="message-popup-icon">

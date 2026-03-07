@@ -375,7 +375,7 @@
                         <li class="utilty-menu-item">
                             <button type="button" class="currency-btn btn-reset" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                <img class="flag" src="{{asset('main_view/assets/img/flag/usd.jpg')}}" alt="img">
+                                <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/usd.jpg')}}" alt="img" loading="lazy" >
                                 <span>USD</span>
                                 <span class="utilty-icon-wrapper">
                                     <svg class="icon icon-dropdown" xmlns="http://www.w3.org/2000/svg" width="24"
@@ -389,31 +389,31 @@
                             <ul class="currency-list dropdown-menu dropdown-menu-end px-2">
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="USD">
-                                        <img class="flag" src="{{asset('main_view/assets/img/flag/usd.jpg')}}" alt="img">
+                                        <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/usd.jpg')}}" alt="img" loading="lazy" >
                                         <span>USD</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="CAD">
-                                        <img class="flag" src="{{asset('main_view/assets/img/flag/cad.jpg')}}" alt="img">
+                                        <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/cad.jpg')}}" alt="img" loading="lazy" >
                                         <span>CAD</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="EUR">
-                                        <img class="flag" src="{{asset('main_view/assets/img/flag/eur.jpg')}}" alt="img">
+                                        <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/eur.jpg')}}" alt="img" loading="lazy" >
                                         <span>EUR</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="JPY">
-                                        <img class="flag" src="{{asset('main_view/assets/img/flag/jpy.jpg')}}" alt="img">
+                                        <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/jpy.jpg')}}" alt="img" loading="lazy" >
                                         <span>JPY</span>
                                     </a>
                                 </li>
                                 <li class="currency-list-item ">
                                     <a class="currency-list-option" href="#" data-value="GBP">
-                                        <img class="flag" src="{{asset('main_view/assets/img/flag/gbp.jpg')}}" alt="img">
+                                        <img class="lazy-image flag" src="{{asset('main_view/assets/img/flag/gbp.jpg')}}" alt="img" loading="lazy" >
                                         <span>GBP</span>
                                     </a>
                                 </li>

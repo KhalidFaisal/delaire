@@ -55,14 +55,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($damagedItems as $item)
+                            @forelse($damagedItems as $item)
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         @if($item->product && $item->product->pro_img1)
-                                            <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" alt="" width="50" class="me-2 rounded">
+                                            <img src="{{ asset('uploads/' . $item->product->pro_img1) }}" alt="" width="50" class="lazy-image me-2 rounded" loading="lazy" >
                                         @else
-                                            <img src="{{ asset('backend/images/product/1.png') }}" alt="" width="50" class="me-2 rounded">
+                                            <img src="{{ asset('backend/images/product/1.png') }}" alt="" width="50" class="lazy-image me-2 rounded" loading="lazy" >
                                         @endif
                                         <div>
                                             <h6 class="mb-0">{{ $item->product->pro_title ?? 'Product Deleted' }}</h6>
@@ -116,7 +116,16 @@
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <i class="fa fa-folder-open-o fs-2 mb-2 text-muted"></i>
+                                        <h6 class="mb-0">No data found</h6>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

@@ -179,7 +179,7 @@
                                     // Fetch 3 random suggestions containing images
                                     $suggestedProducts = \App\Models\Product::whereNotNull('pro_img1')->inRandomOrder()->take(3)->get();
                                 @endphp
-                                @foreach($suggestedProducts as $s_product)
+                                @forelse($suggestedProducts as $s_product)
                                 <div class="suggestion-item d-flex align-items-center mb-3 pb-3 {{ $loop->last ? '' : 'border-bottom' }}" 
                                      id="suggestion-{{ $s_product->id }}" 
                                      data-product-id="{{ $s_product->id }}"
@@ -187,7 +187,7 @@
                                     
                                     <div class="position-relative me-3">
                                         <img src="{{ asset('uploads/'. $s_product->pro_img1) }}" alt="{{ $s_product->pro_title }}" 
-                                             style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px;">
+                                             style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px;" loading="lazy"  class="lazy-image" >
                                     </div>
                                     
                                     <div class="flex-grow-1" style="min-width: 0;">
@@ -230,7 +230,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                @endforeach
+                                @empty
+                                <div class="suggestion-item text-center pb-3">
+                                    <span class="text-muted small">No suggestions to show right now.</span>
+                                </div>
+                                @endforelse
                             </div>
 
                             <div class="checkout-card summary-sticky">

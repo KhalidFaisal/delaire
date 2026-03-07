@@ -12,8 +12,56 @@ class StockController extends Controller
 {
     public function index()
     {
+        // 1. Fetch Products with relationships
         $products = Product::where('pro_status', 1)->orWhereNull('pro_status')->with(['sizes', 'brand'])->get();
-        // Assuming '1' means active, or all products.
+
+        // 2. Pre-fetch Sold Quantities (Grouped by Product and Size)
+        // We fetch all valid order items once
+        $soldItems = \App\Models\OrderItem::whereHas('order', function($q) {
+                $q->where('status', '!=', 'cancelled');
+            })
+            ->selectRaw('product_id, size, sum(qty) as total_sold')
+            ->groupBy('product_id', 'size')
+            ->get();
+
+        // Map sold items for easy lookup: string key "prod_id_size" -> total_sold
+        $soldMap = [];
+        foreach($soldItems as $item) {
+            $key = $item->product_id . '_' . ($item->size ?? 'N/A');
+            $soldMap[$key] = $item->total_sold;
+        }
+
+        // 3. Pre-fetch Stock History (Lot Numbers & Entry Dates)
+        // We fetch relevant fields from Stock table
+        $stockEntries = Stock::select('product_id', 'product_size_id', 'lot_number', 'entry_date')
+                             ->orderBy('created_at', 'asc') // useful for entry_date
+                             ->get();
+
+        // Map stock data for lookup. 
+        // We need lookup by product_size_id (for sized products) or product_id (for non-sized)
+        // Since a product can have multiple stock entries (batches), we need to group them.
+        
+        $stockHistoryMap = []; // Key: "size_ID" or "prod_ID" -> ['lots' => [], 'first_entry' => date]
+
+        foreach($stockEntries as $entry) {
+            if ($entry->product_size_id) {
+                $key = 'size_' . $entry->product_size_id;
+            } else {
+                $key = 'prod_' . $entry->product_id;
+            }
+
+            if (!isset($stockHistoryMap[$key])) {
+                $stockHistoryMap[$key] = [
+                    'lots' => [], 
+                    'first_entry' => $entry->entry_date // Since we ordered by ASC, first one we see is the earliest
+                ];
+            }
+
+            if ($entry->lot_number && !in_array($entry->lot_number, $stockHistoryMap[$key]['lots'])) {
+                $stockHistoryMap[$key]['lots'][] = $entry->lot_number;
+            }
+        }
+
 
         $stockItems = [];
 
@@ -22,32 +70,25 @@ class StockController extends Controller
                 foreach ($product->sizes as $size) {
                     $currentStock = $size->stock;
                     
-                    // Calculate Sold Qty from Order Items
-                    $soldQty = \App\Models\OrderItem::where('product_id', $product->id)
-                                                    ->where('size', $size->size)
-                                                    ->whereHas('order', function($q) {
-                                                        $q->where('status', '!=', 'cancelled');
-                                                    })
-                                                    ->sum('qty');
+                    // Lookup Sold Qty
+                    $soldKey = $product->id . '_' . $size->size;
+                    $soldQty = $soldMap[$soldKey] ?? 0;
 
                     // Calculate Starting Qty
                     $startingQty = $currentStock + $soldQty;
 
-                    // Lot Numbers
-                    $lotNumbers = Stock::where('product_size_id', $size->id)
-                                       ->whereNotNull('lot_number')
-                                       ->distinct()
-                                       ->pluck('lot_number')
-                                       ->implode(', ');
+                    // Lookup Stock History
+                    $histKey = 'size_' . $size->id;
+                    $history = $stockHistoryMap[$histKey] ?? ['lots' => [], 'first_entry' => null];
                     
-                    // Entry Date
-                    $firstEntry = Stock::where('product_size_id', $size->id)->orderBy('created_at', 'asc')->value('entry_date');
+                    $lotNumbers = !empty($history['lots']) ? implode(', ', $history['lots']) : 'N/A';
+                    $firstEntry = $history['first_entry'];
 
                     $stockItems[] = [
                         'product_name' => $product->pro_title,
                         'product_image' => $product->pro_img1, 
                         'size' => $size->size,
-                        'lot_number' => $lotNumbers ?: 'N/A',
+                        'lot_number' => $lotNumbers,
                         'starting_qty' => $startingQty,
                         'current_stock' => $currentStock,
                         'sold_qty' => $soldQty,
@@ -57,38 +98,29 @@ class StockController extends Controller
             } else {
                 $currentStock = $product->pro_qty;
 
-                // Calculate Sold Qty from Order Items
-                $soldQty = \App\Models\OrderItem::where('product_id', $product->id)
-                                                ->whereNull('size') 
-                                                ->whereHas('order', function($q) {
-                                                    $q->where('status', '!=', 'cancelled');
-                                                })
-                                                ->sum('qty');
-                 
-                 // Fallback if some legacy orders have size but product now has no sizes? Unlikely. 
-                 // But let's be safe: matches product_id.
-                 // Actually, if product has no sizes, order items shouldn't have sizes. 
+                // Lookup Sold Qty (Size is null or empty in DB, mapped to 'N/A' above logic needs alignment)
+                // In DB order_items, size might be null or empty string.
+                // Our map key uses ($item->size ?? 'N/A').
+                // If DB has NULL, key is `ID_N/A`. If DB has "", key is `ID_`.
+                // Safest to just sum both possibilities or ensure query handles nulls.
+                
+                $soldQty = ($soldMap[$product->id . '_N/A'] ?? 0) + ($soldMap[$product->id . '_'] ?? 0); 
 
                 // Calculate Starting Qty
                 $startingQty = $currentStock + $soldQty;
 
-                 $lotNumbers = Stock::where('product_id', $product->id)
-                                   ->whereNull('product_size_id')
-                                   ->whereNotNull('lot_number')
-                                   ->distinct()
-                                   ->pluck('lot_number')
-                                   ->implode(', ');
-                 
-                 $firstEntry = Stock::where('product_id', $product->id)
-                                   ->whereNull('product_size_id')
-                                   ->orderBy('created_at', 'asc')
-                                   ->value('entry_date');
+                // Lookup Stock History
+                $histKey = 'prod_' . $product->id;
+                $history = $stockHistoryMap[$histKey] ?? ['lots' => [], 'first_entry' => null];
+                
+                $lotNumbers = !empty($history['lots']) ? implode(', ', $history['lots']) : 'N/A';
+                $firstEntry = $history['first_entry'];
 
                 $stockItems[] = [
                     'product_name' => $product->pro_title,
                     'product_image' => $product->pro_img1,
                     'size' => 'N/A',
-                    'lot_number' => $lotNumbers ?: 'N/A',
+                    'lot_number' => $lotNumbers,
                     'starting_qty' => $startingQty,
                     'current_stock' => $currentStock,
                     'sold_qty' => $soldQty,
