@@ -287,6 +287,8 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
                     return view('backend.pages.website.manageContent');
                     })->name('manage.content');
                     Route::post('/content/update', [ContentController::class, 'updatec'])->name('content.updatec');
+                    Route::get('/manage/content-setting', [\App\Http\Controllers\Backend\ContentSettingController::class, 'index'])->name('manage.content.setting');
+                    Route::post('/manage/content-setting/update', [\App\Http\Controllers\Backend\ContentSettingController::class, 'update'])->name('manage.content.setting.update');
     
     //Content route End
     
@@ -319,6 +321,10 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     // manage.promocodes
     Route::get('/general-settings/promocodes', [App\Http\Controllers\Backend\PromoCodeController::class, 'index'])->name('manage.promocodes');
     
+    // manage.app.settings
+    Route::get('/general-settings/app-settings', [App\Http\Controllers\Backend\AppSettingsController::class, 'index'])->name('manage.app.settings');
+    Route::post('/general-settings/app-settings/update', [App\Http\Controllers\Backend\AppSettingsController::class, 'update'])->name('update.app.settings');
+
     // Promo Code Actions
     Route::post('/promo-codes/store', [App\Http\Controllers\Backend\PromoCodeController::class, 'store'])->name('promo.store');
     Route::get('/promo-codes/delete/{id}', [App\Http\Controllers\Backend\PromoCodeController::class, 'destroy'])->name('promo.delete');

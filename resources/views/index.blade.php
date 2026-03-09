@@ -36,6 +36,11 @@
 
         <main id="MainContent" class="content-for-layout">
             <!-- slideshow start -->
+            @php 
+                $contentSetting = \App\Models\ContentSetting::firstOrCreate([]); 
+                $content = \App\Models\Content::first();
+            @endphp
+            @if($contentSetting->slider_active)
             <div class="slideshow-section position-relative">
                 <div class="slideshow-active activate-slider" data-slick='{
                     "slidesToShow": 1, 
@@ -51,9 +56,7 @@
                         }
                     ]
                 }'>
-                @php
-                            $content = App\Models\Content::first();
-                        @endphp
+
                    @if($content)
                     <div class="slide-item slide-item-bag position-relative">
                         <img class="lazy-image slide-img d-none d-md-block" src="{{ asset('uploads/'. $content->pro_image) }}" alt="slide-1" loading="lazy" >
@@ -128,6 +131,7 @@
                 <div class="activate-arrows"></div>
                 <div class="activate-dots dot-tools"></div>
             </div>
+            @endif
             <!-- slideshow end -->
 
             <!-- trusted badge start 
@@ -178,6 +182,7 @@
             trusted badge end -->
 
             <!-- Feature Category start -->
+            @if($contentSetting->feature_content_active)
             <div class="grid-banner mt-100 overflow-hidden">
                 <div class="collection-tab-inner mt-0">
                     <div class="container">
@@ -217,6 +222,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             <!-- Feature Categoty end -->
 
             <!-- Notification -->
@@ -396,7 +402,7 @@
            
 
             <!-- single banner start -->
-            @if($content && $content->banner_image)
+            @if($content && $content->banner_image && $contentSetting->banner_active)
             <div class="single-banner-section mt-100 overflow-hidden">
                 <div class="position-relative overlay">
                     <img class="lazy-image single-banner-img" src="{{asset('uploads/'. $content->banner_image)}}" alt="slide-1" loading="lazy" >
@@ -430,6 +436,7 @@
             <!-- single banner end -->
 
              <!-- testimonial start -->
+            @if($contentSetting->testimonial_active)
             <div class="testimonial-section mt-100 overflow-hidden home-section">
                 <div class="testimonial-inner">
                     <div class="container">
@@ -501,6 +508,8 @@
                     </div>
                 </div>
             </div>
+            @endif
+            <!-- testimonial end -->
         </main>
 
         @include('main_view.include.footer')

@@ -96,10 +96,11 @@
                       <span style="margin-left: 5px;">Manage Website</span>
                   </a>
 
-                  <ul class="nav-submenu menu-content">
+                    <ul class="nav-submenu menu-content">
                     <li><a href="{{route('manage.portfolio')}}"><i class="fa fa-briefcase"></i> Manage Portfolio</a></li>
                     <li><a href="{{route('manage.content')}}"><i class="fa fa-file-text-o"></i> Manage Content</a></li>
                     <li><a href="{{route('manage.feature.category')}}"><i class="fa fa-th-large"></i> Feature Category</a></li>
+                    <li><a href="{{route('manage.content.setting')}}"><i class="fa fa-toggle-on"></i> Content Setting</a></li>
                     <li><a href="{{route('manage.testimonial')}}"><i class="fa fa-comments"></i> Manage Testimonial</a></li>
                   </ul>
 
@@ -114,6 +115,7 @@
                     <li><a href="{{route('manage.offers')}}"><i class="fa fa-percent"></i> Manage Offers</a></li>
                     <li><a href="{{route('manage.charges')}}"><i class="fa fa-truck"></i> Manage Charges</a></li>
                     <li><a href="{{route('manage.promocodes')}}"><i class="fa fa-ticket"></i> Manage Promo Codes</a></li>
+                    <li><a href="{{route('manage.app.settings')}}"><i class="fa fa-cogs"></i> App Settings</a></li>
                     <li><a href="{{route('admin.manage.index')}}"><i class="fa fa-user-plus"></i> Manage Admin</a></li>
                   </ul>
             </li>
