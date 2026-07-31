@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Models\Blog;
 use App\Models\Procategory;
 
-class proCatController extends Controller
+class ProCatController extends Controller
 {
     public function createProCategory(Request $request){
         $category = new Procategory();

@@ -8,7 +8,7 @@ use App\Models\Blog;
 use App\Models\Procategory;
 use App\Models\Prosubcategory;
 
-class proSubCatController extends Controller
+class ProSubCatController extends Controller
 {
     public function createSubProCategory(Request $request){
         $category = new Prosubcategory();
