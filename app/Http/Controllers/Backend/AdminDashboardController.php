@@ -1,0 +1,143 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\UserOrder;
+use App\Models\UserReview;
+use App\Models\OrderItem;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class AdminDashboardController extends Controller
+{
+    public function index()
+    {
+        // 1. Total Sales (Sum of total column in user_orders table)
+        // Exclude cancelled orders
+        $grossSales = UserOrder::where('status', '!=', 'Cancelled')->sum('total');
+
+        // Calculate total amount from approved returns
+        $approvedReturns = \App\Models\UserReturn::where('status', 'approved')->get();
+        $refundedAmount = 0;
+
+        foreach ($approvedReturns as $returnReq) {
+            $refundItem = \App\Models\OrderItem::where('order_id', $returnReq->order_id)
+                                               ->where('product_id', $returnReq->product_id)
+                                               ->first();
+            if ($refundItem) {
+                // Determine the price paid for that quantity
+                $refundedAmount += ($refundItem->price * $refundItem->qty);
+            }
+        }
+
+        $totalSales = max(0, $grossSales - $refundedAmount);
+
+        // 2. Total Orders
+        $totalOrders = UserOrder::count();
+
+        // 3. Total Stock
+        $totalStock = Product::sum('pro_qty');
+
+        // 4. Total Users (excluding admins if there is a role distinction, assuming User model is for customers)
+        $totalUsers = User::count();
+
+        // 5. Low Stock Products (< 10)
+        // 5. Low Stock Products (< 5)
+        $lowStockThreshold = 5;
+
+        // Get products with sizes that are low stock
+        $lowStockSizes = \App\Models\ProductSize::where('stock', '<', $lowStockThreshold)
+            ->with(['product' => function($q) {
+                $q->select('id', 'pro_title', 'pro_img1');
+            }])
+            ->limit(5)
+            ->get()
+            ->toBase()
+            ->map(function($size) {
+                return (object) [
+                    'id' => $size->product->id,
+                    'pro_title' => $size->product->pro_title,
+                    'pro_img1' => $size->product->pro_img1,
+                    'stock' => $size->stock,
+                    'size' => $size->size
+                ];
+            });
+
+        // Get products without sizes that are low stock
+        $lowStockNoSizes = Product::doesntHave('sizes')
+            ->where('pro_qty', '<', $lowStockThreshold)
+            ->select('id', 'pro_title', 'pro_img1', 'pro_qty')
+            ->limit(5)
+            ->get()
+            ->toBase()
+            ->map(function($product) {
+                return (object) [
+                    'id' => $product->id,
+                    'pro_title' => $product->pro_title,
+                    'pro_img1' => $product->pro_img1,
+                    'stock' => $product->pro_qty,
+                    'size' => null
+                ];
+            });
+
+        // Merge and sort
+        $lowStockProducts = $lowStockSizes->merge($lowStockNoSizes)->sortBy('stock')->take(5);
+
+        // 6. Top Selling Products
+        // Group by product_id in OrderItem, sum qty
+        $topSellingProducts = OrderItem::select('product_id', DB::raw('sum(qty) as total_sold'))
+            ->with(['product' => function($query) {
+                $query->select('id', 'pro_title', 'pro_img1');
+            }])
+            ->groupBy('product_id')
+            ->orderBy('total_sold', 'desc')
+            ->limit(5)
+            ->get();
+
+        // 7. Top Reviewed Products
+        // Average rating
+        $topReviewedProducts = UserReview::select('product_id', DB::raw('avg(rating) as average_rating'), DB::raw('count(*) as review_count'))
+            ->with(['product' => function($query) {
+                $query->select('id', 'pro_title', 'pro_img1');
+            }])
+            ->groupBy('product_id')
+            ->orderBy('average_rating', 'desc')
+            ->limit(5)
+            ->get();
+
+        // 8. Sales Graph Data (Monthly for last 12 months)
+        $salesData = UserOrder::select(
+            DB::raw('sum(total) as sums'), 
+            DB::raw("DATE_FORMAT(created_at,'%M %Y') as months")
+        )
+        ->where("created_at", ">=", Carbon::now()->subMonths(12))
+        ->where('status', '!=', 'Cancelled')
+        ->groupBy('months')
+        ->orderBy('created_at', 'asc')
+        ->get();
+        
+        $months = [];
+        $sales = [];
+        foreach($salesData as $data) {
+            $months[] = $data->months;
+            $sales[] = $data->sums;
+        }
+
+
+        return view('backend.pages.dashboard', compact(
+            'totalSales',
+            'totalOrders',
+            'totalStock',
+            'totalUsers',
+            'lowStockProducts',
+            'topSellingProducts',
+            'topReviewedProducts',
+            'months',
+            'sales'
+        ));
+    }
+}

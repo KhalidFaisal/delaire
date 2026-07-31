@@ -1,0 +1,92 @@
+@extends('backend.layout.template')
+@section('title')
+    Dashboard
+@endsection
+@section('body-content')
+
+@php 
+                $content = App\Models\Content::first();
+            
+              @endphp
+
+              @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+<div class="container card">
+    <div class="content-container p-4">
+        <h3 class="text-center">Manage Content</h3><br>
+        <form action="{{ route('content.updatec')}}" method="post" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label for="greetings">Slider 1 Header</label>
+                <input type="text" class="form-control" id="greetings" name="greetings" Value="{{ $content->greetings }}" >
+            </div>
+           
+                <div class="form-group">
+                    <!-- <label for="pro_image">Slider 1 image</label><br> -->
+                    <td><img src="{{ asset('uploads/'. $content->pro_image) }}" alt="Slide 1" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
+                    <input type="file" class="form-control-file" id="pro_image" name="pro_image" accept="image/*" data-crop="true">
+                </div> <hr>
+                <div class="form-group">
+                <label for="intro">Slider 2 header</label>
+                <input type="text" class="form-control" id="intro" name="intro" Value="{{ $content->intro }}" >
+            </div>
+                <div class="form-group">
+                    <!-- <label for="about_image">Slider 2 image</label><br> -->
+                    <td><img src="{{ asset('uploads/'. $content->about_image) }}" alt="Slide 2" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
+                    <input type="file" class="form-control-file" id="about_image" name="about_image" accept="image/*" data-crop="true">
+                </div>
+    <hr>
+            <div class="form-group">
+                <label for="slider3_header">Slide 3 header</label>
+                <input type="text" class="form-control" id="slider3_header" name="slider3_header" Value="{{ $content->slider3_header }}" >
+            </div>
+            <div class="form-group">
+                <!-- <label for="about_intro">slide 3 image</label><br> -->
+                <td><img src="{{ asset('uploads/'. $content->about_intro) }}" alt="Slide 3" width="250" loading="lazy"  class="lazy-image" ></td><br><br>           
+                    <input type="file" class="form-control-file" id="about_intro" name="about_intro" accept="image/*" data-crop="true">
+           
+            </div>
+            <hr>
+
+            <div class="form-group">
+                <label for="banner_header">Banner Header</label>
+                <input type="text" class="form-control" id="banner_header" name="banner_header" Value="{{ $content->banner_header }}" >
+            </div>
+            <div class="form-group">
+                <label for="banner_image">Banner Image</label><br>
+                @if($content->banner_image)
+                <td><img src="{{ asset('uploads/'. $content->banner_image) }}" alt="Banner" width="250" loading="lazy"  class="lazy-image" ></td><br><br>
+                @endif
+                <input type="file" class="form-control-file" id="banner_image" name="banner_image" accept="image/*" data-crop="true" data-crop-ratio="16/9">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div><br>
+
+
+
+  <!-- Add Bootstrap JS and jQuery scripts (optional but may be required for certain features) -->
+ 
+
+@endsection
+
+@section('script')
+    <script>
+
+    </script>
+@endsection
