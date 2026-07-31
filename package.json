@@ -1,9 +1,5 @@
 {
     "private": true,
-    "type": "commonjs",
-    "engines": {
-        "node": "18.x"
-    },
     "scripts": {
         "dev": "vite",
         "build": "vite build"
