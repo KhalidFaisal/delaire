@@ -44,10 +44,10 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        @if($return->user->avatar)
-                                            <img src="{{ asset('backend/images/profile/' . $return->user->avatar) }}" alt="" width="40" class="lazy-image rounded-circle me-2" loading="lazy" >
+                                        @if($return->user)
+                                            <img src="{{ $return->user->avatar_url }}" alt="" width="40" class="lazy-image rounded-circle me-2" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
                                         @else
-                                             <img src="{{ asset('backend/images/profile/profile.png') }}" alt="" width="40" class="lazy-image rounded-circle me-2" loading="lazy" >
+                                            <img src="{{ asset('main_view/assets/img/user.png') }}" alt="" width="40" class="lazy-image rounded-circle me-2" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
                                         @endif
                                         <div>
                                             <h6 class="mb-0">{{ $return->user->name ?? 'Unknown User' }}</h6>

@@ -41,8 +41,8 @@
                                 <tr>
                                     <td>{{ $customer->id }}</td>
                                     <td>
-                                        <img src="{{ $customer->avatar ?? asset('main_view/assets/img/user.png') }}" 
-                                             alt="{{ $customer->name }}" class="lazy-image img-fluid rounded-circle" width="40" height="40" loading="lazy" >
+                                        <img src="{{ $customer->avatar_url }}" 
+                                             alt="{{ $customer->name }}" class="lazy-image img-fluid rounded-circle" width="40" height="40" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
                                     </td>
                                     <td>{{ $customer->name }}</td>
                                     <td>{{ $customer->email }}</td>

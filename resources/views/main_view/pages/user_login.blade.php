@@ -61,7 +61,10 @@
                 <input type="password" name="password" id="passwordInput" class="form-control" placeholder="Enter password" required>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+            <button type="submit" class="btn btn-primary w-100 mb-2">Login</button>
+            <div class="text-center mb-3">
+                <a href="{{ route('password.request') }}" class="small text-decoration-none text-muted">Forgot password?</a>
+            </div>
 
             <div class="text-center mb-3 text-muted">or</div>
 

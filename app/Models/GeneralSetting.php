@@ -17,5 +17,11 @@ class GeneralSetting extends Model
         'offer_name',
         'offer_start_date',
         'offer_end_date',
+        'admin_notification_email',
+        'require_login',
+    ];
+
+    protected $casts = [
+        'require_login' => 'boolean',
     ];
 }

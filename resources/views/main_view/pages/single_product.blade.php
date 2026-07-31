@@ -7,6 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{ $product->meta_description ?? Str::limit(strip_tags($product->pro_desc), 160) }}">
     <meta name="keywords" content="{{ $product->meta_keywords ?? '' }}">
+
+    <!-- Open Graph / Facebook / Social Sharing Meta Tags -->
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="{{ $product->meta_title ?? $product->pro_title }} | {{ $portfolio->company_name ?? 'Pinkush' }}">
+    <meta property="og:description" content="{{ $product->meta_description ?? Str::limit(strip_tags($product->pro_desc), 160) }}">
+    <meta property="og:image" content="{{ asset('uploads/'. $product->pro_img1) }}">
+    <meta property="og:url" content="{{ $product->url }}">
+    <meta property="og:site_name" content="{{ $portfolio->company_name ?? 'Pinkush' }}">
+    <meta property="product:price:amount" content="{{ $product->final_price }}">
+    <meta property="product:price:currency" content="BDT">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $product->meta_title ?? $product->pro_title }} | {{ $portfolio->company_name ?? 'Pinkush' }}">
+    <meta name="twitter:description" content="{{ $product->meta_description ?? Str::limit(strip_tags($product->pro_desc), 160) }}">
+    <meta name="twitter:image" content="{{ asset('uploads/'. $product->pro_img1) }}">
+
     <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
     @include('main_view.include.css')
     <style>
@@ -214,7 +231,7 @@
 
                         <!-- Actions -->
                         <div class="d-flex flex-column mb-4">
-                            <div id="size-error" class="text-danger mb-2" style="display: none; font-weight: 600;">Please select a shoe size</div>
+                            <div id="size-error" class="text-danger mb-2" style="display: none; font-weight: 600;">Please select a size</div>
                             <div id="qty-error" class="text-danger mb-2" style="display: none; font-weight: 600;">Stock limit reached</div>
                             
                             <div class="d-flex align-items-center gap-3">
@@ -372,7 +389,7 @@
                             $inWishlist = in_array($r_product->id, $wishlistProductIds ?? []);
                         @endphp
                         <div class="col-lg-3 col-md-6 col-6 mb-4">
-                            <div class="minimalist-card" onclick="window.location='{{ route('product.show', $r_product->id) }}'">
+                            <div class="minimalist-card" onclick="window.location='{{ $r_product->url }}'">
                                 <div class="position-relative product-img-wrapper">
                                     <img src="{{ asset('uploads/'. $r_product->pro_img1) }}" alt="{{ $r_product->pro_title }}" loading="lazy"  class="lazy-image" >
                                     
@@ -393,7 +410,7 @@
                                 
                                 <div class="card-body text-center mt-3 px-3">
                                     <h3 class="product-card-title mb-2" style="font-size: 16px; font-weight: 600;">
-                                        <a href="{{ route('product.show', $r_product->id) }}" class="text-dark text-decoration-none">{{ $r_product->pro_title }}</a>
+                                        <a href="{{ $r_product->url }}" class="text-dark text-decoration-none">{{ $r_product->pro_title }}</a>
                                     </h3>
                                     <div class="product-card-price mb-3">
                                         <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $r_product->final_price }}</span>
@@ -402,7 +419,7 @@
                                         @endif
                                     </div>
                                     <div class="shop-now-btn text-center pb-2">
-                                        <a href="{{ route('product.show', $r_product->id) }}" class="btn btn-primary btn-sm rounded-pill px-4">Shop Now</a>
+                                        <a href="{{ $r_product->url }}" class="btn btn-primary btn-sm rounded-pill px-4">Shop Now</a>
                                     </div>
                                 </div>
                             </div>

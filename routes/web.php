@@ -49,7 +49,7 @@ Route::view('/faq', 'main_view.pages.faq')->name('faq');
 Route::view('/about-us', 'main_view.pages.about_us')->name('about');
 Route::get('/Products/Search', [ProductController::class, 'search'])->name('search.product');
 
-Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
+Route::get('/product/{id}/{slug?}', [ProductController::class, 'show'])->name('product.show')->where('id', '[0-9]+');
 
 Route::get('/dashboard', function () {
     if (Auth::guard('admin')->check()) {
@@ -93,7 +93,7 @@ Route::middleware('guest')->group(function () {
 });
 
 
-Route::middleware('auth:admin')->prefix('admin')->group(function () {
+Route::middleware(['auth:admin', 'permission'])->prefix('admin')->group(function () {
    
 
 
@@ -182,6 +182,8 @@ Route::middleware('auth')->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile/edit', [UserDashboardController::class, 'editProfile'])->name('profile.edit');
     Route::put('/profile', [UserDashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/change-password', [UserDashboardController::class, 'showChangePassword'])->name('change_password');
+    Route::post('/change-password', [UserDashboardController::class, 'updatePassword'])->name('update_password');
     Route::get('/orders', [UserDashboardController::class, 'orders'])->name('orders');
     Route::get('/orders/{id}/invoice', [UserDashboardController::class, 'downloadInvoice'])->name('orders.invoice');
     Route::get('/returns', [UserDashboardController::class, 'returns'])->name('returns');
@@ -222,6 +224,7 @@ if (config('app.debug')) {
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 Route::post('/checkout/apply-promo', [App\Http\Controllers\CheckoutController::class, 'applyPromo'])->name('checkout.promo');
+Route::get('/checkout/success', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
 
 Route::group([], function () {
     Route::get('/orders/{id}', function ($id) {
@@ -235,7 +238,7 @@ Route::group([], function () {
     });
 });
 
-Route::middleware('auth:admin')->prefix('admin')->group(function () {
+Route::middleware(['auth:admin', 'permission'])->prefix('admin')->group(function () {
                 Route::get('/blog', function () {
                     return view('backend.pages.blog.allBlog');
                 })->name('all.blog');
@@ -325,6 +328,17 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('/general-settings/app-settings', [App\Http\Controllers\Backend\AppSettingsController::class, 'index'])->name('manage.app.settings');
     Route::post('/general-settings/app-settings/update', [App\Http\Controllers\Backend\AppSettingsController::class, 'update'])->name('update.app.settings');
 
+    // manage.email.account
+    Route::get('/general-settings/email-account', [App\Http\Controllers\Backend\GeneralSettingController::class, 'manageEmailAccount'])->name('manage.email.account');
+    Route::post('/general-settings/email-account/update', [App\Http\Controllers\Backend\GeneralSettingController::class, 'updateEmailAccount'])->name('update.email.account');
+
+    // manage.login
+    Route::get('/general-settings/login', [App\Http\Controllers\Backend\GeneralSettingController::class, 'manageLogin'])->name('manage.login');
+    Route::post('/general-settings/login/update', [App\Http\Controllers\Backend\GeneralSettingController::class, 'updateLogin'])->name('update.login');
+
+    // manage.logs
+    Route::get('/general-settings/logs', [App\Http\Controllers\Backend\AdminLogController::class, 'index'])->name('admin.logs.index');
+
     // Promo Code Actions
     Route::post('/promo-codes/store', [App\Http\Controllers\Backend\PromoCodeController::class, 'store'])->name('promo.store');
     Route::get('/promo-codes/delete/{id}', [App\Http\Controllers\Backend\PromoCodeController::class, 'destroy'])->name('promo.delete');
@@ -335,6 +349,7 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('/orders/create', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'create'])->name('admin.orders.create');
     Route::post('/orders/store', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'store'])->name('admin.orders.store');
     Route::post('/orders/apply-promo', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'applyPromo'])->name('apply.promo.ajax');
+    Route::get('/orders/promo-suggestions', [\App\Http\Controllers\Backend\AdminOrderCreationController::class, 'getPromoSuggestions'])->name('admin.orders.promo_suggestions');
 
     Route::get('/orders', [App\Http\Controllers\OrderController::class, 'index'])->name('admin.orders.index');
     Route::get('/orders/{id}', [App\Http\Controllers\OrderController::class, 'show'])->name('admin.orders.show');
@@ -386,6 +401,14 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
 
         // Manage Admins
         Route::get('/manage-admins', [\App\Http\Controllers\Backend\AdminManagementController::class, 'index'])->name('admin.manage.index');
+
+        // Manage Roles
+        Route::get('/manage-roles', [\App\Http\Controllers\Backend\RoleController::class, 'index'])->name('admin.roles.index');
+        Route::get('/manage-roles/create', [\App\Http\Controllers\Backend\RoleController::class, 'create'])->name('admin.roles.create');
+        Route::post('/manage-roles', [\App\Http\Controllers\Backend\RoleController::class, 'store'])->name('admin.roles.store');
+        Route::get('/manage-roles/{id}/edit', [\App\Http\Controllers\Backend\RoleController::class, 'edit'])->name('admin.roles.edit');
+        Route::put('/manage-roles/{id}', [\App\Http\Controllers\Backend\RoleController::class, 'update'])->name('admin.roles.update');
+        Route::delete('/manage-roles/{id}', [\App\Http\Controllers\Backend\RoleController::class, 'destroy'])->name('admin.roles.destroy');
         
         Route::middleware(['role:super_admin'])->group(function () {
             Route::get('/manage-admins/create', [\App\Http\Controllers\Backend\AdminManagementController::class, 'create'])->name('admin.manage.create');

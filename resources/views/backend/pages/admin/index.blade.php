@@ -10,7 +10,10 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5>Manage Admins</h5>
                     @if(Auth::guard('admin')->user()->role === 'super_admin')
-                        <a href="{{ route('admin.manage.create') }}" class="btn btn-primary">Add New Admin</a>
+                        <div>
+                            <a href="{{ route('admin.roles.index') }}" class="btn btn-secondary btn-sm me-2"><i class="fa fa-shield"></i> Manage Roles</a>
+                            <a href="{{ route('admin.manage.create') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add New Admin</a>
+                        </div>
                     @endif
                 </div>
                 <div class="card-body">

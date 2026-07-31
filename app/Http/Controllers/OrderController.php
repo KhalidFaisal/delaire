@@ -101,7 +101,32 @@ class OrderController extends Controller
             }
         }
 
+        $oldStatus = $order->status;
         $order->update(['status' => $request->status]);
+
+        // Log order status update
+        \App\Models\AdminLog::log(
+            'Order Status Update',
+            "Admin '" . auth('admin')->user()->name . "' updated status of Order #{$order->order_number} from '{$oldStatus}' to '{$request->status}'.",
+            [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'old_status' => $oldStatus,
+                'new_status' => $request->status
+            ]
+        );
+
+        // Send email to customer if status has changed
+        if ($oldStatus !== $request->status) {
+            try {
+                $userEmail = $order->shipping_email;
+                if ($userEmail && filter_var($userEmail, FILTER_VALIDATE_EMAIL) && !str_contains($userEmail, 'admin-created@example.com') && !str_contains($userEmail, 'guest-no-email')) {
+                    \Illuminate\Support\Facades\Mail::to($userEmail)->send(new \App\Mail\OrderStatusUpdatedMail($order));
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Order Status Update Email Error: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('admin.orders.show', $id)->with('success', 'Order status updated successfully.');
     }

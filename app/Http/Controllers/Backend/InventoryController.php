@@ -221,6 +221,26 @@ class InventoryController extends Controller
 
             DB::commit();
 
+            // Log stock in action
+            $itemsLogged = [];
+            foreach ($request->items as $item) {
+                $product = Product::find($item['product_id']);
+                $prodTitle = $product ? $product->pro_title : 'Product ID ' . $item['product_id'];
+                $sizeStr = !empty($item['size']) ? " (Size: {$item['size']})" : "";
+                $itemsLogged[] = "{$item['quantity']}x {$prodTitle}{$sizeStr}";
+            }
+            $logDesc = "Admin '" . auth('admin')->user()->name . "' stocked in inventory: " . implode(', ', $itemsLogged) . " via " . ucfirst($request->type) . ".";
+            \App\Models\AdminLog::log(
+                'Stock In',
+                $logDesc,
+                [
+                    'type' => $request->type,
+                    'lot_number' => $request->lot_number,
+                    'entry_date' => $request->entry_date,
+                    'items' => $request->items
+                ]
+            );
+
             return redirect()->route('admin.inventory.index')->with('success', 'Stock added successfully.');
 
         } catch (\Exception $e) {

@@ -22,8 +22,8 @@
         <div class="col-xl-4 col-md-6 mb-4">
             <div class="card h-100">
                 <div class="card-body text-center">
-                    <img src="{{ $customer->avatar ?? asset('main_view/assets/img/user.png') }}" 
-                         class="lazy-image rounded-circle mb-3 object-fit-cover" width="100" height="100" alt="Avatar" loading="lazy" >
+                    <img src="{{ $customer->avatar_url }}" 
+                         class="lazy-image rounded-circle mb-3 object-fit-cover" width="100" height="100" alt="Avatar" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
                     <h5 class="mb-1">{{ $customer->name }}</h5>
                     <p class="text-muted mb-1">{{ $customer->email }}</p>
                     <p class="text-muted small">Member Since: {{ $customer->created_at ? $customer->created_at->format('d M Y') : 'N/A' }}</p>

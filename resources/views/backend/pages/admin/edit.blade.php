@@ -33,10 +33,9 @@
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
                             <select class="form-control" id="role" name="role" required>
-                                <option value="admin" {{ $admin->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="super_admin" {{ $admin->role == 'super_admin' ? 'selected' : '' }}>Super Admin</option>
-                                <option value="manager" {{ $admin->role == 'manager' ? 'selected' : '' }}>Manager</option>
-                                <option value="editor" {{ $admin->role == 'editor' ? 'selected' : '' }}>Editor</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->slug }}" {{ $admin->role == $role->slug ? 'selected' : '' }}>{{ $role->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="mb-3">

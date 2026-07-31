@@ -24,7 +24,14 @@ class PromoCodeController extends Controller
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
 
-        PromoCode::create($request->all());
+        $promo = PromoCode::create($request->all());
+
+        // Log promo code creation
+        \App\Models\AdminLog::log(
+            'Promo Code Created',
+            "Admin '" . auth('admin')->user()->name . "' created Promo Code '{$promo->code}' with " . ($promo->discount_type == 'percentage' ? "{$promo->discount_amount}%" : "Tk {$promo->discount_amount}") . " discount.",
+            $promo->toArray()
+        );
 
         return back()->with('success', 'Promo Code created successfully!');
     }
@@ -34,6 +41,13 @@ class PromoCodeController extends Controller
         $promo = PromoCode::findOrFail($id);
         $promo->delete();
 
+        // Log promo code deletion
+        \App\Models\AdminLog::log(
+            'Promo Code Deleted',
+            "Admin '" . auth('admin')->user()->name . "' deleted Promo Code '{$promo->code}'.",
+            ['promo_id' => $promo->id, 'code' => $promo->code]
+        );
+
         return back()->with('success', 'Promo Code deleted successfully!');
     }
     
@@ -42,6 +56,14 @@ class PromoCodeController extends Controller
         $promo = PromoCode::findOrFail($id);
         $promo->status = !$promo->status;
         $promo->save();
+        
+        // Log promo code status update
+        $statusStr = $promo->status ? 'activated' : 'deactivated';
+        \App\Models\AdminLog::log(
+            'Promo Code Updated',
+            "Admin '" . auth('admin')->user()->name . "' {$statusStr} Promo Code '{$promo->code}'.",
+            ['promo_id' => $promo->id, 'code' => $promo->code, 'status' => $promo->status]
+        );
         
         return back()->with('success', 'Promo Code status updated!');
     }

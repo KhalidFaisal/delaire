@@ -17,7 +17,7 @@
         <label class="form-label">Profile image</label>
         <div class="d-flex align-items-center gap-3 mb-2">
             @if($user->avatar)
-                <img src="{{ asset('storage/' . $user->avatar) }}" alt="" class="lazy-image rounded-circle" width="80" height="80" style="object-fit:cover;" loading="lazy" >
+                <img src="{{ $user->avatar_url }}" alt="" class="lazy-image rounded-circle" width="80" height="80" style="object-fit:cover;" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
             @else
                 <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width:80px;height:80px;font-size:28px;">
                     {{ strtoupper(substr($user->name ?: 'U', 0, 1)) }}

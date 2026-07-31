@@ -10,6 +10,49 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
     @include('main_view.include.css')
+    <style>
+        .content-body {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #555555;
+        }
+        .content-body h1, .content-body h2, .content-body h3, .content-body h4 {
+            color: {{ $portfolio->brand_color_1 ?? '#de2e79' }};
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .content-body ul {
+            padding-left: 0;
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+        .content-body ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+        }
+        .content-body ul li::before {
+            content: "•";
+            color: {{ $portfolio->brand_color_1 ?? '#de2e79' }};
+            font-weight: bold;
+            font-size: 22px;
+            position: absolute;
+            left: 5px;
+            top: -3px;
+        }
+        .content-body ol {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        .content-body ol li {
+            margin-bottom: 12px;
+            padding-left: 5px;
+        }
+        .content-body p {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,19 +64,23 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <h2 class="section-heading primary-color mb-4 text-center">Return Policy</h2>
-                        <div class="content">
-                            <p>Here at {{ $portfolio->company_name ?? 'Pinkush' }}, we want you to be completely satisfied with your purchase. If you are not satisfied with your purchase, you may return it within a specific period from the purchase date.</p>
-                            
-                            <h4 class="mt-4">1. Eligibility for Returns</h4>
-                            <p>To be eligible for a return, your item must be unused and in the same condition that you received it. It must also be in the original packaging.</p>
-
-                            <h4 class="mt-4">2. Non-returnable Items</h4>
-                            <p>Several types of goods are exempt from being returned. Perishable goods such as food, flowers, newspapers or magazines cannot be returned.</p>
-
-                            <h4 class="mt-4">3. Refund Process</h4>
-                            <p>Once your return is received and inspected, we will send you an email to notify you that we have received your returned item. We will also notify you of the approval or rejection of your refund.</p>
-
-                            <p class="mt-4"><i>Note: This is a sample return policy. Please update with your actual policy details from the admin panel or manually edit this file.</i></p>
+                        <div class="content content-body">
+                            @if(!empty($portfolio->return_policy))
+                                @php
+                                    $lines = array_filter(array_map('trim', explode("\n", str_replace("\r", "", $portfolio->return_policy))));
+                                @endphp
+                                @if(count($lines) > 0)
+                                    <ul>
+                                        @foreach($lines as $line)
+                                            <li>{{ $line }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p class="text-muted text-center">No return policy has been defined yet.</p>
+                                @endif
+                            @else
+                                <p class="text-muted text-center">No return policy has been defined yet.</p>
+                            @endif
                         </div>
                     </div>
                 </div>

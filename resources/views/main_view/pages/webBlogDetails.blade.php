@@ -9,6 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{ $blog->meta_description ?? Str::limit(strip_tags($blog->blog_description), 160) }}">
     <meta name="keywords" content="{{ $blog->meta_keywords ?? '' }}">
+
+    <!-- Open Graph / Facebook / Social Sharing Meta Tags -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ $blog->meta_title ?? $blog->blog_title }} - Blog">
+    <meta property="og:description" content="{{ $blog->meta_description ?? Str::limit(strip_tags($blog->blog_description), 160) }}">
+    <meta property="og:image" content="{{ asset('uploads/'. $blog->blog_image) }}">
+    <meta property="og:url" content="{{ route('web.blog.details', $blog->id) }}">
+    <meta property="og:site_name" content="{{ $portfolio->company_name ?? 'Pinkush' }}">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $blog->meta_title ?? $blog->blog_title }} - Blog">
+    <meta name="twitter:description" content="{{ $blog->meta_description ?? Str::limit(strip_tags($blog->blog_description), 160) }}">
+    <meta name="twitter:image" content="{{ asset('uploads/'. $blog->blog_image) }}">
+
     <!-- title -->
     <title>
         {{ $blog->meta_title ?? $blog->blog_title }} - Blog

@@ -56,6 +56,11 @@ return [
             'throw' => false,
         ],
 
+        'vercel-blob' => [
+            'driver' => 'vercel-blob',
+            'token' => env('BLOB_READ_WRITE_TOKEN'),
+        ],
+
     ],
 
     /*

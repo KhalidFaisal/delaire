@@ -29,9 +29,16 @@ class NotificationController extends Controller
             $notification = $user->notifications()->where('id', $request->id)->first();
             if($notification) {
                 $notification->markAsRead();
+                
+                $message = $notification->data['message'] ?? 'Notification ID: ' . $notification->id;
+                \App\Models\AdminLog::log('Notification Read', "Admin '{$user->name}' read notification: \"{$message}\"", [
+                    'notification_id' => $notification->id,
+                    'notification_data' => $notification->data
+                ]);
             }
         } else {
             $user->unreadNotifications()->update(['read_at' => now()]);
+            \App\Models\AdminLog::log('Notification Read', "Admin '{$user->name}' marked all notifications as read.");
         }
         return response()->json(['success' => true]);
     }

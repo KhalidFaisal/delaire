@@ -87,6 +87,19 @@ class AdminReturnController extends Controller
         $return->status = $status;
         $return->save();
 
+        // Log return request status update
+        \App\Models\AdminLog::log(
+            'Return Request Updated',
+            "Admin '" . auth('admin')->user()->name . "' updated Return Request #{$return->id} (Order #{$return->order->order_number}) status to '{$status}'" . ($isDamaged ? " (marked as damaged)" : "") . ".",
+            [
+                'return_id' => $return->id,
+                'order_id' => $return->order_id,
+                'order_number' => $return->order->order_number,
+                'status' => $status,
+                'is_damaged' => $isDamaged
+            ]
+        );
+
         return redirect()->back()->with('success', 'Return request status updated successfully.');
     }
 }

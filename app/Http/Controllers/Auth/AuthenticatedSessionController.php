@@ -29,6 +29,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $admin = Auth::guard('admin')->user();
+        if ($admin) {
+            \App\Models\AdminLog::log('Login', "Admin '{$admin->name}' successfully logged in.");
+        }
+
         return redirect()->intended(route('admin.dashboard'));
     }
 
@@ -37,6 +42,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $admin = Auth::guard('admin')->user();
+        if ($admin) {
+            \App\Models\AdminLog::log('Logout', "Admin '{$admin->name}' logged out.");
+        }
+
         Auth::guard('admin')->logout();
 
         $request->session()->invalidate();

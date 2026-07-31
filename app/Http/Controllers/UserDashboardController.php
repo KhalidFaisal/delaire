@@ -9,6 +9,7 @@ use App\Models\UserReview;
 use App\Models\UserWishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -43,7 +44,7 @@ class UserDashboardController extends Controller
         $data = $request->only('name', 'address', 'shipping_address');
 
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
+            if ($user->avatar && !filter_var($user->avatar, FILTER_VALIDATE_URL)) {
                 Storage::disk('public')->delete($user->avatar);
             }
             $image = $request->file('avatar');
@@ -337,5 +338,31 @@ class UserDashboardController extends Controller
     {
         Auth::user()->reviews()->findOrFail($id)->delete();
         return back()->with('success', 'Review deleted.');
+    }
+
+    public function showChangePassword()
+    {
+        $user = Auth::user();
+        return view('main_view.pages.user_dashboard.change_password', compact('user'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'The current password does not match our records.']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return redirect()->route('user.dashboard')->with('success', 'Password updated successfully.');
     }
 }

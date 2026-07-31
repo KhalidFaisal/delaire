@@ -24,7 +24,7 @@
 
     @foreach ($products as $product)
         <url>
-            <loc>{{ route('product.show', $product->id) }}</loc>
+            <loc>{{ $product->url }}</loc>
             <lastmod>{{ $product->updated_at->tz('UTC')->toAtomString() }}</lastmod>
             <changefreq>daily</changefreq>
             <priority>0.8</priority>

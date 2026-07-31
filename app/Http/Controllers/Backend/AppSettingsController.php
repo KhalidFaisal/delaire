@@ -69,6 +69,15 @@ class AppSettingsController extends Controller
         // Clear caches so settings take effect immediately
         Artisan::call('config:clear');
 
+        // Log settings update
+        \App\Models\AdminLog::log(
+            'Settings Updated',
+            "Admin '" . auth('admin')->user()->name . "' updated Application Environment Settings (.env variables).",
+            [
+                'updated_keys' => array_keys($keysToUpdate)
+            ]
+        );
+
         return back()->with('success', 'App Settings updated successfully!');
     }
 }

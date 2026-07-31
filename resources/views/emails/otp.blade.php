@@ -15,11 +15,11 @@
 </head>
 <body>
     <div class="wrap">
-        <h1>Your Pinkush verification code</h1>
+        <h1>Your {{ $portfolio->company_name ?? env('APP_NAME', 'Pinkush') }} verification code</h1>
         <p>Use this code to complete your registration:</p>
         <div class="code">{{ $otp }}</div>
         <p class="muted">This code expires in 10 minutes. If you didn't request it, you can ignore this email.</p>
-        <p class="muted">— Pinkush</p>
+        <p class="muted">— {{ $portfolio->company_name ?? env('APP_NAME', 'Pinkush') }}</p>
     </div>
 </body>
 </html>

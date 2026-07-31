@@ -19,6 +19,29 @@
         .btn-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; }
         .footer-style-2 .footer-top .footer-widget .footer-widget-inner .footer-social-wrapper .footer-social .footer-social-item a svg { fill: var(--primary-color); }
         .header-action-item svg { fill: var(--secondary-color); }
+
+        /* Contact Page Hover Effects */
+        .contact-item {
+            transition: all 0.3s ease;
+        }
+        .contact-item h4,
+        .contact-item p,
+        .contact-item svg {
+            transition: all 0.3s ease;
+        }
+        .contact-item:hover {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .contact-item:hover h4 {
+            color: #fff !important;
+        }
+        .contact-item:hover p {
+            color: #fff !important;
+        }
+        .contact-item:hover svg {
+            color: #fff !important;
+        }
     </style>
 </head>
 

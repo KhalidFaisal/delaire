@@ -9,6 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="{{ $portfolio->about ?? 'Welcome to ' . ($portfolio->company_name ?? 'Pinkush') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Open Graph / Facebook / Social Sharing Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $portfolio->company_name ?? 'Pinkush' }}">
+    <meta property="og:description" content="{{ $portfolio->about ?? 'Welcome to ' . ($portfolio->company_name ?? 'Pinkush') }}">
+    <meta property="og:image" content="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:site_name" content="{{ $portfolio->company_name ?? 'Pinkush' }}">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $portfolio->company_name ?? 'Pinkush' }}">
+    <meta name="twitter:description" content="{{ $portfolio->about ?? 'Welcome to ' . ($portfolio->company_name ?? 'Pinkush') }}">
+    <meta name="twitter:image" content="{{ isset($portfolio->logo) ? asset($portfolio->logo) : asset('main_view/assets/img/logo.png') }}">
+
     <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- all css -->
@@ -350,7 +365,7 @@
                                 @endphp
                             
                                 <div class="col-lg-3 col-md-6 col-6 mb-4" data-aos="fade-up" data-aos-duration="700">
-                                    <div class="minimalist-card" onclick="window.location='{{ route('product.show', $product->id) }}'">
+                                    <div class="minimalist-card" onclick="window.location='{{ $product->url }}'">
                                         <div class="position-relative product-img-wrapper">
                                             <img src="{{ asset('uploads/'. $product->pro_img1) }}" alt="{{ $product->pro_title }}" loading="lazy"  class="lazy-image" >
                                             
@@ -369,7 +384,7 @@
                                         
                                         <div class="card-body text-center mt-3 px-3">
                                             <h3 class="product-card-title mb-2" style="font-size: 16px; font-weight: 600;">
-                                                <a href="{{ route('product.show', $product->id) }}" class="text-dark text-decoration-none">{{ $product->pro_title }}</a>
+                                                <a href="{{ $product->url }}" class="text-dark text-decoration-none">{{ $product->pro_title }}</a>
                                             </h3>
                                             <div class="product-card-price mb-3">
                                                 <span class="fw-bold" style="color: var(--primary-color);">৳ {{ $product->final_price }}</span>
@@ -378,7 +393,7 @@
                                                 @endif
                                             </div>
                                             <div class="shop-now-btn text-center pb-2">
-                                                <a href="{{ route('product.show', $product->id) }}" class="btn btn-primary btn-sm rounded-pill px-4">Shop Now</a>
+                                                <a href="{{ $product->url }}" class="btn btn-primary btn-sm rounded-pill px-4">Shop Now</a>
                                             </div>
                                         </div>
                                     </div>

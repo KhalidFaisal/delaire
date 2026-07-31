@@ -48,7 +48,23 @@
 <body>
     <div class="header">
         <div style="float: left;">
-            <span class="logo">Pinkush</span>
+            @php
+                $showLogo = false;
+                if (!empty($portfolio->logo) && file_exists(public_path($portfolio->logo))) {
+                    $imagePath = public_path($portfolio->logo);
+                    $mimeType = mime_content_type($imagePath);
+                    $isWebp = (strpos($mimeType, 'webp') !== false || strpos($portfolio->logo, '.webp') !== false);
+                    if (!$isWebp || function_exists('imagecreatefromwebp')) {
+                        $showLogo = true;
+                        $imageData = base64_encode(file_get_contents($imagePath));
+                    }
+                }
+            @endphp
+            @if($showLogo)
+                <img src="data:{{ $mimeType }};base64,{{ $imageData }}" style="max-height: 45px; vertical-align: middle;">
+            @else
+                <span class="logo">{{ $portfolio->company_name ?? env('APP_NAME', 'Pinkush') }}</span>
+            @endif
             <div style="font-size: 12px; margin-top: 5px;">
                 @if(!empty($portfolio->address))
                     {!! nl2br(e($portfolio->address)) !!} <br>
@@ -119,9 +135,15 @@
     <p>Thank you for shopping with us!</p>
 
     @if(!empty($portfolio->return_policy))
-    <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 10px; text-align: justify;">
+    <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 10px; text-align: justify; line-height: 1.4;">
         <strong>Return Policy:</strong><br>
-        {!! nl2br(e($portfolio->return_policy)) !!}
+        @php
+            $cleanText = strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>', '</div>', '</li>'], "\n", $portfolio->return_policy));
+            $lines = array_filter(array_map('trim', explode("\n", $cleanText)));
+        @endphp
+        @foreach($lines as $line)
+            • {{ $line }}<br>
+        @endforeach
     </div>
     @endif
 

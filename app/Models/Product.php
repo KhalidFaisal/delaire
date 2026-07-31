@@ -63,4 +63,13 @@ class Product extends Model
 
         return round($adjustedPrice - $discount);
     }
+
+    // Accessor for SEO-friendly Professional URL
+    public function getUrlAttribute()
+    {
+        return route('product.show', [
+            'id' => $this->id,
+            'slug' => \Illuminate\Support\Str::slug($this->pro_title ?: 'product')
+        ]);
+    }
 }

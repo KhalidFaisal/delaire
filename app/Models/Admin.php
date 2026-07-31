@@ -58,4 +58,54 @@ class Admin extends Authenticatable
     {
         return $this->role === $role;
     }
+
+    /**
+     * Check if the admin has a specific permission key.
+     *
+     * @param string $permissionKey
+     * @return bool
+     */
+    public function hasPermission($permissionKey)
+    {
+        if ($this->role === 'super_admin') {
+            return true;
+        }
+
+        $role = Role::where('slug', $this->role)->first();
+        if (!$role) {
+            return false;
+        }
+
+        return in_array($permissionKey, $role->permissions ?? []);
+    }
+
+    /**
+     * Check if the admin is permitted to access a specific route.
+     *
+     * @param string $routeName
+     * @return bool
+     */
+    public function hasRoutePermission($routeName)
+    {
+        if ($this->role === 'super_admin') {
+            return true;
+        }
+
+        $map = Role::PERMISSION_MAP;
+        $permissionKey = null;
+
+        foreach ($map as $key => $routes) {
+            if (in_array($routeName, $routes)) {
+                $permissionKey = $key;
+                break;
+            }
+        }
+
+        // If the route name is not mapped to any permission, default to true
+        if (!$permissionKey) {
+            return true;
+        }
+
+        return $this->hasPermission($permissionKey);
+    }
 }

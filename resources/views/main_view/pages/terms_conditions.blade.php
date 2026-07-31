@@ -10,6 +10,49 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{ isset($portfolio->favicon) ? asset($portfolio->favicon) : asset('main_view/assets/img/favicon.png')}}" type="image/x-icon">
     @include('main_view.include.css')
+    <style>
+        .content-body {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #555555;
+        }
+        .content-body h1, .content-body h2, .content-body h3, .content-body h4 {
+            color: {{ $portfolio->brand_color_1 ?? '#de2e79' }};
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .content-body ul {
+            padding-left: 0;
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+        .content-body ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+        }
+        .content-body ul li::before {
+            content: "•";
+            color: {{ $portfolio->brand_color_1 ?? '#de2e79' }};
+            font-weight: bold;
+            font-size: 22px;
+            position: absolute;
+            left: 5px;
+            top: -3px;
+        }
+        .content-body ol {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        .content-body ol li {
+            margin-bottom: 12px;
+            padding-left: 5px;
+        }
+        .content-body p {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,20 +64,23 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <h2 class="section-heading primary-color mb-4 text-center">Terms & Conditions</h2>
-                        <div class="content">
-                            <p>Welcome to {{ $portfolio->company_name ?? 'Pinkush' }}!</p>
-                            <p>These terms and conditions outline the rules and regulations for the use of {{ $portfolio->company_name ?? 'Pinkush' }}'s Website.</p>
-                            
-                            <h4 class="mt-4">1. Acceptance of Terms</h4>
-                            <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use {{ $portfolio->company_name ?? 'Pinkush' }} if you do not agree to take all of the terms and conditions stated on this page.</p>
-
-                            <h4 class="mt-4">2. Cookies</h4>
-                            <p>We employ the use of cookies. By accessing {{ $portfolio->company_name ?? 'Pinkush' }}, you agreed to use cookies in agreement with the {{ $portfolio->company_name ?? 'Pinkush' }}'s Privacy Policy.</p>
-
-                            <h4 class="mt-4">3. License</h4>
-                            <p>Unless otherwise stated, {{ $portfolio->company_name ?? 'Pinkush' }} and/or its licensors own the intellectual property rights for all material on {{ $portfolio->company_name ?? 'Pinkush' }}. All intellectual property rights are reserved.</p>
-
-                            <p class="mt-4"><i>Note: This is a sample Terms & Conditions page. Please update with your actual terms.</i></p>
+                        <div class="content content-body">
+                            @if(!empty($portfolio->terms_condition))
+                                @php
+                                    $lines = array_filter(array_map('trim', explode("\n", str_replace("\r", "", $portfolio->terms_condition))));
+                                @endphp
+                                @if(count($lines) > 0)
+                                    <ul>
+                                        @foreach($lines as $line)
+                                            <li>{{ $line }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <p class="text-muted text-center">No terms & conditions have been defined yet.</p>
+                                @endif
+                            @else
+                                <p class="text-muted text-center">No terms & conditions have been defined yet.</p>
+                            @endif
                         </div>
                     </div>
                 </div>

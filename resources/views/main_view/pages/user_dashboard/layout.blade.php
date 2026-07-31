@@ -37,6 +37,7 @@
                 <a href="{{ route('user.dashboard') }}" class="{{ request()->routeIs('user.dashboard') ? 'active' : '' }}"><i class="fas fa-home me-2"></i>Dashboard</a>
                 <a href="{{ route('user.orders') }}" class="{{ request()->routeIs('user.orders') ? 'active' : '' }}"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
                 <a href="{{ route('user.profile.edit') }}" class="{{ request()->routeIs('user.profile.*') ? 'active' : '' }}"><i class="fas fa-user-edit me-2"></i>Edit Profile</a>
+                <a href="{{ route('user.change_password') }}" class="{{ request()->routeIs('user.change_password') ? 'active' : '' }}"><i class="fas fa-key me-2"></i>Change Password</a>
                 <a href="{{ route('user.returns') }}" class="{{ request()->routeIs('user.returns') ? 'active' : '' }}"><i class="fas fa-undo me-2"></i>My Returns</a>
                 <a href="{{ route('user.wishlist') }}" class="{{ request()->routeIs('user.wishlist') ? 'active' : '' }}"><i class="fas fa-heart me-2"></i>Wishlist</a>
                 <a href="{{ route('user.reviews') }}" class="{{ request()->routeIs('user.reviews') ? 'active' : '' }}"><i class="fas fa-star me-2"></i>My Reviews</a>

@@ -114,18 +114,20 @@ class AdminOrderCreationController extends Controller
                         })
                         ->first();
 
-            if ($promo) {
-                $appliedPromo = $promo->code;
-                if ($promo->discount_type == 'percent') {
-                    $promoDiscount = ($subtotal * $promo->discount_amount) / 100;
-                } else {
-                    $promoDiscount = $promo->discount_amount;
-                }
+            if (!$promo) {
+                return back()->withErrors(['promo_code' => 'The selected promo code is invalid or expired.'])->withInput();
+            }
 
-                // Prevent negative total
-                if ($promoDiscount > $subtotal) {
-                    $promoDiscount = $subtotal;
-                }
+            $appliedPromo = $promo->code;
+            if ($promo->discount_type == 'percentage') {
+                $promoDiscount = ($subtotal * $promo->discount_amount) / 100;
+            } else {
+                $promoDiscount = $promo->discount_amount;
+            }
+
+            // Prevent negative total
+            if ($promoDiscount > $subtotal) {
+                $promoDiscount = $subtotal;
             }
         }
 
@@ -161,6 +163,43 @@ class AdminOrderCreationController extends Controller
             $order->items()->create($data);
         }
 
+        // Log manual order creation
+        \App\Models\AdminLog::log(
+            'Order Created by Admin',
+            "Admin '{$adminName}' manually created Order #{$order->order_number} for customer '{$request->shipping_name}' (Total: {$order->total}).",
+            [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'shipping_name' => $request->shipping_name,
+                'total' => $order->total,
+                'items' => $request->items
+            ]
+        );
+
+        // Send Email Notifications
+        try {
+            $settings = \App\Models\GeneralSetting::first();
+            
+            // 1. Send Admin Email
+            $adminEmail = $settings ? $settings->admin_notification_email : null;
+            if ($adminEmail) {
+                $emails = array_filter(array_map('trim', explode(',', $adminEmail)));
+                foreach ($emails as $email) {
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\AdminOrderPlacedMail($order));
+                    }
+                }
+            }
+            
+            // 2. Send User Email
+            $userEmail = $order->shipping_email;
+            if ($userEmail && filter_var($userEmail, FILTER_VALIDATE_EMAIL) && !str_contains($userEmail, 'admin-created@example.com') && !str_contains($userEmail, 'guest-no-email')) {
+                \Illuminate\Support\Facades\Mail::to($userEmail)->send(new \App\Mail\UserOrderPlacedMail($order));
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Order Placement Email Error: ' . $e->getMessage());
+        }
+
         return redirect()->route('admin.orders.index')->with('success', 'Order created successfully.');
     }
 
@@ -185,7 +224,7 @@ class AdminOrderCreationController extends Controller
 
         if ($promo) {
             $discount = 0;
-            if ($promo->discount_type == 'percent') {
+            if ($promo->discount_type == 'percentage') {
                 $discount = ($subtotal * $promo->discount_amount) / 100;
             } else {
                 $discount = $promo->discount_amount;
@@ -198,11 +237,34 @@ class AdminOrderCreationController extends Controller
             return response()->json([
                 'success' => true,
                 'discount' => $discount,
+                'discount_type' => $promo->discount_type,
+                'discount_amount' => $promo->discount_amount,
                 'code' => $promo->code,
                 'message' => 'Promo applied successfully'
             ]);
         }
 
         return response()->json(['success' => false, 'message' => 'Invalid or expired promo code']);
+    }
+
+    public function getPromoSuggestions(Request $request)
+    {
+        $query = $request->query('query', '');
+
+        $promos = \App\Models\PromoCode::where('status', 1)
+            ->where(function ($q) {
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            });
+
+        if ($query !== '') {
+            $promos = $promos->where('code', 'LIKE', '%' . $query . '%');
+        }
+
+        $promos = $promos->orderBy('code', 'asc')->get();
+
+        return response()->json($promos);
     }
 }

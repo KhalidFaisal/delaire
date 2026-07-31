@@ -2,7 +2,7 @@
 
 @section('body-content')
 <style>
-    #searchResults {
+    #searchResults, #promoSuggestions {
         background-color: #fff;
         border: 1px solid #ddd;
         border-radius: 4px;
@@ -10,17 +10,17 @@
         max-height: 300px;
         overflow-y: auto;
     }
-    #searchResults .list-group-item {
+    #searchResults .list-group-item, #promoSuggestions .list-group-item {
         border-left: none;
         border-right: none;
     }
-    #searchResults .list-group-item:first-child {
+    #searchResults .list-group-item:first-child, #promoSuggestions .list-group-item:first-child {
         border-top: none;
     }
-    #searchResults .list-group-item:last-child {
+    #searchResults .list-group-item:last-child, #promoSuggestions .list-group-item:last-child {
         border-bottom: none;
     }
-    #searchResults .list-group-item:hover {
+    #searchResults .list-group-item:hover, #promoSuggestions .list-group-item:hover {
         background-color: #f8f9fa;
     }
 </style>
@@ -121,6 +121,21 @@
                                     <tr>
                                         <td colspan="3" class="text-end">Delivery Charge:</td>
                                         <td colspan="2"><input type="number" name="delivery_charge" class="form-control form-control-sm" value="0" min="0" onchange="calculateTotal()"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-end">Promo Code:</td>
+                                        <td colspan="2" class="position-relative">
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" name="promo_code" id="promoCodeInput" class="form-control form-control-sm" placeholder="Enter promo code" autocomplete="off">
+                                                <button class="btn btn-secondary btn-sm" type="button" id="applyPromoBtn">Apply</button>
+                                            </div>
+                                            <div id="promoSuggestions" class="list-group position-absolute w-100 mt-1" style="z-index: 1000; display: none; max-height: 200px; overflow-y: auto;"></div>
+                                            <div id="promoFeedback" class="mt-1 small" style="display: none;"></div>
+                                        </td>
+                                    </tr>
+                                    <tr id="promoDiscountRow" style="display: none;">
+                                        <td colspan="3" class="text-end text-success">Promo Discount:</td>
+                                        <td colspan="2" class="text-success">-৳<span id="promoDiscountDisplay">0.00</span></td>
                                     </tr>
                                     <tr>
                                         <th colspan="3" class="text-end">Grand Total:</th>
@@ -251,12 +266,16 @@
         calculateTotal();
     };
 
+    let appliedPromo = null;
+
     // Remove Item
     window.removeItem = function(rowId) {
         $(`#${rowId}`).remove();
         if ($('#orderItems tr').length === 1) { // counting emptyRow
              $('#emptyRow').show();
              $('#submitBtn').prop('disabled', true);
+             clearPromo();
+             $('#promoCodeInput').val('');
         }
         calculateTotal();
     };
@@ -282,9 +301,158 @@
         subtotal = total;
         $('#subtotalDisplay').text(subtotal.toFixed(2));
 
+        // Calculate Promo Discount
+        let discount = 0;
+        if (appliedPromo) {
+            if (appliedPromo.type === 'percentage') {
+                discount = (subtotal * appliedPromo.amount) / 100;
+            } else {
+                discount = appliedPromo.amount;
+            }
+            // Discount cannot exceed subtotal
+            if (discount > subtotal) {
+                discount = subtotal;
+            }
+            $('#promoDiscountDisplay').text(discount.toFixed(2));
+            $('#promoDiscountRow').show();
+        } else {
+            $('#promoDiscountRow').hide();
+        }
+
         let delivery = parseFloat($('input[name="delivery_charge"]').val()) || 0;
-        let grandTotal = subtotal + delivery;
+        let grandTotal = subtotal + delivery - discount;
+        if (grandTotal < 0) {
+            grandTotal = 0;
+        }
         $('#totalDisplay').text(grandTotal.toFixed(2));
     };
+
+    // Fetch Promo Suggestions
+    function fetchPromoSuggestions(query = '') {
+        $.ajax({
+            url: "{{ route('admin.orders.promo_suggestions') }}",
+            type: "GET",
+            data: { query: query },
+            success: function(data) {
+                let html = '';
+                if (data.length > 0) {
+                    data.forEach(promo => {
+                        let discountLabel = promo.discount_type === 'percentage' 
+                            ? `${promo.discount_amount}% Off` 
+                            : `৳${promo.discount_amount} Off`;
+                        
+                        html += `<a href="#" class="list-group-item list-group-item-action promo-suggestion-item" data-code="${promo.code}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>${promo.code}</strong>
+                                <span class="badge bg-success">${discountLabel}</span>
+                            </div>
+                        </a>`;
+                    });
+                    $('#promoSuggestions').html(html).show();
+                } else {
+                    $('#promoSuggestions').html('<div class="list-group-item text-muted">No valid promo codes found</div>').show();
+                }
+            }
+        });
+    }
+
+    // On input focus/keyup
+    $('#promoCodeInput').on('focus keyup', function() {
+        let query = $(this).val();
+        fetchPromoSuggestions(query);
+    });
+
+    // Handle Promo Suggestion Click
+    $(document).on('click', '.promo-suggestion-item', function(e) {
+        e.preventDefault();
+        let code = $(this).data('code');
+        $('#promoCodeInput').val(code);
+        $('#promoSuggestions').hide();
+        applyPromoCode(code);
+    });
+
+    // Hide suggestions when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('#promoCodeInput, #promoSuggestions').length) {
+            $('#promoSuggestions').hide();
+        }
+    });
+
+    // Apply Promo Button Click
+    $('#applyPromoBtn').on('click', function() {
+        let code = $('#promoCodeInput').val().trim();
+        if (code === '') {
+            clearPromo();
+            return;
+        }
+        applyPromoCode(code);
+    });
+
+    // Handle enter key on promo input
+    $('#promoCodeInput').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            let code = $(this).val().trim();
+            if (code !== '') {
+                applyPromoCode(code);
+            }
+        }
+    });
+
+    // Clear promo if field is cleared manually
+    $('#promoCodeInput').on('input', function() {
+        if ($(this).val().trim() === '') {
+            clearPromo();
+        }
+    });
+
+    function applyPromoCode(code) {
+        if (subtotal <= 0) {
+            showPromoFeedback('Add items to order before applying promo code.', 'text-danger');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('apply.promo.ajax') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                code: code,
+                subtotal: subtotal
+            },
+            success: function(response) {
+                if (response.success) {
+                    appliedPromo = {
+                        code: response.code,
+                        type: response.discount_type,
+                        amount: parseFloat(response.discount_amount)
+                    };
+                    showPromoFeedback(response.message, 'text-success');
+                    calculateTotal();
+                } else {
+                    clearPromo();
+                    showPromoFeedback(response.message, 'text-danger');
+                }
+            },
+            error: function() {
+                clearPromo();
+                showPromoFeedback('Error validating promo code. Please try again.', 'text-danger');
+            }
+        });
+    }
+
+    function clearPromo() {
+        appliedPromo = null;
+        calculateTotal();
+        $('#promoFeedback').hide();
+    }
+
+    function showPromoFeedback(message, className) {
+        $('#promoFeedback')
+            .removeClass('text-success text-danger')
+            .addClass(className)
+            .text(message)
+            .show();
+    }
 </script>
 @endsection

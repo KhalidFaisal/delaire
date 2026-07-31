@@ -273,7 +273,7 @@
 <a href="javascript:void(0)" class="header-profile-toggle">
     @auth
         @if(auth()->user()->avatar)
-            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="lazy-image header-profile-avatar" width="32" height="32" loading="lazy" >
+            <img src="{{ auth()->user()->avatar_url }}" alt="" class="lazy-image header-profile-avatar" width="32" height="32" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
         @else
             <svg class="icon icon-profile" width="26" height="26" viewBox="0 0 24 24"
                  fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -304,7 +304,7 @@
     @auth
     <div class="d-flex align-items-center mb-3 p-2 border-bottom">
         @if(auth()->user()->avatar)
-            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="" class="lazy-image user-img me-2" loading="lazy" >
+            <img src="{{ auth()->user()->avatar_url }}" alt="" class="lazy-image user-img me-2" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
         @else
             <div class="user-img-placeholder me-2">
                 {{ strtoupper(substr(auth()->user()->name ?: 'U', 0, 1)) }}
@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 @auth
                                     <div class="d-flex align-items-center mb-2">
                                         @if(auth()->user()->avatar)
-                                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="lazy-image rounded-circle me-2" width="40" height="40" alt="Avatar" loading="lazy" >
+                                            <img src="{{ auth()->user()->avatar_url }}" class="lazy-image rounded-circle me-2" width="40" height="40" alt="Avatar" loading="lazy" onerror="this.onerror=null; this.src='{{ asset('main_view/assets/img/user.png') }}';">
                                         @else
                                             <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
                                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}

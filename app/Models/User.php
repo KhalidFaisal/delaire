@@ -69,4 +69,33 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserReview::class, 'user_id');
     }
+
+    /**
+     * Get the resolved URL for the user's avatar.
+     *
+     * @return string
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->avatar || trim($this->avatar) === '' || strtolower(trim($this->avatar)) === 'null') {
+            return asset('main_view/assets/img/user.png');
+        }
+
+        if (filter_var($this->avatar, FILTER_VALIDATE_URL)) {
+            return $this->avatar;
+        }
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($this->avatar)) {
+            try {
+                $size = \Illuminate\Support\Facades\Storage::disk('public')->size($this->avatar);
+                if ($size > 0) {
+                    return asset('storage/' . $this->avatar);
+                }
+            } catch (\Exception $e) {
+                // If there's an error getting file size, fall back to default
+            }
+        }
+
+        return asset('main_view/assets/img/user.png');
+    }
 }

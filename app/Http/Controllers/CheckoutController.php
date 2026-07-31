@@ -13,26 +13,35 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-        if (!Auth::check()) {
+        $setting = \App\Models\GeneralSetting::first();
+        $requireLogin = $setting ? $setting->require_login : true;
+
+        if ($requireLogin && !Auth::check()) {
             return redirect()->route('user_login');
         }
-        return view('main_view.pages.checkout');
+        return view('main_view.pages.checkout', compact('requireLogin'));
     }
 
     public function store(Request $request)
     {
-        if (!Auth::check()) {
+        $setting = \App\Models\GeneralSetting::first();
+        $requireLogin = $setting ? $setting->require_login : true;
+
+        if ($requireLogin && !Auth::check()) {
             return redirect()->route('user_login');
         }
 
         $request->validate([
             'shipping_name' => 'required|string|max:255',
-            'shipping_email' => 'required|email|max:255',
+            'shipping_email' => $requireLogin ? 'required|email|max:255' : 'nullable|email|max:255',
             'shipping_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
             'shipping_city' => 'required|string|max:100',
             'shipping_zip' => 'required|string|max:20',
-            'cart_data' => 'required|string'
+            'cart_data' => 'required|string',
+            'terms_accepted' => 'required|accepted'
+        ], [
+            'terms_accepted.accepted' => 'You must agree to the Terms & Conditions and Return Policy.'
         ]);
 
         $cart = json_decode($request->cart_data, true);
@@ -80,8 +89,34 @@ class CheckoutController extends Controller
             $total = $cartTotal + $deliveryCharge - $promoDiscount;
             if ($total < 0) $total = 0;
 
+            $userId = null;
+            $email = null;
+            if (Auth::check()) {
+                $userId = Auth::id();
+                $email = $request->shipping_email ?: Auth::user()->email;
+            } else {
+                // Find or create user
+                $email = $request->shipping_email;
+                if (!$email) {
+                    // Generate a unique dummy email for guest checkout
+                    $email = 'guest-no-email-' . preg_replace('/[^0-9]/', '', $request->shipping_phone) . '-' . time() . '@delaire.store';
+                }
+                
+                $user = \App\Models\User::where('email', $email)->first();
+                if (!$user) {
+                    $user = \App\Models\User::create([
+                        'name' => $request->shipping_name,
+                        'email' => $email,
+                        'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(16)),
+                        'address' => $request->shipping_address,
+                        'shipping_address' => $request->shipping_address,
+                    ]);
+                }
+                $userId = $user->id;
+            }
+
             $order = UserOrder::create([
-                'user_id' => Auth::id(),
+                'user_id' => $userId,
                 'order_number' => 'ORD-' . strtoupper(uniqid()),
                 'subtotal' => $cartTotal,
                 'total' => $total,
@@ -90,7 +125,7 @@ class CheckoutController extends Controller
                 'promo_code' => $promoCode,
                 'promo_discount' => $promoDiscount,
                 'shipping_name' => $request->shipping_name,
-                'shipping_email' => $request->shipping_email,
+                'shipping_email' => $email,
                 'shipping_phone' => $request->shipping_phone,
                 'shipping_address' => $request->shipping_address,
                 'shipping_city' => $request->shipping_city,
@@ -160,10 +195,42 @@ class CheckoutController extends Controller
                 \Illuminate\Support\Facades\Log::error('Notification Error: ' . $e->getMessage());
             }
 
-            return redirect()->route('user.orders')->with([
-                'success' => 'Order placed successfully!',
-                'order_placed' => true
-            ]);
+            // Send Email Notifications
+            try {
+                $settings = \App\Models\GeneralSetting::first();
+                
+                // 1. Send Admin Email
+                $adminEmail = $settings ? $settings->admin_notification_email : null;
+                if ($adminEmail) {
+                    $emails = array_filter(array_map('trim', explode(',', $adminEmail)));
+                    foreach ($emails as $email) {
+                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\AdminOrderPlacedMail($order));
+                        }
+                    }
+                }
+                
+                // 2. Send User Email
+                $userEmail = $order->shipping_email;
+                if ($userEmail && filter_var($userEmail, FILTER_VALIDATE_EMAIL) && !str_contains($userEmail, 'admin-created@example.com') && !str_contains($userEmail, 'guest-no-email')) {
+                    \Illuminate\Support\Facades\Mail::to($userEmail)->send(new \App\Mail\UserOrderPlacedMail($order));
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Order Placement Email Error: ' . $e->getMessage());
+            }
+
+            if (Auth::check()) {
+                return redirect()->route('user.orders')->with([
+                    'success' => 'Order placed successfully!',
+                    'order_placed' => true
+                ]);
+            } else {
+                return redirect()->route('checkout.success')->with([
+                    'success' => 'Order placed successfully!',
+                    'order_placed' => true,
+                    'order_number' => $order->order_number
+                ]);
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -204,5 +271,14 @@ class CheckoutController extends Controller
             'discount' => $discount,
             'message' => 'Promo code applied!'
         ]);
+    }
+
+    public function success()
+    {
+        $orderNumber = session('order_number');
+        if (!$orderNumber) {
+            return redirect()->route('home');
+        }
+        return view('main_view.pages.order_success', compact('orderNumber'));
     }
 }

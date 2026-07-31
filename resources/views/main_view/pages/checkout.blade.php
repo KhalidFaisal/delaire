@@ -112,13 +112,13 @@
 
                                     <div class="mb-4">
                                         <label class="form-label fw-bold">Full Name <span class="text-danger">*</span></label>
-                                        <input type="text" name="shipping_name" class="form-control" value="{{ auth()->user()->name }}" required placeholder="Ex: John Doe">
+                                        <input type="text" name="shipping_name" class="form-control" value="{{ auth()->check() ? auth()->user()->name : '' }}" required placeholder="Ex: John Doe">
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
-                                            <label class="form-label fw-bold">Email Address <span class="text-danger">*</span></label>
-                                            <input type="email" name="shipping_email" class="form-control" value="{{ auth()->user()->email }}" required placeholder="Ex: john@example.com">
+                                            <label class="form-label fw-bold">Email Address @if($requireLogin) <span class="text-danger">*</span> @endif</label>
+                                            <input type="email" name="shipping_email" class="form-control" value="{{ auth()->check() ? auth()->user()->email : '' }}" {{ $requireLogin ? 'required' : '' }} placeholder="Ex: john@example.com">
                                         </div>
                                         <div class="col-md-6 mb-4">
                                             <label class="form-label fw-bold">Phone Number <span class="text-danger">*</span></label>
@@ -167,6 +167,16 @@
                                             </div>
                                         </div>
                                         -->
+                                    </div>
+                                </div>
+
+                                <!-- Terms & Conditions and Return Policy -->
+                                <div class="checkout-card">
+                                    <div class="form-check d-flex align-items-start mb-0">
+                                        <input class="form-check-input me-3" type="checkbox" name="terms_accepted" id="terms_accepted" value="1" required style="width: 1.25rem; height: 1.25rem; cursor: pointer; flex-shrink: 0; margin-top: 3px;">
+                                        <label class="form-check-label text-muted" for="terms_accepted" style="cursor: pointer; font-size: 0.95rem; line-height: 1.4; user-select: none;">
+                                            I have read and agree to the website <a href="{{ route('terms.conditions') }}" target="_blank" class="fw-bold text-decoration-underline" style="color: var(--primary-color);">Terms & Conditions</a> and <a href="{{ route('return.policy') }}" target="_blank" class="fw-bold text-decoration-underline" style="color: var(--primary-color);">Return Policy</a> <span class="text-danger">*</span>
+                                        </label>
                                     </div>
                                 </div>
                             </form>

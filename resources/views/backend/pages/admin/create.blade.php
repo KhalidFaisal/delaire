@@ -32,10 +32,9 @@
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
                             <select class="form-control" id="role" name="role" required>
-                                <option value="admin">Admin</option>
-                                <option value="super_admin">Super Admin</option>
-                                <option value="manager">Manager</option>
-                                <option value="editor">Editor</option>
+                                @foreach($roles as $role)
+                                    <option value="{{ $role->slug }}">{{ $role->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="mb-3">

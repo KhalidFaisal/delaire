@@ -20,7 +20,7 @@
                     <h6 class="card-title small">{{ $item->product->pro_title ?? 'Product' }}</h6>
                     <p class="card-text small text-muted mb-1">{{ $item->product->pro_price ?? '—' }}</p>
                     <div class="d-flex gap-2 justify-content-center mt-2">
-                        <a href="{{ route('product.show', $item->product->id) }}" class="btn btn-sm btn-primary">Shop Now</a>
+                        <a href="{{ $item->product ? $item->product->url : '#' }}" class="btn btn-sm btn-primary">Shop Now</a>
                         <form action="{{ route('user.wishlist.destroy', $item->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')

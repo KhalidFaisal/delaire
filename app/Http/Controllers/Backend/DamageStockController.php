@@ -84,6 +84,22 @@ class DamageStockController extends Controller
 
             DB::commit();
 
+            // Log damage stock recorded
+            $size = $request->product_size_id ? \App\Models\ProductSize::find($request->product_size_id) : null;
+            $sizeStr = $size ? " (Size: {$size->size})" : "";
+            \App\Models\AdminLog::log(
+                'Damage Stock Recorded',
+                "Admin '" . auth('admin')->user()->name . "' marked {$request->quantity} units of '{$product->pro_title}'{$sizeStr} as damaged.",
+                [
+                    'product_id' => $request->product_id,
+                    'product_size_id' => $request->product_size_id,
+                    'quantity' => $request->quantity,
+                    'lot_number' => $request->lot_number,
+                    'entry_date' => $request->entry_date,
+                    'note' => $request->note
+                ]
+            );
+
             return redirect()->route('admin.damage.stock')->with('success', 'Damage stock recorded successfully.');
 
         } catch (\Exception $e) {
@@ -124,6 +140,20 @@ class DamageStockController extends Controller
             $product->save();
 
             DB::commit();
+
+            // Log damage stock restored
+            $size = $stock->product_size_id ? \App\Models\ProductSize::find($stock->product_size_id) : null;
+            $sizeStr = $size ? " (Size: {$size->size})" : "";
+            \App\Models\AdminLog::log(
+                'Damage Stock Restored',
+                "Admin '" . auth('admin')->user()->name . "' restored " . abs($stock->quantity) . " units of '{$product->pro_title}'{$sizeStr} from damaged stock back to inventory.",
+                [
+                    'stock_id' => $stock->id,
+                    'product_id' => $stock->product_id,
+                    'product_size_id' => $stock->product_size_id,
+                    'quantity' => abs($stock->quantity)
+                ]
+            );
 
             return redirect()->back()->with('success', 'Stock restored to inventory successfully.');
 

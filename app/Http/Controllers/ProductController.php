@@ -63,6 +63,20 @@ class ProductController extends Controller
 
         $product->save();
 
+        // Log product creation
+        \App\Models\AdminLog::log(
+            'Product Created',
+            "Admin '" . auth('admin')->user()->name . "' created product: '{$product->pro_title}' (Price: {$product->pro_price}).",
+            [
+                'product_id' => $product->id,
+                'title' => $product->pro_title,
+                'price' => $product->pro_price,
+                'sprice' => $product->pro_sprice,
+                'brand' => $product->pro_brand,
+                'category' => $product->main_category
+            ]
+        );
+
        return redirect()->route('all.product')->with('success', 'Product Added successfully.');
 
     }
@@ -76,6 +90,16 @@ class ProductController extends Controller
                 }
 
                 $item->delete();
+
+                // Log product deletion
+                \App\Models\AdminLog::log(
+                    'Product Deleted',
+                    "Admin '" . auth('admin')->user()->name . "' deleted product: '{$item->pro_title}'.",
+                    [
+                        'deleted_product_id' => $item->id,
+                        'title' => $item->pro_title
+                    ]
+                );
 
                 // Redirect back with a success message
                 return redirect()->route('all.product')->with('success', 'Product deleted successfully.');
@@ -103,10 +127,16 @@ class ProductController extends Controller
                 return response()->json(['products' => $filteredItems]);
             }
 
-    public function show($id)
+    public function show($id, $slug = null)
     {
         // Fetch the product by ID with relationships
         $product = Product::with(['sizes', 'category', 'brand', 'subCategory'])->findOrFail($id);
+        
+        // Redirect to canonical URL if slug is missing or incorrect
+        $expectedSlug = \Illuminate\Support\Str::slug($product->pro_title ?: 'product');
+        if ($slug !== $expectedSlug) {
+            return redirect()->route('product.show', ['id' => $id, 'slug' => $expectedSlug], 301);
+        }
         
         // Fetch related products (same main category, exclude current product)
         $related_products = Product::where('main_category', $product->main_category)
@@ -246,6 +276,18 @@ class ProductController extends Controller
             $product->save();
         }
 
+        // Log product update
+        \App\Models\AdminLog::log(
+            'Product Updated',
+            "Admin '" . auth('admin')->user()->name . "' updated product: '{$product->pro_title}'.",
+            [
+                'product_id' => $product->id,
+                'title' => $product->pro_title,
+                'price' => $product->pro_price,
+                'qty' => $product->pro_qty
+            ]
+        );
+
         return redirect()->route('all.product')->with('success', 'Product Updated successfully.');
     }
 
@@ -308,6 +350,15 @@ class ProductController extends Controller
         
         fclose($fileHandle);
 
+        // Log product bulk upload
+        \App\Models\AdminLog::log(
+            'Product Bulk Uploaded',
+            "Admin '" . auth('admin')->user()->name . "' uploaded products in bulk via CSV file: '{$file->getClientOriginalName()}'.",
+            [
+                'file_name' => $file->getClientOriginalName()
+            ]
+        );
+
         return redirect()->back()->with('success', 'Products uploaded successfully via CSV.');
     }
 
@@ -338,7 +389,7 @@ class ProductController extends Controller
                     return ['size' => $s->size, 'stock' => $s->stock];
                 }),
                 'qty' => $product->pro_qty,
-                'url' => route('product.show', $product->id)
+                'url' => $product->url
             ];
         });
 
