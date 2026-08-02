@@ -139,7 +139,7 @@
     });
 
     function fetchSizes(productId) {
-         return fetch("{{ url('/inventory/get-sizes') }}/" + productId)
+         return fetch("{{ url('/admin/inventory/get-sizes') }}/" + productId)
                 .then(response => response.json())
                 .then(data => {
                     productSizes[productId] = data;
